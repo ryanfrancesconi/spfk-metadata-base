@@ -9,6 +9,9 @@ import SPFKUtils
 /// (TXXX user-defined frames, unrecognized INFO tags) goes into ``customTags``.
 /// Supports merging multiple `TagData` instances via ``DictionaryMergeScheme``.
 public struct TagData: TagPropertiesContainerModel, Hashable, Codable, Sendable {
+    /// Prefix that TagLib prepends to duplicate TXXX comment frame keys.
+    public static let commentKeyPrefix = "COMMENT:"
+
     /// Whether both tag dictionaries are empty.
     public var isEmpty: Bool {
         tags.isEmpty && customTags.isEmpty
@@ -21,6 +24,26 @@ public struct TagData: TagPropertiesContainerModel, Hashable, Codable, Sendable 
     public var customTags: [String: String]
 
     public init(tags: TagKeyDictionary = .init(), customTags: [String: String] = .init()) {
+        self.tags = tags
+        self.customTags = customTags
+    }
+
+    /// Creates a `TagData` from label/value pairs (e.g. from UI row models).
+    ///
+    /// Labels that match a known ``TagKey/displayName`` are stored in ``tags``;
+    /// everything else goes into ``customTags``.
+    public init(labels: [(label: String, value: String)]) {
+        var tags = TagKeyDictionary()
+        var customTags = [String: String]()
+
+        for item in labels {
+            if let tagKey = TagKey(displayName: item.label) {
+                tags[tagKey] = item.value
+            } else {
+                customTags[item.label] = item.value
+            }
+        }
+
         self.tags = tags
         self.customTags = customTags
     }
