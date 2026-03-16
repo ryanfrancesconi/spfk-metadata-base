@@ -20,7 +20,7 @@ public struct ImageDescription: Sendable, Hashable {
     public var description: String?
 
     /// Indicates whether the artwork has been modified and needs to be written back to the file.
-    public private(set) var needsSave: Bool = false
+    public private(set) var isDirty: Bool = false
 
     public init() {}
 
