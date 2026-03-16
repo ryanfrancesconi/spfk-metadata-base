@@ -38,7 +38,9 @@ extension BEXTDescription: Codable {
             umid = try? container.decodeIfPresent(String.self, forKey: .umid)
         }
 
-        if version >= 2, let value = try? container.decodeIfPresent(LoudnessDescription.self, forKey: .loudnessDescription) {
+        if version >= 2,
+            let value = try? container.decodeIfPresent(LoudnessDescription.self, forKey: .loudnessDescription)
+        {
             loudnessDescription = value
         }
     }

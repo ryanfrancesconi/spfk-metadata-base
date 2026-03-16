@@ -31,28 +31,27 @@ extension BEXTDescription {
 
         /// Whether this field can be edited by the user. Version and coding history are read-only.
         public var isEditable: Bool {
-            self != .version &&
-                self != .codingHistory
+            self != .version && self != .codingHistory
         }
 
         /// Human-readable label for UI display.
         public var displayName: String {
             switch self {
-            case .originator:               "Originator"
-            case .originatorReference:      "Originator Reference"
-            case .originationDate:          "Origination Date"
-            case .originationTime:          "Origination Time"
-            case .timeReferenceSamples:     "Time Reference Samples"
-            case .timeReferenceString:      "Time Reference"
-            case .umid:                     "UMID"
-            case .description:              "Description"
-            case .loudnessIntegrated:       TagKey.loudnessIntegrated.displayName
-            case .loudnessRange:            TagKey.loudnessRange.displayName
-            case .maxTruePeakLevel:         TagKey.loudnessTruePeak.displayName
-            case .maxMomentaryLoudness:     TagKey.loudnessMaxMomentary.displayName
-            case .maxShortTermLoudness:     TagKey.loudnessMaxShortTerm.displayName
-            case .version:                  "Version"
-            case .codingHistory:            "Coding History"
+            case .originator: "Originator"
+            case .originatorReference: "Originator Reference"
+            case .originationDate: "Origination Date"
+            case .originationTime: "Origination Time"
+            case .timeReferenceSamples: "Time Reference Samples"
+            case .timeReferenceString: "Time Reference"
+            case .umid: "UMID"
+            case .description: "Description"
+            case .loudnessIntegrated: TagKey.loudnessIntegrated.displayName
+            case .loudnessRange: TagKey.loudnessRange.displayName
+            case .maxTruePeakLevel: TagKey.loudnessTruePeak.displayName
+            case .maxMomentaryLoudness: TagKey.loudnessMaxMomentary.displayName
+            case .maxShortTermLoudness: TagKey.loudnessMaxShortTerm.displayName
+            case .version: "Version"
+            case .codingHistory: "Coding History"
             }
         }
 
@@ -118,23 +117,25 @@ extension BEXTDescription {
 
     /// All BEXT fields as an ordered key-value dictionary. Setting this updates the underlying properties.
     public var dictionary: BEXTKeyDictionary {
-        get { [
-            .originator:            originator,
-            .originatorReference:   originatorReference,
-            .originationDate:       originationDate,
-            .originationTime:       originationTime,
-            .timeReferenceSamples:  timeReference?.string,
-            .timeReferenceString:   timeReferenceString,
-            .umid:                  umid,
-            .description:           sequenceDescription,
-            .loudnessIntegrated:    loudnessDescription.loudnessIntegrated?.string,
-            .loudnessRange:         loudnessDescription.loudnessRange?.string,
-            .maxTruePeakLevel:      loudnessDescription.maxTruePeakLevel?.string,
-            .maxMomentaryLoudness:  loudnessDescription.maxMomentaryLoudness?.string,
-            .maxShortTermLoudness:  loudnessDescription.maxShortTermLoudness?.string,
-            .version:               version > 0 ? version.string : "",
-            .codingHistory:         codingHistory,
-        ] }
+        get {
+            [
+                .originator: originator,
+                .originatorReference: originatorReference,
+                .originationDate: originationDate,
+                .originationTime: originationTime,
+                .timeReferenceSamples: timeReference?.string,
+                .timeReferenceString: timeReferenceString,
+                .umid: umid,
+                .description: sequenceDescription,
+                .loudnessIntegrated: loudnessDescription.loudnessIntegrated?.string,
+                .loudnessRange: loudnessDescription.loudnessRange?.string,
+                .maxTruePeakLevel: loudnessDescription.maxTruePeakLevel?.string,
+                .maxMomentaryLoudness: loudnessDescription.maxMomentaryLoudness?.string,
+                .maxShortTermLoudness: loudnessDescription.maxShortTermLoudness?.string,
+                .version: version > 0 ? version.string : "",
+                .codingHistory: codingHistory,
+            ]
+        }
 
         set {
             if let value = newValue[.version], let unwrapped = value?.int16 {

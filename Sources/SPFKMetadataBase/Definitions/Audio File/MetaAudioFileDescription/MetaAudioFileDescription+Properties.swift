@@ -7,8 +7,7 @@ import SPFKAudioBase
 extension MetaAudioFileDescription {
     /// Returns the embedded artwork if available, falling back to the file's Finder thumbnail.
     public var bestAvailableImage: CGImage? {
-        imageDescription.cgImage ??
-            url.bestImageRepresentation?.cgImage
+        imageDescription.cgImage ?? url.bestImageRepresentation?.cgImage
     }
 
     /// The BPM (beats per minute) value from the `.bpm` tag. Setting this updates the underlying tag string.

@@ -82,7 +82,9 @@ extension AudioMarkerDescriptionCollection {
     }
 
     /// Inserts a single marker with the next available ID and returns the updated marker.
-    public mutating func insertAndIncrementID(markerDescription: AudioMarkerDescription) throws -> AudioMarkerDescription {
+    public mutating func insertAndIncrementID(markerDescription: AudioMarkerDescription) throws
+        -> AudioMarkerDescription
+    {
         let nextID = highestID + 1
         var markerDescription = markerDescription
 
@@ -121,6 +123,8 @@ extension AudioMarkerDescriptionCollection {
             return
         }
 
-        throw NSError(description: "Failed to find markerID \(markerID), all ids are \(markerDescriptions.compactMap(\.markerID))")
+        throw NSError(
+            description: "Failed to find markerID \(markerID), all ids are \(markerDescriptions.compactMap(\.markerID))"
+        )
     }
 }

@@ -111,7 +111,7 @@ public struct BEXTDescription: Hashable, Sendable {
     /// Sample rate isn't part of the BEXT values.
     public var timeReferenceInSeconds: TimeInterval? {
         guard let timeReference,
-              let sampleRate, sampleRate > 0
+            let sampleRate, sampleRate > 0
         else { return nil }
 
         return TimeInterval(timeReference) / sampleRate

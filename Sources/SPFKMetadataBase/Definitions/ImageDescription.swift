@@ -46,8 +46,7 @@ public struct ImageDescription: Sendable, Hashable {
 
 extension ImageDescription: Equatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.thumbnailData == rhs.thumbnailData &&
-            lhs.description == rhs.description
+        lhs.thumbnailData == rhs.thumbnailData && lhs.description == rhs.description
     }
 }
 
@@ -80,7 +79,7 @@ extension ImageDescription {
     public static func createThumbnail(cgImage: CGImage, size: CGSize = .init(equal: 32)) async -> Data? {
         let task = Task<Data?, Error>(priority: .userInitiated) {
             guard cgImage.width > 64, cgImage.height > 64,
-                  let rescaledImage = cgImage.scaled(to: size)
+                let rescaledImage = cgImage.scaled(to: size)
             else { return nil }
 
             return rescaledImage.pngRepresentation

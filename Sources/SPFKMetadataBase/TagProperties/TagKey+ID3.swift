@@ -7,7 +7,6 @@ extension TagKey {
     public var id3Frame: ID3FrameKey {
         // unlike the wave info keys which need custom mapping,
         // these names will match in our case as ID3 is the predominant structure
-        ID3FrameKey(rawValue: rawValue) ??
-            .userDefined
+        ID3FrameKey(rawValue: rawValue) ?? .userDefined
     }
 }

@@ -100,7 +100,9 @@ extension MetaAudioFileDescription: Codable {
         xmpMetadata = try? container.decodeIfPresent(String.self, forKey: .xmpMetadata)
         iXMLMetadata = try? container.decodeIfPresent(String.self, forKey: .iXMLMetadata)
 
-        if let markerCollection = try? container.decodeIfPresent(AudioMarkerDescriptionCollection.self, forKey: .markerCollection) {
+        if let markerCollection = try? container.decodeIfPresent(
+            AudioMarkerDescriptionCollection.self, forKey: .markerCollection)
+        {
             self.markerCollection = markerCollection
         }
     }

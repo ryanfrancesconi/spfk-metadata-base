@@ -81,29 +81,33 @@ extension [TagData] {
         var mergedCustomTags: [String: String] = .init()
 
         for item in allTags {
-            mergedTags = mergedTags.merging(item, uniquingKeysWith: { old, new in
-                switch scheme {
-                case .preserve:
-                    old
-                case .replace:
-                    new
-                case .combine:
-                    old + ", \(new)" // string delimiter ", "
-                }
-            })
+            mergedTags = mergedTags.merging(
+                item,
+                uniquingKeysWith: { old, new in
+                    switch scheme {
+                    case .preserve:
+                        old
+                    case .replace:
+                        new
+                    case .combine:
+                        old + ", \(new)" // string delimiter ", "
+                    }
+                })
         }
 
         for item in allCustomTags {
-            mergedCustomTags = mergedCustomTags.merging(item, uniquingKeysWith: { old, new in
-                switch scheme {
-                case .preserve:
-                    old
-                case .replace:
-                    new
-                case .combine:
-                    old + ", \(new)"
-                }
-            })
+            mergedCustomTags = mergedCustomTags.merging(
+                item,
+                uniquingKeysWith: { old, new in
+                    switch scheme {
+                    case .preserve:
+                        old
+                    case .replace:
+                        new
+                    case .combine:
+                        old + ", \(new)"
+                    }
+                })
         }
 
         return TagData(tags: mergedTags, customTags: mergedCustomTags)

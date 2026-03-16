@@ -58,11 +58,8 @@ public enum TagSet: CaseIterable, Hashable, Sendable {
 
 extension TagSet {
     private static let otherTags: [TagKey] = TagKey.allCases.filter {
-        !commonTags.contains($0) &&
-            !musicTags.contains($0) &&
-            !loudnessTags.contains($0) &&
-            !replayGainTags.contains($0) &&
-            !utilityTags.contains($0)
+        !commonTags.contains($0) && !musicTags.contains($0) && !loudnessTags.contains($0)
+            && !replayGainTags.contains($0) && !utilityTags.contains($0)
     }
 
     static let commonTags: [TagKey] = [
@@ -89,7 +86,7 @@ extension TagSet {
         .movementName,
         .movementNumber,
         .remixer,
-        .work
+        .work,
     ]
 
     static let loudnessTags: [TagKey] = [

@@ -37,7 +37,7 @@ public struct TagProperties: Hashable, Codable, Sendable {
     public mutating func merge(data otherData: TagData, scheme: DictionaryMergeScheme = .replace) {
         data = [data, otherData].merge(scheme: scheme)
     }
-    
+
     /// Removes all keys found in `otherData` from this instance.
     public mutating func remove(data otherData: TagData) {
         data.remove(data: otherData)
@@ -55,4 +55,3 @@ extension TagProperties: TagPropertiesContainerModel {
         set { data.customTags = newValue }
     }
 }
-

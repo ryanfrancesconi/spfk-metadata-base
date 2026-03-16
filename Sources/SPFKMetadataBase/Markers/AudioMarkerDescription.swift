@@ -12,14 +12,10 @@ public struct AudioMarkerDescription: Hashable, Sendable, Equatable, Comparable 
     public static func == (lhs: Self, rhs: Self) -> Bool {
         guard let id1 = lhs.markerID, let id2 = rhs.markerID else {
             //
-            return lhs.name == rhs.name &&
-                lhs.startTime == rhs.startTime &&
-                lhs.endTime == rhs.endTime
+            return lhs.name == rhs.name && lhs.startTime == rhs.startTime && lhs.endTime == rhs.endTime
         }
 
-        return id1 == id2 &&
-            lhs.startTime == rhs.startTime &&
-            lhs.endTime == rhs.endTime
+        return id1 == id2 && lhs.startTime == rhs.startTime && lhs.endTime == rhs.endTime
     }
 
     public static func < (lhs: Self, rhs: Self) -> Bool {
