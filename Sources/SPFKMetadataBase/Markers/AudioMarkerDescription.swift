@@ -92,11 +92,11 @@ extension AudioMarkerDescription: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         try container.encode(startTime, forKey: .startTime)
-        try? container.encodeIfPresent(name, forKey: .name)
-        try? container.encodeIfPresent(endTime, forKey: .endTime)
-        try? container.encodeIfPresent(sampleRate, forKey: .sampleRate)
-        try? container.encodeIfPresent(markerID, forKey: .markerID)
-        try? container.encodeIfPresent(hexColor, forKey: .hexColor)
+        try container.encodeIfPresent(name, forKey: .name)
+        try container.encodeIfPresent(endTime, forKey: .endTime)
+        try container.encodeIfPresent(sampleRate, forKey: .sampleRate)
+        try container.encodeIfPresent(markerID, forKey: .markerID)
+        try container.encodeIfPresent(hexColor, forKey: .hexColor)
     }
 }
 
