@@ -91,7 +91,7 @@ public enum TagKey: String, CaseIterable, Codable, Comparable, Sendable {
     case trackNumber
     case work
 
-    // MARK: TXXX Non-Standard packageDefined frames
+    // MARK: - TXXX Non-Standard SPFKMetadata defined frames
 
     // Color. Defined by SPFKMetadata
     case color
