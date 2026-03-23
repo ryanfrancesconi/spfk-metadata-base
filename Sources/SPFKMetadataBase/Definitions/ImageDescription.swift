@@ -4,16 +4,16 @@ import SPFKUtils
 
 /// Container for embedded audio file artwork with thumbnail generation.
 ///
-/// Holds the full-resolution `CGImage` (excluded from `Codable` to avoid database bloat)
-/// and a small PNG thumbnail for serialization.
+/// The full-resolution `CGImage` and thumbnail image are transient — excluded from `Codable`.
+/// Only the text ``description`` is serialized. Image data is persisted via `ImageDataStore`.
 public struct ImageDescription: Sendable, Hashable {
-    /// The full-resolution embedded artwork. Not encoded — use ``thumbnailImage`` for persistence.
+    /// The full-resolution embedded artwork. Not encoded.
     public var cgImage: CGImage?
 
-    /// A downscaled thumbnail of the artwork, created from ``thumbnailData``.
+    /// A downscaled thumbnail of the artwork, created from ``thumbnailData`` or set via ``setThumbnailImage(_:)``.
     public private(set) var thumbnailImage: CGImage?
 
-    /// PNG data of the thumbnail image, suitable for database storage.
+    /// PNG data of the thumbnail image, populated in-memory by ``createThumbnail()``.
     public private(set) var thumbnailData: Data?
 
     /// Optional text description of the image (e.g., "Front Cover").
@@ -37,32 +37,36 @@ public struct ImageDescription: Sendable, Hashable {
             thumbnailImage = try? CGImage.create(from: thumbnailData)
         }
     }
-}
 
-// MARK: deliberately not encoding CGImage due to size stored in database
-
-extension ImageDescription: Equatable {
-    public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.thumbnailData == rhs.thumbnailData && lhs.description == rhs.description
+    /// Sets the thumbnail image directly, for use when hydrating from the image cache.
+    public mutating func setThumbnailImage(_ image: CGImage?) {
+        thumbnailImage = image
     }
 }
 
+// MARK: - Equatable
+
+extension ImageDescription: Equatable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.description == rhs.description
+    }
+}
+
+// MARK: - Codable
+
 extension ImageDescription: Codable {
     enum CodingKeys: String, CodingKey {
-        case thumbnailData
         case description
     }
 
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        thumbnailData = try container.decodeIfPresent(Data.self, forKey: .thumbnailData)
         description = try container.decodeIfPresent(String.self, forKey: .description)
-        updateThumbnail()
+        // thumbnailImage is populated separately from the image cache after decode
     }
 
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(thumbnailData, forKey: .thumbnailData)
         try container.encodeIfPresent(description, forKey: .description)
     }
 }
