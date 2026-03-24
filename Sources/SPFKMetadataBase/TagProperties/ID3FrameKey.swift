@@ -8,7 +8,7 @@ import Foundation
 /// (e.g., `.title` → `"TIT2"`, `.artist` → `"TPE1"`).
 ///
 /// Conforms to ``TagFrameKey`` for shared lookup and display name logic.
-public enum ID3FrameKey: String, TagFrameKey, Codable, Comparable {
+public enum ID3FrameKey: String, TagFrameKey, Codable, Comparable, Sendable, CaseIterable {
     public static func < (lhs: ID3FrameKey, rhs: ID3FrameKey) -> Bool {
         lhs.rawValue < rhs.rawValue
     }

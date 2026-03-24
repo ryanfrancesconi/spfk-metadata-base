@@ -9,7 +9,7 @@ import Foundation
 ///
 /// Conforms to ``TagFrameKey`` for shared lookup and display name logic.
 /// Tags not mapped here are stored in ``TagData/customTags``.
-public enum InfoFrameKey: String, TagFrameKey, Codable, Comparable {
+public enum InfoFrameKey: String, TagFrameKey, Codable, Comparable, Sendable, CaseIterable {
     public static func < (lhs: InfoFrameKey, rhs: InfoFrameKey) -> Bool {
         lhs.rawValue < rhs.rawValue
     }
