@@ -96,18 +96,47 @@ struct AudioMarkerDescriptionEquatableTests {
         #expect(m1 != m2)
     }
 
-    @Test func notEqualDifferentStartTime() {
+    // markerID is the stable identity: same ID = equal regardless of mutable properties
+
+    @Test func equalWhenSameIDDifferentStartTime() {
         let m1 = AudioMarkerDescription(name: "A", startTime: 1.0, markerID: 1)
         let m2 = AudioMarkerDescription(name: "A", startTime: 2.0, markerID: 1)
 
-        #expect(m1 != m2)
+        #expect(m1 == m2)
     }
 
-    @Test func notEqualDifferentEndTime() {
+    @Test func equalWhenSameIDDifferentEndTime() {
         let m1 = AudioMarkerDescription(name: "A", startTime: 1.0, endTime: 2.0, markerID: 1)
         let m2 = AudioMarkerDescription(name: "A", startTime: 1.0, endTime: 3.0, markerID: 1)
 
-        #expect(m1 != m2)
+        #expect(m1 == m2)
+    }
+
+    @Test func equalWhenSameIDDifferentName() {
+        let m1 = AudioMarkerDescription(name: "Before", startTime: 1.0, markerID: 5)
+        let m2 = AudioMarkerDescription(name: "After", startTime: 5.0, markerID: 5)
+
+        #expect(m1 == m2)
+    }
+
+    @Test func hashConsistencyWithSameID() {
+        let m1 = AudioMarkerDescription(name: "X", startTime: 1.0, markerID: 3)
+        let m2 = AudioMarkerDescription(name: "Y", startTime: 9.0, markerID: 3)
+
+        var h1 = Hasher(); m1.hash(into: &h1)
+        var h2 = Hasher(); m2.hash(into: &h2)
+
+        #expect(h1.finalize() == h2.finalize())
+    }
+
+    @Test func hashConsistencyWithoutID() {
+        let m1 = AudioMarkerDescription(name: "A", startTime: 1.0)
+        let m2 = AudioMarkerDescription(name: "A", startTime: 1.0)
+
+        var h1 = Hasher(); m1.hash(into: &h1)
+        var h2 = Hasher(); m2.hash(into: &h2)
+
+        #expect(h1.finalize() == h2.finalize())
     }
 }
 

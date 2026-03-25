@@ -11,11 +11,20 @@ import SPFKBase
 public struct AudioMarkerDescription: Hashable, Sendable, Equatable, Comparable, Codable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         guard let id1 = lhs.markerID, let id2 = rhs.markerID else {
-            //
             return lhs.name == rhs.name && lhs.startTime == rhs.startTime && lhs.endTime == rhs.endTime
         }
 
-        return id1 == id2 && lhs.startTime == rhs.startTime && lhs.endTime == rhs.endTime
+        return id1 == id2
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        if let markerID {
+            hasher.combine(markerID)
+        } else {
+            hasher.combine(name)
+            hasher.combine(startTime)
+            hasher.combine(endTime)
+        }
     }
 
     public static func < (lhs: Self, rhs: Self) -> Bool {
