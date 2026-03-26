@@ -69,6 +69,42 @@ public struct TagData: TagPropertiesContainerModel, Hashable, Codable, Sendable 
 extension TagData: Serializable {}
 
 extension [TagData] {
+    /// Returns the display names of tag keys that are present in ALL elements
+    /// but have different values across them.
+    ///
+    /// Used by the multi-select Tags editor to visually indicate which fields
+    /// show only one of several differing values rather than a shared value.
+    /// Returns an empty set for single-element arrays.
+    public func divergentTagKeyDisplayNames() -> Set<String> {
+        guard count > 1, let first else { return [] }
+
+        var divergent = Set<String>()
+
+        // Standard TagKey entries present in ALL elements
+        let commonTagKeys = dropFirst().reduce(Set(first.tags.keys)) {
+            $0.intersection(Set($1.tags.keys))
+        }
+        for key in commonTagKeys {
+            let values = compactMap { $0.tags[key] }
+            if let firstValue = values.first, !values.allSatisfy({ $0 == firstValue }) {
+                divergent.insert(key.displayName)
+            }
+        }
+
+        // Custom tag entries present in ALL elements
+        let commonCustomKeys = dropFirst().reduce(Set(first.customTags.keys)) {
+            $0.intersection(Set($1.customTags.keys))
+        }
+        for key in commonCustomKeys {
+            let values = compactMap { $0.customTags[key] }
+            if let firstValue = values.first, !values.allSatisfy({ $0 == firstValue }) {
+                divergent.insert(key)
+            }
+        }
+
+        return divergent
+    }
+
     /// Combines multiple `TagData` instances into one using the specified merge scheme.
     ///
     /// - Parameter scheme: `.preserve` keeps existing values, `.replace` overwrites with newer,
