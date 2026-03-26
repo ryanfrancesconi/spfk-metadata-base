@@ -115,6 +115,7 @@ public enum TagKey: String, CaseIterable, Codable, Comparable, Sendable {
 
     case ucsCategory
     case ucsSubcategory
+    case ucsCatID
 }
 
 // MARK: - overrides
@@ -141,6 +142,7 @@ extension TagKey {
         case .loudnessMaxShortTerm: "Loudness Max Short-Term (LUFS)"
         case .ucsCategory:          "UCS Category"
         case .ucsSubcategory:       "UCS Subcategory"
+        case .ucsCatID:             "UCS CatID"
 
         //
         default:

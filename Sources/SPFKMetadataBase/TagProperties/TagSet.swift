@@ -6,6 +6,7 @@ import Foundation
 public enum TagSet: CaseIterable, Hashable, Sendable {
     case common
     case music
+    case ucs
     case loudness
     case replayGain
     case utility
@@ -16,6 +17,7 @@ public enum TagSet: CaseIterable, Hashable, Sendable {
         switch self {
         case .common: "Common Tags"
         case .music: "Music Tags"
+        case .ucs: "UCS"
         case .loudness: "Loudness"
         case .replayGain: "Replay Gain"
         case .utility: "Utility"
@@ -34,6 +36,9 @@ public enum TagSet: CaseIterable, Hashable, Sendable {
 
         case .music:
             TagSet.musicTags
+
+        case .ucs:
+            TagSet.ucsTags
 
         case .loudness:
             TagSet.loudnessTags
@@ -87,6 +92,12 @@ extension TagSet {
         .movementNumber,
         .remixer,
         .work,
+    ]
+
+    static let ucsTags: [TagKey] = [
+        .ucsCategory,
+        .ucsSubcategory,
+        .ucsCatID
     ]
 
     static let loudnessTags: [TagKey] = [
