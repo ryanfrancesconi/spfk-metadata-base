@@ -13,7 +13,7 @@ extension MetaAudioFileDescription {
     /// The BPM (beats per minute) value from the `.bpm` tag. Setting this updates the underlying tag string.
     public var bpm: Bpm? {
         get {
-            guard let rawValue = tagProperties.tags[.bpm]?.double else {
+            guard let rawValue = tagProperties[.bpm]?.double else {
                 return nil
             }
 
@@ -21,8 +21,19 @@ extension MetaAudioFileDescription {
         }
 
         set {
-            tagProperties.tags[.bpm] = newValue?.stringValue
+            tagProperties[.bpm] = newValue?.stringValue
         }
+    }
+
+    /// Infers a BPM from embedded audio markers and the filename when no explicit `.bpm` tag is present.
+    ///
+    /// Searches marker names first (e.g. Logic's "Tempo: 120" marker), then the filename stem.
+    /// Recognized patterns (case-insensitive): `Tempo: 120`, `Tempo 120`, `BPM 120`, `BPM120`,
+    /// `120 BPM`, `120bpm`.
+    public var tempoMarker: Bpm? {
+        let candidates = markerCollection.markerDescriptions.compactMap(\.name)
+            + [url.deletingPathExtension().lastPathComponent]
+        return candidates.lazy.compactMap { Bpm(tempoString: $0) }.first
     }
 
     /// Loudness values assembled from ID3/TXXX loudness tags (not from the BEXT chunk).
@@ -36,3 +47,4 @@ extension MetaAudioFileDescription {
         )
     }
 }
+

@@ -13,6 +13,16 @@ struct MetaAudioFileDescriptionTests {
         MetaAudioFileDescription(url: url)
     }
 
+    private func makeDescription(markerNames: [String], filename: String = "test.wav") -> MetaAudioFileDescription {
+        let markers = markerNames.enumerated().map { i, name in
+            AudioMarkerDescription(name: name, startTime: TimeInterval(i))
+        }
+        return MetaAudioFileDescription(
+            url: URL(fileURLWithPath: "/tmp/\(filename)"),
+            markerCollection: AudioMarkerDescriptionCollection(markerDescriptions: markers)
+        )
+    }
+
     // MARK: - Tag Accessors
 
     @Test func tagForKey() {
@@ -98,6 +108,34 @@ struct MetaAudioFileDescriptionTests {
         desc.bpm = nil
 
         #expect(desc.tagProperties.tags[.bpm] == nil)
+    }
+
+    // MARK: - tempoMarker
+
+    @Test func tempoMarkerParsesFromMarkerName() {
+        let desc = makeDescription(markerNames: ["Tempo: 120"])
+        #expect(desc.tempoMarker?.rawValue == 120)
+    }
+
+    @Test func tempoMarkerParsesFromFilename() {
+        let desc = makeDescription(markerNames: [], filename: "120bpm_kick_drum.wav")
+        #expect(desc.tempoMarker?.rawValue == 120)
+    }
+
+    @Test func tempoMarkerMarkerWinsOverFilename() {
+        // Marker (160) should take priority over filename BPM (120)
+        let desc = makeDescription(markerNames: ["Tempo: 160"], filename: "120bpm_loop.wav")
+        #expect(desc.tempoMarker?.rawValue == 160)
+    }
+
+    @Test func tempoMarkerFirstMatchWins() {
+        let desc = makeDescription(markerNames: ["Intro", "Tempo: 95", "Tempo: 110"])
+        #expect(desc.tempoMarker?.rawValue == 95)
+    }
+
+    @Test func tempoMarkerNilWhenNoMatch() {
+        let desc = makeDescription(url: URL(fileURLWithPath: "/tmp/kick_drum.wav"))
+        #expect(desc.tempoMarker == nil)
     }
 
     // MARK: - Codable
