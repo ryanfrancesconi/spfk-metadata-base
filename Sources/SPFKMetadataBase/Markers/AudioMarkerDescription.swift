@@ -58,6 +58,10 @@ public struct AudioMarkerDescription: Hashable, Sendable, Equatable, Comparable,
     /// Optional display color as a hex string (e.g., "#FF0000").
     public var hexColor: HexColor?
 
+    public var startTimeString: String {
+        RealTimeDomain.string(seconds: startTime, showHours: .auto, showMilliseconds: true)
+    }
+    
     public init(
         name: String?,
         startTime: TimeInterval,
