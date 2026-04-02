@@ -44,6 +44,13 @@ public struct MetaAudioFileDescription: Hashable, Sendable {
     /// Embedded artwork and its thumbnail. The full `CGImage` is excluded from `Codable` serialization.
     public var imageDescription: ImageDescription = .init()
 
+    /// Whether the file can be opened by `AVAudioFile` for playback.
+    ///
+    /// Set to `false` during parsing when the file's container structure is malformed in a way that
+    /// AVFoundation rejects (e.g. wrong RIFF chunk size), even though TagLib can still read metadata.
+    /// Not persisted — always re-evaluated at load time.
+    public var isAVPlayable: Bool = true
+
     public init(
         url: URL,
         urlProperties: URLProperties? = nil,
@@ -71,7 +78,49 @@ public struct MetaAudioFileDescription: Hashable, Sendable {
     }
 }
 
-extension MetaAudioFileDescription: Codable {}
+extension MetaAudioFileDescription: Codable {
+    enum CodingKeys: String, CodingKey {
+        case url
+        case urlProperties
+        case fileType
+        case audioFormat
+        case tagProperties
+        case bextDescription
+        case iXMLMetadata
+        case xmpMetadata
+        case markerCollection
+        case imageDescription
+        // isAVPlayable is transient — not persisted
+    }
+
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        url = try container.decode(URL.self, forKey: .url)
+        urlProperties = try container.decodeIfPresent(URLProperties.self, forKey: .urlProperties) ?? URLProperties(url: url)
+        fileType = try container.decodeIfPresent(AudioFileType.self, forKey: .fileType)
+        audioFormat = try container.decodeIfPresent(AudioFormatProperties.self, forKey: .audioFormat)
+        tagProperties = try container.decodeIfPresent(TagProperties.self, forKey: .tagProperties) ?? .init()
+        bextDescription = try container.decodeIfPresent(BEXTDescription.self, forKey: .bextDescription)
+        iXMLMetadata = try container.decodeIfPresent(String.self, forKey: .iXMLMetadata)
+        xmpMetadata = try container.decodeIfPresent(String.self, forKey: .xmpMetadata)
+        markerCollection = try container.decodeIfPresent(AudioMarkerDescriptionCollection.self, forKey: .markerCollection) ?? .init()
+        imageDescription = try container.decodeIfPresent(ImageDescription.self, forKey: .imageDescription) ?? .init()
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(url, forKey: .url)
+        try container.encode(urlProperties, forKey: .urlProperties)
+        try container.encodeIfPresent(fileType, forKey: .fileType)
+        try container.encodeIfPresent(audioFormat, forKey: .audioFormat)
+        try container.encode(tagProperties, forKey: .tagProperties)
+        try container.encodeIfPresent(bextDescription, forKey: .bextDescription)
+        try container.encodeIfPresent(iXMLMetadata, forKey: .iXMLMetadata)
+        try container.encodeIfPresent(xmpMetadata, forKey: .xmpMetadata)
+        try container.encode(markerCollection, forKey: .markerCollection)
+        try container.encode(imageDescription, forKey: .imageDescription)
+    }
+}
 
 // MARK: - Comparison
 
