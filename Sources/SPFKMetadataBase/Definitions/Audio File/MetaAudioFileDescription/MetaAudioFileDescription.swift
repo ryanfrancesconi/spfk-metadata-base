@@ -47,8 +47,9 @@ public struct MetaAudioFileDescription: Hashable, Sendable {
     /// Whether the file can be opened by `AVAudioFile` for playback.
     ///
     /// Set to `false` during parsing when the file's container structure is malformed in a way that
-    /// AVFoundation rejects (e.g. wrong RIFF chunk size), even though TagLib can still read metadata.
-    /// Not persisted — always re-evaluated at load time.
+    /// AVFoundation reports 0 frames (e.g. WAV with wrong RIFF chunk size), even though TagLib can
+    /// still read metadata. Persisted so the UI can show a warning on files loaded from saved playlists
+    /// without re-probing on every decode.
     public var isAVPlayable: Bool = true
 
     public init(
@@ -90,7 +91,7 @@ extension MetaAudioFileDescription: Codable {
         case xmpMetadata
         case markerCollection
         case imageDescription
-        // isAVPlayable is transient — not persisted
+        case isAVPlayable
     }
 
     public init(from decoder: any Decoder) throws {
@@ -105,6 +106,7 @@ extension MetaAudioFileDescription: Codable {
         xmpMetadata = try container.decodeIfPresent(String.self, forKey: .xmpMetadata)
         markerCollection = try container.decodeIfPresent(AudioMarkerDescriptionCollection.self, forKey: .markerCollection) ?? .init()
         imageDescription = try container.decodeIfPresent(ImageDescription.self, forKey: .imageDescription) ?? .init()
+        isAVPlayable = try container.decodeIfPresent(Bool.self, forKey: .isAVPlayable) ?? true
     }
 
     public func encode(to encoder: any Encoder) throws {
@@ -119,6 +121,7 @@ extension MetaAudioFileDescription: Codable {
         try container.encodeIfPresent(xmpMetadata, forKey: .xmpMetadata)
         try container.encode(markerCollection, forKey: .markerCollection)
         try container.encode(imageDescription, forKey: .imageDescription)
+        try container.encode(isAVPlayable, forKey: .isAVPlayable)
     }
 }
 
