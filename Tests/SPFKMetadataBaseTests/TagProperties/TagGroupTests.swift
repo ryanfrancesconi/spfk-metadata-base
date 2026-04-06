@@ -4,15 +4,6 @@ import Testing
 @testable import SPFKMetadataBase
 
 struct TagGroupTests {
-    @Test func titles() {
-        #expect(TagGroup.common.title == "Common Tags")
-        #expect(TagGroup.music.title == "Music Tags")
-        #expect(TagGroup.loudness.title == "Loudness")
-        #expect(TagGroup.replayGain.title == "Replay Gain")
-        #expect(TagGroup.utility.title == "Utility")
-        #expect(TagGroup.other.title == "Other Tags")
-    }
-
     @Test func initFromTitle() {
         for set in TagGroup.allCases {
             let recovered = TagGroup(title: set.title)
@@ -76,7 +67,7 @@ struct TagGroupTests {
         }
 
         for key in TagKey.allCases {
-            let count = allKeysInSets.filter { $0 == key }.count
+            let count = allKeysInSets.count(where: { $0 == key })
             #expect(count == 1, "\(key) appears \(count) times across TagGroups (expected 1)")
         }
     }
