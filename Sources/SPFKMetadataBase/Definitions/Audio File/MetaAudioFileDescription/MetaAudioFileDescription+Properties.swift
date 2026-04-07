@@ -9,6 +9,10 @@ extension MetaAudioFileDescription {
     public var bestAvailableImage: CGImage? {
         imageDescription.cgImage ?? url.bestImageRepresentation?.cgImage
     }
+    
+    public var bestOriginalImage: CGImage? {
+        imageDescription.cgImage ?? imageDescription.thumbnailImage
+    }
 
     /// The BPM (beats per minute) value from the `.bpm` tag. Setting this updates the underlying tag string.
     public var bpm: Bpm? {
