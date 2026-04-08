@@ -10,11 +10,16 @@ import SPFKBase
 /// `Codable`, `Sendable` type. Ordered by start time (then name) for sorted collections.
 public struct AudioMarkerDescription: Hashable, Sendable, Equatable, Comparable, Codable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        guard let id1 = lhs.markerID, let id2 = rhs.markerID else {
+        switch (lhs.markerID, rhs.markerID) {
+        case let (id1?, id2?):
+            return id1 == id2
+        case (nil, nil):
             return lhs.name == rhs.name && lhs.startTime == rhs.startTime && lhs.endTime == rhs.endTime
+        default:
+            // One has an ID and the other doesn't — different identity types, never equal.
+            // Treating them as equal would violate Hashable (they hash by different fields).
+            return false
         }
-
-        return id1 == id2
     }
 
     public func hash(into hasher: inout Hasher) {
