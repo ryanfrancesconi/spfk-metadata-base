@@ -49,19 +49,31 @@ extension AudioMarkerDescriptionCollection: Codable {
 }
 
 extension AudioMarkerDescriptionCollection {
-    /// Replaces all markers, sorting and assigning sequential IDs starting from 0.
+    /// Replaces all markers, sorting and preserving existing markerIDs.
+    /// Markers that already have a `markerID` keep it unchanged. Markers with
+    /// `markerID == nil` are assigned the next available ID that doesn't conflict
+    /// with any ID already present in the incoming collection.
     public mutating func update(markerDescriptions: [AudioMarkerDescription]) {
-        var markerDescriptions = markerDescriptions.sorted()
+        var sorted = markerDescriptions.sorted()
 
-        for i in 0 ..< markerDescriptions.count {
-            markerDescriptions[i].markerID = i
+        // Collect IDs that are already assigned to avoid conflicts when filling in nil entries.
+        var usedIDs = Set(sorted.compactMap(\.markerID))
+        var nextID = 0
 
-            if markerDescriptions[i].name == nil {
-                markerDescriptions[i].name = "Marker \(i)"
+        for i in 0 ..< sorted.count {
+            if sorted[i].markerID == nil {
+                while usedIDs.contains(nextID) { nextID += 1 }
+                sorted[i].markerID = nextID
+                usedIDs.insert(nextID)
+                nextID += 1
+            }
+
+            if sorted[i].name == nil {
+                sorted[i].name = "Marker \(sorted[i].markerID!)"
             }
         }
 
-        self.markerDescriptions = markerDescriptions
+        self.markerDescriptions = sorted
     }
 
     /// Inserts markers that don't duplicate an existing start time, assigning new IDs.
