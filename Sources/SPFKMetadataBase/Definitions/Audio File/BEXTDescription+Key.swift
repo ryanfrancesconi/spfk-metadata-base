@@ -146,23 +146,23 @@ extension BEXTDescription {
                 originator = value
             }
 
-            if let value = newValue[.originatorReference], let value {
+            if let value = newValue[.originatorReference] {
                 originatorReference = value
             }
 
-            if let value = newValue[.originationDate], let value {
+            if let value = newValue[.originationDate] {
                 originationDate = value
             }
 
-            if let value = newValue[.originationTime], let value {
+            if let value = newValue[.originationTime] {
                 originationTime = value
             }
 
-            if let value = newValue[.umid], let value {
+            if let value = newValue[.umid] {
                 umid = value
             }
 
-            if let value = newValue[.description], let value {
+            if let value = newValue[.description] {
                 sequenceDescription = value
             }
 
@@ -191,7 +191,7 @@ extension BEXTDescription {
             }
 
             if let value = newValue[.timeReferenceString], let value {
-                Log.fault("TODO: timeReference (\(value)) isn't settable via the dictionary")
+                Log.error("TODO: timeReference (\(value)) isn't settable via the dictionary")
             }
         }
     }
