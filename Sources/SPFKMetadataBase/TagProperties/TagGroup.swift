@@ -6,6 +6,7 @@ import Foundation
 public enum TagGroup: CaseIterable, Hashable, Sendable {
     case common
     case music
+    case dateAndTime
     case ucs
     case loudness
     case replayGain
@@ -17,6 +18,7 @@ public enum TagGroup: CaseIterable, Hashable, Sendable {
         switch self {
         case .common: "Common"
         case .music: "Musical"
+        case .dateAndTime: "Date & Time"
         case .ucs: "UCS"
         case .loudness: "Loudness"
         case .replayGain: "Replay Gain"
