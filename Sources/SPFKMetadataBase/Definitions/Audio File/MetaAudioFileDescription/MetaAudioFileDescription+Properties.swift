@@ -5,9 +5,11 @@ import Foundation
 import SPFKAudioBase
 
 extension MetaAudioFileDescription {
-    /// Returns the embedded artwork if available, falling back to the file's Finder thumbnail.
+    /// Returns the best available image for display: embedded artwork (from a fresh parse),
+    /// then the cached thumbnail (hydrated from `ImageDataStore` at load time), then the
+    /// file's Finder Quick Look thumbnail as a last resort.
     public var bestAvailableImage: CGImage? {
-        imageDescription.cgImage ?? url.bestImageRepresentation?.cgImage
+        imageDescription.cgImage ?? imageDescription.thumbnailImage ?? url.bestImageRepresentation?.cgImage
     }
     
     public var bestOriginalImage: CGImage? {
