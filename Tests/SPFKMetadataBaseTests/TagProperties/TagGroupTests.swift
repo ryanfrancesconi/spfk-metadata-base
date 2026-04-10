@@ -21,7 +21,6 @@ struct TagGroupTests {
         #expect(keys.contains(.album))
         #expect(keys.contains(.artist))
         #expect(keys.contains(.genre))
-        #expect(keys.contains(.date))
         #expect(keys.contains(.comment))
         #expect(keys.contains(.trackNumber))
     }
@@ -33,6 +32,18 @@ struct TagGroupTests {
         #expect(keys.contains(.conductor))
         #expect(keys.contains(.initialKey))
         #expect(keys.contains(.lyrics))
+    }
+
+    @Test func dateAndTimeTagsContents() {
+        let keys = TagGroup.dateAndTime.keys
+        #expect(keys.contains(.date))
+        #expect(keys.contains(.releaseDate))
+        #expect(keys.contains(.taggingDate))
+        #expect(keys.contains(.originalDate))
+        #expect(keys.contains(.encodingTime))
+        #expect(keys.contains(.startTimecode))
+        #expect(keys.contains(.endTimecode))
+        #expect(keys.contains(.length))
     }
 
     @Test func loudnessTagsContents() {
@@ -55,7 +66,6 @@ struct TagGroupTests {
     @Test func utilityTagsContents() {
         let keys = TagGroup.utility.keys
         #expect(keys.contains(.isrc))
-        #expect(keys.contains(.releaseDate))
         #expect(keys.contains(.artistWebpage))
     }
 

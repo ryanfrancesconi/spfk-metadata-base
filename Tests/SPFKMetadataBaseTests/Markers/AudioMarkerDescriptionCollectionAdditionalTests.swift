@@ -88,9 +88,9 @@ struct AudioMarkerDescriptionCollectionAdditionalTests {
         #expect(collection.count == 2)
     }
 
-    // MARK: - update(markerDescriptions:) reassigns IDs
+    // MARK: - update(markerDescriptions:) preserves IDs
 
-    @Test func updateReassignsIDs() {
+    @Test func updatePreservesExistingIDs() {
         var collection = AudioMarkerDescriptionCollection()
         collection.update(markerDescriptions: [
             AudioMarkerDescription(name: "C", startTime: 3, markerID: 99),
@@ -98,15 +98,15 @@ struct AudioMarkerDescriptionCollectionAdditionalTests {
             AudioMarkerDescription(name: "B", startTime: 2, markerID: 75),
         ])
 
-        // should be sorted and IDs reassigned sequentially
-        #expect(collection.markerDescriptions[0].markerID == 0)
-        #expect(collection.markerDescriptions[1].markerID == 1)
-        #expect(collection.markerDescriptions[2].markerID == 2)
-
-        // should be sorted by startTime
+        // sorted by startTime
         #expect(collection.markerDescriptions[0].startTime == 1)
         #expect(collection.markerDescriptions[1].startTime == 2)
         #expect(collection.markerDescriptions[2].startTime == 3)
+
+        // existing IDs preserved — not reassigned sequentially
+        #expect(collection.markerDescriptions[0].markerID == 50)
+        #expect(collection.markerDescriptions[1].markerID == 75)
+        #expect(collection.markerDescriptions[2].markerID == 99)
     }
 
     @Test func updateAutoNamesNilMarkers() {
