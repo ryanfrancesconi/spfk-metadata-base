@@ -9,7 +9,7 @@ extension MetaAudioFileDescription {
     /// then the cached thumbnail (hydrated from `ImageDataStore` at load time), then the
     /// file's Finder Quick Look thumbnail as a last resort.
     public var bestAvailableImage: CGImage? {
-        imageDescription.cgImage ?? imageDescription.thumbnailImage ?? url.bestImageRepresentation?.cgImage
+        imageDescription.cgImage ?? url.bestImageRepresentation?.cgImage
     }
     
     public var bestOriginalImage: CGImage? {
