@@ -13,7 +13,7 @@ public struct AudioFormatProperties: Hashable, Sendable {
     /// Sample rate in Hz (e.g., 44100, 48000).
     public private(set) var sampleRate: Double
 
-    /// Bit depth per channel, if available (e.g., 16, 24, 32). `nil` for compressed formats.
+    /// Bit depth per channel, if available (e.g., 16, 24, 32). `nil` for lossy compressed formats (MP3, AAC).
     public private(set) var bitsPerChannel: Int?
 
     /// Bit rate in kbit/s for compressed formats (e.g., 320 for MP3). `nil` for uncompressed.
@@ -59,6 +59,12 @@ public struct AudioFormatProperties: Hashable, Sendable {
     public mutating func update(bitRate: Int32) {
         self.bitRate = bitRate
         updateBitRateDescription()
+        updateFormatDescription()
+    }
+
+    /// Updates the bit depth and regenerates the cached description strings.
+    public mutating func update(bitsPerChannel: Int) {
+        self.bitsPerChannel = bitsPerChannel
         updateFormatDescription()
     }
 
