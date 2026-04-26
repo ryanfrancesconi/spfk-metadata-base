@@ -36,6 +36,7 @@ public struct AudioFormatProperties: Hashable, Sendable {
     /// Bit rate label (e.g., "320 kbit/s"). Empty for uncompressed formats.
     public private(set) var bitRateDescription: String = ""
 
+    /// Sample rate expressed in kHz
     public private(set) var sampleRateDescription: String = ""
 
     public init(
