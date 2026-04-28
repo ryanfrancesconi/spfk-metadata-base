@@ -29,10 +29,10 @@ public struct MetaAudioFileDescription: Hashable, Sendable {
     /// ID3 / RIFF INFO tags and custom TXXX tags read from or to be written to the file.
     public var tagProperties: TagProperties = .init()
 
-    /// Broadcast Wave Extension (BWF) chunk data. Only present for WAV files that contain a BEXT chunk.
+    /// Broadcast Wave Extension (BWF) chunk data. Only present for WAV/FLAC files that contain a BEXT chunk.
     public var bextDescription: BEXTDescription?
 
-    /// Raw iXML chunk string extracted from WAV files. `nil` for non-WAV formats or files without iXML.
+    /// Raw iXML chunk string extracted from WAV/FLAC files. `nil` for other formats or files without iXML.
     public var iXMLMetadata: String?
 
     /// Adobe XMP metadata XML string, if present in the file's ID3 tag.
