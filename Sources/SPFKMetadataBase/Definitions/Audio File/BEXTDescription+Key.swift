@@ -31,7 +31,12 @@ extension BEXTDescription {
 
         /// Whether this field can be edited by the user. Version and coding history are read-only.
         public var isEditable: Bool {
-            self != .version && self != .codingHistory
+            self != .version
+        }
+
+        /// Whether this field typically contains multi-line text and should use a multi-line editor.
+        public var isMultiLine: Bool {
+            self == .description || self == .codingHistory
         }
 
         /// Human-readable label for UI display.
@@ -132,8 +137,8 @@ extension BEXTDescription {
                 .maxTruePeakLevel: loudnessDescription.maxTruePeakLevel?.string,
                 .maxMomentaryLoudness: loudnessDescription.maxMomentaryLoudness?.string,
                 .maxShortTermLoudness: loudnessDescription.maxShortTermLoudness?.string,
-                .version: version > 0 ? version.string : "",
                 .codingHistory: codingHistory,
+                .version: version > 0 ? version.string : "",
             ]
         }
 
@@ -192,6 +197,10 @@ extension BEXTDescription {
 
             if let value = newValue[.timeReferenceString], let value {
                 Log.error("TODO: timeReference (\(value)) isn't settable via the dictionary")
+            }
+
+            if let value = newValue[.codingHistory] {
+                codingHistory = value
             }
         }
     }

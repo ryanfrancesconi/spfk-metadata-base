@@ -121,6 +121,16 @@ public enum TagKey: String, CaseIterable, Codable, Comparable, Sendable {
 // MARK: - overrides
 
 extension TagKey {
+    /// Whether this tag typically contains multi-line text and should use a multi-line editor.
+    public var isMultiLine: Bool {
+        switch self {
+        case .comment, .keywords, .lyrics, .podcastDescription:
+            true
+        default:
+            false
+        }
+    }
+
     /// All `TagKey` cases that map to the TXXX user-defined ID3 frame.
     public static let userDefinedKeys: [TagKey] =
         allCases.filter {
