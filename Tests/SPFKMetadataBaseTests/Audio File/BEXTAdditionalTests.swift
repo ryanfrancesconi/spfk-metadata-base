@@ -246,8 +246,8 @@ struct BEXTKeyTests {
         #expect(BEXTDescription.Key.originator.isEditable)
         #expect(BEXTDescription.Key.description.isEditable)
         #expect(BEXTDescription.Key.umid.isEditable)
+        #expect(BEXTDescription.Key.codingHistory.isEditable)
         #expect(!BEXTDescription.Key.version.isEditable)
-        #expect(!BEXTDescription.Key.codingHistory.isEditable)
     }
 
     @Test func descriptions() {
