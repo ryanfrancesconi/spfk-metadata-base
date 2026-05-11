@@ -14,7 +14,10 @@ public struct AudioMarkerDescription: Hashable, Sendable, Equatable, Comparable,
         case let (id1?, id2?):
             return id1 == id2
         case (nil, nil):
-            return lhs.name == rhs.name && lhs.startTime == rhs.startTime && lhs.endTime == rhs.endTime
+            return lhs.name == rhs.name
+                && lhs.startTime == rhs.startTime
+                && lhs.endTime == rhs.endTime
+                && lhs.markerType == rhs.markerType
         default:
             // One has an ID and the other doesn't — different identity types, never equal.
             // Treating them as equal would violate Hashable (they hash by different fields).
@@ -29,6 +32,7 @@ public struct AudioMarkerDescription: Hashable, Sendable, Equatable, Comparable,
             hasher.combine(name)
             hasher.combine(startTime)
             hasher.combine(endTime)
+            hasher.combine(markerType)
         }
     }
 
@@ -51,7 +55,7 @@ public struct AudioMarkerDescription: Hashable, Sendable, Equatable, Comparable,
     /// Start position in seconds.
     public var startTime: TimeInterval
 
-    /// End position in seconds for region markers. `nil` for point markers.
+    /// End position in seconds. Required for `.region` markers, nil for `.cue` markers.
     public var endTime: TimeInterval?
 
     /// Sample rate of the source file (used for sample-accurate positioning).
@@ -63,17 +67,21 @@ public struct AudioMarkerDescription: Hashable, Sendable, Equatable, Comparable,
     /// Optional display color as a hex string (e.g., "#FF0000").
     public var hexColor: HexColor?
 
+    /// Structural type of this marker. Defaults to `.cue`.
+    public var markerType: AudioMarkerType = .cue
+
     public var startTimeString: String {
         RealTimeDomain.string(seconds: startTime, showHours: .auto, showMilliseconds: true)
     }
-    
+
     public init(
         name: String?,
         startTime: TimeInterval,
         endTime: TimeInterval? = nil,
         sampleRate: Double? = nil,
         markerID: Int? = nil,
-        hexColor: HexColor? = nil
+        hexColor: HexColor? = nil,
+        markerType: AudioMarkerType = .cue
     ) {
         self.name = name
         self.startTime = startTime.isNaN ? 0 : startTime
@@ -81,8 +89,49 @@ public struct AudioMarkerDescription: Hashable, Sendable, Equatable, Comparable,
         self.sampleRate = sampleRate
         self.markerID = markerID
         self.hexColor = hexColor
+        self.markerType = markerType
     }
 }
+
+// MARK: - Codable
+
+extension AudioMarkerDescription {
+    enum CodingKeys: String, CodingKey {
+        case name
+        case startTime
+        case endTime
+        case sampleRate
+        case markerID
+        case hexColor
+        case markerType
+    }
+
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        name = try container.decodeIfPresent(String.self, forKey: .name)
+        startTime = try container.decode(TimeInterval.self, forKey: .startTime)
+        endTime = try container.decodeIfPresent(TimeInterval.self, forKey: .endTime)
+        sampleRate = try container.decodeIfPresent(Double.self, forKey: .sampleRate)
+        markerID = try container.decodeIfPresent(Int.self, forKey: .markerID)
+        hexColor = try container.decodeIfPresent(HexColor.self, forKey: .hexColor)
+        markerType = try container.decodeIfPresent(AudioMarkerType.self, forKey: .markerType) ?? .cue
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(name, forKey: .name)
+        try container.encode(startTime, forKey: .startTime)
+        try container.encodeIfPresent(endTime, forKey: .endTime)
+        try container.encodeIfPresent(sampleRate, forKey: .sampleRate)
+        try container.encodeIfPresent(markerID, forKey: .markerID)
+        try container.encodeIfPresent(hexColor, forKey: .hexColor)
+        if markerType != .cue {
+            try container.encode(markerType, forKey: .markerType)
+        }
+    }
+}
+
+// MARK: - CustomStringConvertible
 
 extension AudioMarkerDescription: CustomStringConvertible, CustomDebugStringConvertible {
     public var description: String {
@@ -104,12 +153,18 @@ extension AudioMarkerDescription: CustomStringConvertible, CustomDebugStringConv
             end = "...\(endTime.truncated(decimalPlaces: 3))s"
         }
 
-        return "\(name) @ \(start)s\(end)\(color)\(id)"
+        var type = ""
+        if markerType != .cue {
+            type = ", Type: \(markerType.rawValue)"
+        }
+
+        return "\(name) @ \(start)s\(end)\(color)\(id)\(type)"
     }
 
     public var debugDescription: String {
         "AudioMarkerDescription(name: \(name ?? "nil"), startTime: \(startTime), "
             + "endTime: \(endTime?.string ?? "nil"), sampleRate: \(sampleRate?.string ?? "nil"), "
-            + "markerID: \(markerID?.string ?? "nil"), hexColor: \(hexColor?.stringValue ?? "nil")"
+            + "markerID: \(markerID?.string ?? "nil"), hexColor: \(hexColor?.stringValue ?? "nil"), "
+            + "markerType: \(markerType.rawValue))"
     }
 }

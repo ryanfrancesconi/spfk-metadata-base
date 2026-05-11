@@ -40,6 +40,37 @@ struct AudioMarkerDescriptionCodableTests {
         #expect(decoded.sampleRate == nil)
         #expect(decoded.markerID == nil)
         #expect(decoded.hexColor == nil)
+        #expect(decoded.markerType == .cue)
+    }
+
+    @Test func markerTypeRegionRoundTrip() throws {
+        let original = AudioMarkerDescription(
+            name: "Region 1",
+            startTime: 1.0,
+            endTime: 3.0,
+            markerType: .region
+        )
+
+        let data = try JSONEncoder().encode(original)
+        let decoded = try JSONDecoder().decode(AudioMarkerDescription.self, from: data)
+
+        #expect(decoded.markerType == .region)
+    }
+
+    @Test func markerTypeDefaultsToCueForLegacyJSON() throws {
+        // JSON without a markerType key (old persisted data) must decode with markerType == .cue
+        let json = #"{"startTime":1.5,"name":"Old Marker"}"#
+        let data = json.data(using: .utf8)!
+        let decoded = try JSONDecoder().decode(AudioMarkerDescription.self, from: data)
+        #expect(decoded.markerType == .cue)
+    }
+
+    @Test func markerTypeNotEncodedWhenCue() throws {
+        // .cue is the default and should be omitted from JSON to keep the payload compact
+        let marker = AudioMarkerDescription(name: "X", startTime: 0, markerType: .cue)
+        let data = try JSONEncoder().encode(marker)
+        let json = String(data: data, encoding: .utf8)!
+        #expect(!json.contains("markerType"))
     }
 }
 
