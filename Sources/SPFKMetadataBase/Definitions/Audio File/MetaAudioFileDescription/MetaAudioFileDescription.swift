@@ -17,8 +17,10 @@ public struct MetaAudioFileDescription: Hashable, Sendable {
     /// The file URL this description was parsed from or will be saved to.
     public var url: URL
 
+    #if os(macOS)
     /// Finder-level file properties (size, dates, tags) captured at parse time.
     public var urlProperties: URLProperties
+    #endif
 
     /// The detected audio file format, or `nil` if the format could not be determined.
     public var fileType: AudioFileType?
@@ -52,6 +54,7 @@ public struct MetaAudioFileDescription: Hashable, Sendable {
     /// without re-probing on every decode.
     public var isAVPlayable: Bool = true
 
+    #if os(macOS)
     public init(
         url: URL,
         urlProperties: URLProperties? = nil,
@@ -67,16 +70,33 @@ public struct MetaAudioFileDescription: Hashable, Sendable {
         self.urlProperties = urlProperties ?? URLProperties(url: url)
         self.fileType = fileType
         self.audioFormat = audioFormat
-
-        if let tagProperties {
-            self.tagProperties = tagProperties
-        }
-
+        if let tagProperties { self.tagProperties = tagProperties }
         self.bextDescription = bextDescription
         self.xmpMetadata = xmpMetadata
         self.iXMLMetadata = iXMLMetadata
         self.markerCollection = markerCollection
     }
+    #else
+    public init(
+        url: URL,
+        fileType: AudioFileType? = nil,
+        audioFormat: AudioFormatProperties? = nil,
+        tagProperties: TagProperties? = nil,
+        bextDescription: BEXTDescription? = nil,
+        xmpMetadata: String? = nil,
+        iXMLMetadata: String? = nil,
+        markerCollection: AudioMarkerDescriptionCollection = .init()
+    ) {
+        self.url = url
+        self.fileType = fileType
+        self.audioFormat = audioFormat
+        if let tagProperties { self.tagProperties = tagProperties }
+        self.bextDescription = bextDescription
+        self.xmpMetadata = xmpMetadata
+        self.iXMLMetadata = iXMLMetadata
+        self.markerCollection = markerCollection
+    }
+    #endif
 }
 
 extension MetaAudioFileDescription: Codable {
@@ -97,7 +117,9 @@ extension MetaAudioFileDescription: Codable {
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         url = try container.decode(URL.self, forKey: .url)
+        #if os(macOS)
         urlProperties = try container.decodeIfPresent(URLProperties.self, forKey: .urlProperties) ?? URLProperties(url: url)
+        #endif
         fileType = try container.decodeIfPresent(AudioFileType.self, forKey: .fileType)
         audioFormat = try container.decodeIfPresent(AudioFormatProperties.self, forKey: .audioFormat)
         tagProperties = try container.decodeIfPresent(TagProperties.self, forKey: .tagProperties) ?? .init()
@@ -112,7 +134,9 @@ extension MetaAudioFileDescription: Codable {
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(url, forKey: .url)
+        #if os(macOS)
         try container.encode(urlProperties, forKey: .urlProperties)
+        #endif
         try container.encodeIfPresent(fileType, forKey: .fileType)
         try container.encodeIfPresent(audioFormat, forKey: .audioFormat)
         try container.encode(tagProperties, forKey: .tagProperties)
@@ -134,8 +158,7 @@ extension MetaAudioFileDescription {
     /// and `ImageDescription` thumbnail data is non-deterministic across re-encodes,
     /// so excluding it avoids false-positive dirty flags.
     public func isEqualExcludingImage(to other: MetaAudioFileDescription) -> Bool {
-        url == other.url &&
-            urlProperties == other.urlProperties &&
+        guard url == other.url &&
             fileType == other.fileType &&
             audioFormat == other.audioFormat &&
             tagProperties == other.tagProperties &&
@@ -143,6 +166,12 @@ extension MetaAudioFileDescription {
             iXMLMetadata == other.iXMLMetadata &&
             xmpMetadata == other.xmpMetadata &&
             markerCollection == other.markerCollection
+        else { return false }
+        #if os(macOS)
+        return urlProperties == other.urlProperties
+        #else
+        return true
+        #endif
     }
 }
 
