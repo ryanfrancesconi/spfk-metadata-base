@@ -34,13 +34,21 @@ public struct TagProperties: Hashable, Codable, Sendable {
     public init() {}
 
     /// Merges another `TagData` into this instance using the specified scheme.
-    public mutating func merge(data otherData: TagData, scheme: DictionaryMergeScheme = .replace) {
+    /// Returns `true` if the data actually changed.
+    @discardableResult
+    public mutating func merge(data otherData: TagData, scheme: DictionaryMergeScheme = .replace) -> Bool {
+        let old = data
         data = [data, otherData].merge(scheme: scheme)
+        return data != old
     }
 
     /// Removes all keys found in `otherData` from this instance.
-    public mutating func remove(data otherData: TagData) {
+    /// Returns `true` if the data actually changed.
+    @discardableResult
+    public mutating func remove(data otherData: TagData) -> Bool {
+        let old = data
         data.remove(data: otherData)
+        return data != old
     }
 }
 

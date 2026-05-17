@@ -200,7 +200,11 @@ extension MetaAudioFileDescription {
 
     /// Merges a BEXT key dictionary into the current BEXT description,
     /// creating a new `BEXTDescription` if one doesn't already exist.
-    public mutating func merge(bext dictionary: BEXTKeyDictionary) {
+    /// Returns `true` if the description actually changed.
+    @discardableResult
+    public mutating func merge(bext dictionary: BEXTKeyDictionary) -> Bool {
+        let old = bextDescription
+
         if bextDescription == nil {
             bextDescription = BEXTDescription()
         }
@@ -208,5 +212,7 @@ extension MetaAudioFileDescription {
         for item in dictionary {
             bextDescription?[item.key] = item.value
         }
+
+        return bextDescription != old
     }
 }
