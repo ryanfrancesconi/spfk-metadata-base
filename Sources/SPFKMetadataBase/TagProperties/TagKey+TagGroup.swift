@@ -27,7 +27,7 @@ extension TagKey {
             .replayGain
 
         case .artistWebpage, .audioSourceWebpage, .fileWebpage, .isrc, .paymentWebpage,
-             .publisherWebpage, .radioStationWebpage, .encoding, .encodedBy:
+             .publisherWebpage, .radioStationWebpage, .encoding, .encodedBy, .rating:
             .utility
 
         default:

@@ -80,6 +80,7 @@ public enum TagKey: String, CaseIterable, Codable, Comparable, Sendable {
     case radioStation
     case radioStationOwner
     case radioStationWebpage    // URL Frame
+    case rating
     case releaseCountry         // RIFF INFO
     case releaseDate
     case remixer                // Could also be ARRANGER
