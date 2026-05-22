@@ -6,7 +6,7 @@ extension TagKey {
     /// The ``TagGroup`` this key belongs to for UI display grouping.
     public var tagGroup: TagGroup {
         switch self {
-        case .album, .artist, .comment, .copyright, .genre, .keywords, .mood, .title, .trackNumber, .subtitle:
+        case .album, .artist, .comment, .copyright, .genre, .keywords, .mood, .title, .trackNumber, .subtitle, .rating:
             .common
 
         case .arranger, .bpm, .composer, .conductor, .initialKey, .instrumentation, .label, .lyrics, .lyricist,
@@ -27,7 +27,7 @@ extension TagKey {
             .replayGain
 
         case .artistWebpage, .audioSourceWebpage, .fileWebpage, .isrc, .paymentWebpage,
-             .publisherWebpage, .radioStationWebpage, .encoding, .encodedBy, .rating:
+             .publisherWebpage, .radioStationWebpage, .encoding, .encodedBy:
             .utility
 
         default:
