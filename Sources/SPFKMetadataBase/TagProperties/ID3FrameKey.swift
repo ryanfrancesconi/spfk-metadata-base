@@ -72,7 +72,6 @@ public enum ID3FrameKey: String, TagFrameKey, Codable, Comparable, Sendable, Cas
     case radioStation
     case radioStationOwner
     case radioStationWebpage    // URL Frame
-    case rating                 // Popularimeter (POPM) frame
     case releaseDate
     case remixer                // Could also be ARRANGER
     case subtitle
@@ -149,7 +148,6 @@ public enum ID3FrameKey: String, TagFrameKey, Codable, Comparable, Sendable, Cas
         case .radioStation:         "TRSN"
         case .radioStationOwner:    "TRSO"
         case .radioStationWebpage:  "WORS"
-        case .rating:               "POPM"
         case .releaseDate:          "TDRL"
         case .subtitle:             "TIT3"
         case .taggingDate:          "TDTG"
