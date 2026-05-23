@@ -64,6 +64,21 @@ public struct TagData: TagPropertiesContainerModel, Hashable, Codable, Sendable 
             customTags.removeValue(forKey: key)
         }
     }
+
+    /// What user entered String values should be validated or clamped before accepting them?
+    public mutating func validate() -> Bool {
+        var changed = false
+
+        if let ratingString = tags[.rating], let rating = ratingString.int {
+            tags[.rating] = rating.clamped(to: TagKey.ratingRange).string
+
+            if tags[.rating] != ratingString {
+                changed = true
+            }
+        }
+
+        return changed
+    }
 }
 
 extension TagData: Serializable {}
@@ -128,7 +143,8 @@ extension [TagData] {
                     case .combine:
                         old + ", \(new)" // string delimiter ", "
                     }
-                })
+                }
+            )
         }
 
         for item in allCustomTags {
@@ -143,7 +159,8 @@ extension [TagData] {
                     case .combine:
                         old + ", \(new)"
                     }
-                })
+                }
+            )
         }
 
         return TagData(tags: mergedTags, customTags: mergedCustomTags)

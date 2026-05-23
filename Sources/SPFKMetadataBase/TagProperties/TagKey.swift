@@ -180,4 +180,9 @@ extension TagKey {
     }
 }
 
+extension TagKey {
+    /// Valid star rating range: 0 (unrated) through 5.
+    public static let ratingRange: ClosedRange<Int> = 0 ... 5
+}
+
 // swiftformat:enable consecutiveSpaces
