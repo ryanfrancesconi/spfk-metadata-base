@@ -65,16 +65,19 @@ public struct TagData: TagPropertiesContainerModel, Hashable, Codable, Sendable 
         }
     }
 
-    /// What user entered String values should be validated or clamped before accepting them?
+    /// Clamps and sanitizes all tag values that have a ``TagValueConstraint`` declared on their ``TagKey``.
+    ///
+    /// Returns `true` if any value was changed, `false` if all values were already valid or unparseable.
     public mutating func validate() -> Bool {
         var changed = false
 
-        if let ratingString = tags[.rating], let rating = ratingString.int {
-            tags[.rating] = rating.clamped(to: TagKey.ratingRange).string
-
-            if tags[.rating] != ratingString {
-                changed = true
-            }
+        for key in tags.keys {
+            guard let constraint = key.valueConstraint,
+                  let original = tags[key],
+                  let validated = constraint.apply(to: original)
+            else { continue }
+            tags[key] = validated
+            changed = true
         }
 
         return changed
