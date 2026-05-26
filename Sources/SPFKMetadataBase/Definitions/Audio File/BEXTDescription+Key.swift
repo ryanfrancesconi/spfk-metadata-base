@@ -196,7 +196,7 @@ extension BEXTDescription {
             }
 
             if let value = newValue[.timeReferenceString], let value {
-                Log.error("TODO: timeReference (\(value)) isn't settable via the dictionary")
+                Log.debug("Ignored: timeReference (\(value)) isn't settable via the dictionary")
             }
 
             if let value = newValue[.codingHistory] {
