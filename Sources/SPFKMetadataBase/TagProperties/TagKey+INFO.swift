@@ -32,6 +32,7 @@ extension TagKey {
         case .lyricist:         .writtenBy
         case .media:            .medium
         case .performer:        .starring
+        case .rating:           .rating
         case .releaseCountry:   .country
         case .remixer:          .editedBy
         case .startTimecode:    .startTimecode
