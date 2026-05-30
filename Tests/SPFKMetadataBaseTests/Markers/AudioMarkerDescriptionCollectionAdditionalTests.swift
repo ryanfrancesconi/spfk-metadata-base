@@ -1,4 +1,5 @@
 import Foundation
+import SPFKBase
 import Testing
 
 @testable import SPFKMetadataBase
@@ -158,6 +159,66 @@ struct AudioMarkerDescriptionCollectionAdditionalTests {
     @Test func allIDsEmpty() {
         let collection = AudioMarkerDescriptionCollection()
         #expect(collection.allIDs.isEmpty)
+    }
+
+    // MARK: - removeSegmentMarkers
+
+    @Test("removeSegmentMarkers removes all In NN-named markers and leaves others untouched")
+    func removeSegmentMarkersLeavesOthers() {
+        var collection = AudioMarkerDescriptionCollection(markerDescriptions: [
+            AudioMarkerDescription(name: "In 01", startTime: 1.0, markerType: .region),
+            AudioMarkerDescription(name: "In 02", startTime: 2.0, markerType: .region),
+            AudioMarkerDescription(name: "Cue Point", startTime: 3.0),
+            AudioMarkerDescription(name: "Chapter 1", startTime: 4.0, markerType: .region),
+        ])
+
+        collection.removeSegmentMarkers()
+
+        let names = collection.markerDescriptions.compactMap(\.name)
+        #expect(collection.count == 2)
+        #expect(!names.contains("In 01"))
+        #expect(!names.contains("In 02"))
+        #expect(names.contains("Cue Point"))
+        #expect(names.contains("Chapter 1"))
+    }
+
+    @Test("removeSegmentMarkers on empty collection is a no-op")
+    func removeSegmentMarkersEmpty() {
+        var collection = AudioMarkerDescriptionCollection()
+        collection.removeSegmentMarkers()
+        #expect(collection.count == 0)
+    }
+
+    @Test("removeSegmentMarkers removes all markers when all are segment markers")
+    func removeSegmentMarkersAll() {
+        var collection = AudioMarkerDescriptionCollection(markerDescriptions: [
+            AudioMarkerDescription(name: "In 01", startTime: 0.5, markerType: .region),
+            AudioMarkerDescription(name: "In 02", startTime: 1.5, markerType: .region),
+        ])
+
+        collection.removeSegmentMarkers()
+        #expect(collection.count == 0)
+    }
+
+    @Test("removeSegmentMarkers does not match names that only resemble the pattern")
+    func removeSegmentMarkersPatternEdgeCases() {
+        var collection = AudioMarkerDescriptionCollection(markerDescriptions: [
+            AudioMarkerDescription(name: "In",     startTime: 0.1),  // no trailing number
+            AudioMarkerDescription(name: "In 01",  startTime: 0.2, markerType: .region), // matches
+            AudioMarkerDescription(name: "In01",   startTime: 0.3),  // no space
+            AudioMarkerDescription(name: "In 01X", startTime: 0.4),  // trailing non-digit
+            AudioMarkerDescription(name: "In 1",   startTime: 0.5, markerType: .region), // matches
+        ])
+
+        collection.removeSegmentMarkers()
+
+        let names = collection.markerDescriptions.compactMap(\.name)
+        #expect(collection.count == 3)
+        #expect(!names.contains("In 01"))
+        #expect(!names.contains("In 1"))
+        #expect(names.contains("In"))
+        #expect(names.contains("In01"))
+        #expect(names.contains("In 01X"))
     }
 
     // MARK: - insert deduplication

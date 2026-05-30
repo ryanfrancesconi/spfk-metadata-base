@@ -116,6 +116,19 @@ extension AudioMarkerDescriptionCollection {
         return markerDescription
     }
 
+    /// Removes all markers whose name matches the auto-detected segment pattern ("In " + digits).
+    ///
+    /// Use this before writing a new set of detected segments so that re-detection replaces
+    /// the previous result without disturbing user-placed cue points or chapter markers.
+    public mutating func removeSegmentMarkers() {
+        markerDescriptions.removeAll { marker in
+            guard let name = marker.name else { return false }
+            guard name.hasPrefix("In ") else { return false }
+            let suffix = name.dropFirst(3)
+            return !suffix.isEmpty && suffix.allSatisfy(\.isNumber)
+        }
+    }
+
     /// Removes the marker with the given ID from the collection.
     public mutating func remove(markerID: Int) throws {
         for i in 0 ..< markerDescriptions.count where markerDescriptions[i].markerID == markerID {
