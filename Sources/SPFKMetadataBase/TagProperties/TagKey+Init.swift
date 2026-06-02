@@ -5,8 +5,14 @@ import Foundation
 // MARK: - Static Lookup Tables
 
 extension TagKey {
-    private static let taglibKeyMap: [String: TagKey] = Dictionary(uniqueKeysWithValues: allCases.map { ($0.taglibKey, $0) })
-    private static let displayNameMap: [String: TagKey] = Dictionary(uniqueKeysWithValues: allCases.map { ($0.displayName, $0) })
+    private static let taglibKeyMap: [String: TagKey] = Dictionary(
+        allCases.map { ($0.taglibKey, $0) },
+        uniquingKeysWith: { first, _ in first }
+    )
+
+    private static let displayNameMap: [String: TagKey] = Dictionary(
+        uniqueKeysWithValues: allCases.map { ($0.displayName, $0) }
+    )
 
     private static let lowercasedRawValueMap: [String: TagKey] = Dictionary(
         uniqueKeysWithValues: allCases.map { ($0.rawValue.lowercased(), $0) }

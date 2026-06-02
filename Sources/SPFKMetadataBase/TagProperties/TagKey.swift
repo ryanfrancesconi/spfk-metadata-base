@@ -166,6 +166,11 @@ extension TagKey {
     /// Most cases are the uppercased `rawValue`; overrides handle non-standard key formats.
     public var taglibKey: String {
         switch self {
+        // TagLib's frameTranslation maps TIPL → "INVOLVEDPEOPLE", not "INVOLVEDPEOPLELIST"
+        case .involvedPeopleList:           "INVOLVEDPEOPLE"
+        // TagLib's frameTranslation maps TDES → "PODCASTDESC", not "PODCASTDESCRIPTION"
+        case .podcastDescription:           "PODCASTDESC"
+            
         case .replayGainTrackGain:          "REPLAYGAIN_TRACK_GAIN"
         case .replayGainTrackPeak:          "REPLAYGAIN_TRACK_PEAK"
         case .replayGainTrackRange:         "REPLAYGAIN_TRACK_RANGE"
@@ -174,7 +179,6 @@ extension TagKey {
         case .replayGainAlbumRange:         "REPLAYGAIN_ALBUM_RANGE"
         case .replayGainReferenceLoudness:  "REPLAYGAIN_REFERENCE_LOUDNESS"
         default:
-            // This works for most of the keys as it was planned that way
             rawValue.uppercased()
         }
     }

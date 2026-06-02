@@ -1,3 +1,4 @@
+import SPFKBase
 import Foundation
 import Testing
 
@@ -261,5 +262,30 @@ struct TagKeyTests {
         let desc = TagKey.album.description
         #expect(desc.contains(TagKey.album.descriptionKey))
         #expect(desc.contains(TagKey.album.readableDescription!))
+    }
+}
+
+extension TagKeyTests {
+    // MARK: - Development
+
+    @Test func invalidID3() async throws {
+        let invalidTags: [String: String] = ["TCOP": "2010 BOOM Library-Cinematic Metal Construction Kit", "TDOR": "2010", "TKEY": "impact_p0_brass_bell.wav", "TRCK": "0", "COMM": "Impact - Metal - Soft - High - Small. Brass bells. Dry. Original Pitch.", "TSSE": "Soundminer", "ARCHIVALLOCATION": "", "TPE1": "BOOM Library", "TALB": "Cinematic Metal Construction Kit", "TIT1": "www.boomlibrary.com", "TCON": "BELLS", "TOWN": "Cinematic Metal Construction Kit", "TIT2": "BELLMisc_Impact Brass Bell P0_B00M_CMCK.wav", "TPUB": "www.boomlibrary.com", "TPE2": "Cinematic Metal Construction Kit", "TDRC": "2010", "TIT3": "All sound effects are copyright BOOM Library - all rights reserved", "TOAL": "www.boomlibrary.com"]
+    
+        for item in invalidTags {
+            if let key = ID3FrameKey(value: item.key) {
+                Log.debug("ID3", key, item)
+                continue
+            }
+            
+            if let key = InfoFrameKey(value: item.key) {
+                Log.debug("INFO", key, item)
+                continue
+            }
+            
+            let frame = TagKey(taglibKey: item.key)
+            
+            Log.debug(item, frame)
+
+        }
     }
 }
