@@ -13,11 +13,17 @@ public struct AudioMarkerDescription: Hashable, Sendable, Equatable, Comparable,
         switch (lhs.markerID, rhs.markerID) {
         case let (id1?, id2?):
             return id1 == id2
+                && lhs.name == rhs.name
+                && lhs.startTime == rhs.startTime
+                && lhs.endTime == rhs.endTime
+                && lhs.markerType == rhs.markerType
+                && lhs.hexColor == rhs.hexColor
         case (nil, nil):
             return lhs.name == rhs.name
                 && lhs.startTime == rhs.startTime
                 && lhs.endTime == rhs.endTime
                 && lhs.markerType == rhs.markerType
+                && lhs.hexColor == rhs.hexColor
         default:
             // One has an ID and the other doesn't — different identity types, never equal.
             // Treating them as equal would violate Hashable (they hash by different fields).
@@ -28,11 +34,17 @@ public struct AudioMarkerDescription: Hashable, Sendable, Equatable, Comparable,
     public func hash(into hasher: inout Hasher) {
         if let markerID {
             hasher.combine(markerID)
+            hasher.combine(name)
+            hasher.combine(startTime)
+            hasher.combine(endTime)
+            hasher.combine(markerType)
+            hasher.combine(hexColor)
         } else {
             hasher.combine(name)
             hasher.combine(startTime)
             hasher.combine(endTime)
             hasher.combine(markerType)
+            hasher.combine(hexColor)
         }
     }
 
