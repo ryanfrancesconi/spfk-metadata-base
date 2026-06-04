@@ -129,6 +129,37 @@ extension AudioMarkerDescriptionCollection {
         }
     }
 
+    /// Merges `hexColor` values from `previous` into this collection.
+    ///
+    /// Used after re-reading markers from a file to restore in-memory colors that haven't been
+    /// written to the file yet. Matching is by `markerID` first, then by `(name, startTime)` as
+    /// a fallback for markers without IDs (e.g. freshly parsed from file). Only markers in this
+    /// collection that have no color are updated — file-embedded colors are left untouched.
+    public mutating func mergeColors(from previous: AudioMarkerDescriptionCollection) {
+        guard previous.markerDescriptions.isNotEmpty else { return }
+
+        var colorByID = [Int: HexColor]()
+        var colorByKey = [String: HexColor]()
+
+        for marker in previous.markerDescriptions {
+            guard let color = marker.hexColor else { continue }
+            if let id = marker.markerID { colorByID[id] = color }
+            colorByKey["\(marker.name ?? "")|\(marker.startTime)"] = color
+        }
+
+        for i in 0 ..< markerDescriptions.count {
+            guard markerDescriptions[i].hexColor == nil else { continue }
+            if let id = markerDescriptions[i].markerID, let color = colorByID[id] {
+                markerDescriptions[i].hexColor = color
+            } else {
+                let key = "\(markerDescriptions[i].name ?? "")|\(markerDescriptions[i].startTime)"
+                if let color = colorByKey[key] {
+                    markerDescriptions[i].hexColor = color
+                }
+            }
+        }
+    }
+
     /// Removes the marker with the given ID from the collection.
     public mutating func remove(markerID: Int) throws {
         for i in 0 ..< markerDescriptions.count where markerDescriptions[i].markerID == markerID {
