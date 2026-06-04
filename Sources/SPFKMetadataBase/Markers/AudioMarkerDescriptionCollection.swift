@@ -171,6 +171,17 @@ extension AudioMarkerDescriptionCollection {
         throw NSError(description: "Failed to find markerID \(markerID)")
     }
 
+    /// Returns true when count, order, or any field of any marker differs from `other`.
+    ///
+    /// Use this for dirty-flag detection. `==` on the collection uses marker identity
+    /// (markerID), so two collections can be `==` while having different field values.
+    public func hasContentChanges(from other: AudioMarkerDescriptionCollection) -> Bool {
+        guard markerDescriptions.count == other.markerDescriptions.count else { return true }
+        return zip(markerDescriptions, other.markerDescriptions).contains { lhs, rhs in
+            !lhs.hasSameContent(as: rhs) || lhs.markerID != rhs.markerID
+        }
+    }
+
     /// Replaces the marker with the given ID and re-sorts the collection.
     public mutating func update(markerID: Int, markerDescription: AudioMarkerDescription) throws {
         for i in 0 ..< markerDescriptions.count where markerDescriptions[i].markerID == markerID {
