@@ -94,27 +94,23 @@ extension [TagData] {
     /// show only one of several differing values rather than a shared value.
     /// Returns an empty set for single-element arrays.
     public func divergentTagKeyDisplayNames() -> Set<String> {
-        guard count > 1, let first else { return [] }
+        guard count > 1 else { return [] }
 
         var divergent = Set<String>()
 
-        // Standard TagKey entries present in ALL elements
-        let commonTagKeys = dropFirst().reduce(Set(first.tags.keys)) {
-            $0.intersection(Set($1.tags.keys))
-        }
-        for key in commonTagKeys {
-            let values = compactMap { $0.tags[key] }
+        // Standard TagKey entries present in ANY element; absent values treated as ""
+        let allTagKeys = reduce(into: Set<TagKey>()) { $0.formUnion($1.tags.keys) }
+        for key in allTagKeys {
+            let values = map { $0.tags[key] ?? "" }
             if let firstValue = values.first, !values.allSatisfy({ $0 == firstValue }) {
                 divergent.insert(key.displayName)
             }
         }
 
-        // Custom tag entries present in ALL elements
-        let commonCustomKeys = dropFirst().reduce(Set(first.customTags.keys)) {
-            $0.intersection(Set($1.customTags.keys))
-        }
-        for key in commonCustomKeys {
-            let values = compactMap { $0.customTags[key] }
+        // Custom tag entries present in ANY element; absent values treated as ""
+        let allCustomKeys = reduce(into: Set<String>()) { $0.formUnion($1.customTags.keys) }
+        for key in allCustomKeys {
+            let values = map { $0.customTags[key] ?? "" }
             if let firstValue = values.first, !values.allSatisfy({ $0 == firstValue }) {
                 divergent.insert(key)
             }
