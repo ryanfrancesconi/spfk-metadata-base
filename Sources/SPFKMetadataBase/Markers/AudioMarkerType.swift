@@ -16,3 +16,9 @@ public enum AudioMarkerType: String, Codable, Sendable, CaseIterable {
     /// Promoted to `.region` when the user confirms via "Write Markers".
     case pendingRegion
 }
+
+extension AudioMarkerType {
+    public var isRegion: Bool {
+        self == .region || self == .pendingRegion
+    }
+}
