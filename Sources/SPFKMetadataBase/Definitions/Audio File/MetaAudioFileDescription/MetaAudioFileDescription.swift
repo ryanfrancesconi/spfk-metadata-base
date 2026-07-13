@@ -28,6 +28,14 @@ public struct MetaAudioFileDescription: Hashable, Sendable {
     /// Channel count, sample rate, bit depth, duration, and related format details.
     public var audioFormat: AudioFormatProperties?
 
+    /// Video stream technical properties (resolution, frame rate, codec, pixel aspect ratio,
+    /// rotation). `nil` for pure-audio files.
+    public var videoTrack: VideoTrackProperties?
+
+    /// QuickTime user-data (GPS, capture device, creation date). `nil` for files with no
+    /// QuickTime user-data.
+    public var quickTimeUserData: QuickTimeUserData?
+
     /// ID3 / RIFF INFO tags and custom TXXX tags read from or to be written to the file.
     public var tagProperties: TagProperties = .init()
 
