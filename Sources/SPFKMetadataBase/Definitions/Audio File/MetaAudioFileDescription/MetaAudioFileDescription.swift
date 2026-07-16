@@ -113,6 +113,8 @@ extension MetaAudioFileDescription: Codable {
         case urlProperties
         case fileType
         case audioFormat
+        case videoTrack
+        case quickTimeUserData
         case tagProperties
         case bextDescription
         case iXMLMetadata
@@ -130,6 +132,8 @@ extension MetaAudioFileDescription: Codable {
         #endif
         fileType = try container.decodeIfPresent(AudioFileType.self, forKey: .fileType)
         audioFormat = try container.decodeIfPresent(AudioFormatProperties.self, forKey: .audioFormat)
+        videoTrack = try container.decodeIfPresent(VideoTrackProperties.self, forKey: .videoTrack)
+        quickTimeUserData = try container.decodeIfPresent(QuickTimeUserData.self, forKey: .quickTimeUserData)
         tagProperties = try container.decodeIfPresent(TagProperties.self, forKey: .tagProperties) ?? .init()
         bextDescription = try container.decodeIfPresent(BEXTDescription.self, forKey: .bextDescription)
         iXMLMetadata = try container.decodeIfPresent(String.self, forKey: .iXMLMetadata)
@@ -147,6 +151,8 @@ extension MetaAudioFileDescription: Codable {
         #endif
         try container.encodeIfPresent(fileType, forKey: .fileType)
         try container.encodeIfPresent(audioFormat, forKey: .audioFormat)
+        try container.encodeIfPresent(videoTrack, forKey: .videoTrack)
+        try container.encodeIfPresent(quickTimeUserData, forKey: .quickTimeUserData)
         try container.encode(tagProperties, forKey: .tagProperties)
         try container.encodeIfPresent(bextDescription, forKey: .bextDescription)
         try container.encodeIfPresent(iXMLMetadata, forKey: .iXMLMetadata)

@@ -149,6 +149,14 @@ struct MetaAudioFileDescriptionTests {
         original.tagProperties.set(tag: .title, value: "Test Title")
         original.xmpMetadata = "<xmp>test</xmp>"
         original.iXMLMetadata = "<ixml>test</ixml>"
+        original.videoTrack = VideoTrackProperties(
+            width: 1920, height: 1080, frameRate: 29.97, codec: "avc1",
+            pixelAspectRatio: 1.0, rotationDegrees: 90
+        )
+        original.quickTimeUserData = QuickTimeUserData(
+            latitude: 37.7749, longitude: -122.4194, deviceMake: "Apple",
+            deviceModel: "iPhone 15 Pro", deviceSoftware: "18.0", creationDate: Date(timeIntervalSince1970: 0)
+        )
 
         let data = try JSONEncoder().encode(original)
         let decoded = try JSONDecoder().decode(MetaAudioFileDescription.self, from: data)
@@ -159,6 +167,8 @@ struct MetaAudioFileDescriptionTests {
         #expect(decoded.tag(for: .title) == "Test Title")
         #expect(decoded.xmpMetadata == original.xmpMetadata)
         #expect(decoded.iXMLMetadata == original.iXMLMetadata)
+        #expect(decoded.videoTrack == original.videoTrack)
+        #expect(decoded.quickTimeUserData == original.quickTimeUserData)
     }
 
     @Test func codableNilOptionals() throws {
@@ -172,6 +182,8 @@ struct MetaAudioFileDescriptionTests {
         #expect(decoded.bextDescription == nil)
         #expect(decoded.xmpMetadata == nil)
         #expect(decoded.iXMLMetadata == nil)
+        #expect(decoded.videoTrack == nil)
+        #expect(decoded.quickTimeUserData == nil)
     }
 
     // MARK: - isEqualExcludingImage
