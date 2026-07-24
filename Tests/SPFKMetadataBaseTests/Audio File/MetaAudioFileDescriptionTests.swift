@@ -150,7 +150,7 @@ struct MetaAudioFileDescriptionTests {
         original.xmpMetadata = "<xmp>test</xmp>"
         original.iXMLMetadata = "<ixml>test</ixml>"
         original.videoTrack = VideoTrackProperties(
-            width: 1920, height: 1080, frameRate: 29.97, codec: "avc1",
+            width: 1920, height: 1080, nominalFrameRate: 29.97, codec: "avc1",
             pixelAspectRatio: 1.0, rotationDegrees: 90
         )
         original.quickTimeUserData = QuickTimeUserData(
