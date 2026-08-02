@@ -89,8 +89,12 @@ public struct TagData: TagPropertiesContainerModel, Hashable, Codable, Sendable 
 extension TagData: Serializable {}
 
 extension [TagData] {
-    /// Returns the display names of tag keys that are present in ALL elements
-    /// but have different values across them.
+    /// Returns the display names of tag keys whose values are not unanimous across the elements.
+    ///
+    /// Keys are unioned across the elements, **not** intersected, and an absent value counts as
+    /// `""` — so a key present on some files and missing from others is divergent. That is
+    /// deliberate: partial presence is exactly the case a user needs flagged before an edit
+    /// overwrites it, and treating it as agreement would hide it.
     ///
     /// Used by the multi-select Tags editor to visually indicate which fields
     /// show only one of several differing values rather than a shared value.

@@ -1,4 +1,5 @@
 import Foundation
+import SPFKUtils
 import Testing
 
 @testable import SPFKMetadataBase
@@ -90,6 +91,23 @@ struct TagDataAdditionalTests {
 
         let merged = [data1, data2].merge(scheme: .preserve)
         #expect(merged.tags[.title] == "First")
+    }
+
+    /// Merging is a **union** of keys, not an intersection: a key present on only one element
+    /// survives. The multi-select Tags editor depends on this -- a tag on one file of five is
+    /// still shown, with divergence marking telling the user the value is only one of several --
+    /// and the doc comment on the call site claimed the opposite until 2026-08-02.
+    @Test func mergeUnionsKeysRatherThanIntersectingThem() {
+        let data1 = TagData(tags: [.title: "Only on first"])
+        let data2 = TagData(tags: [.album: "Only on second"], customTags: ["CUSTOM": "Only here"])
+
+        for scheme in [DictionaryMergeScheme.preserve, .replace, .combine] {
+            let merged = [data1, data2].merge(scheme: scheme)
+
+            #expect(merged.tags[.title] == "Only on first", "\(scheme) dropped a key unique to one element")
+            #expect(merged.tags[.album] == "Only on second", "\(scheme) dropped a key unique to one element")
+            #expect(merged.customTags["CUSTOM"] == "Only here", "\(scheme) dropped a custom key unique to one element")
+        }
     }
 
     @Test func mergeReplace() {
