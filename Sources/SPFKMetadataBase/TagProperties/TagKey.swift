@@ -36,6 +36,9 @@ public enum TagKey: String, CaseIterable, Codable, Comparable, Sendable {
     case copyright
     case copyrightURL           // URL Frame
     case date                   // or year
+    /// BEXT Description, and the Vorbis/Matroska `DESCRIPTION` tag. Distinct from ``comment``,
+    /// which those formats carry separately.
+    case description
     case discNumber
     case discSubtitle
     case encodedBy
