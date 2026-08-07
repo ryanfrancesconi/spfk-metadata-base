@@ -38,6 +38,29 @@ For file reading/writing, marker parsing, and BEXT I/O, use [SPFKMetadata](https
 | **BEXTDescription.Key** | Enum of BEXT field keys with dictionary-style subscript access |
 | **ImageDescription** | Embedded artwork container with CGImage and Codable conformance |
 | **TagPropertiesContainerModel** | Protocol for types that contain tag properties |
+| **MediaFilePlayability** | Whether a file can be played, and by which of the two paths |
+| **MetadataDirtyFlag** | Which parts of a description have unsaved edits |
+
+#### MediaFilePlayability
+
+Playability is two questions, not one, because the answers diverge for Matroska:
+
+```swift
+public protocol MediaFilePlayability {
+    var isAVPlayable: Bool { get }   // AVFoundation can open it
+    var isDecodable: Bool { get }    // a demuxer + decoder can
+}
+
+public extension MediaFilePlayability {
+    var isPlayable: Bool { isAVPlayable || isDecodable }
+}
+```
+
+**Neither is derivable from the path extension.** A `.mkv` whose audio codec has no decoder is not
+playable despite being a Matroska file, and a `.mov` AVFoundation refuses is not playable despite
+being a native container — so both are measured from the file rather than inferred from its name.
+A UI showing a "cannot play" state reads `isPlayable`; a caller choosing between `FilePlayer` and
+`StreamPlayer` reads `isAVPlayable`.
 
 ### Markers
 
@@ -62,6 +85,7 @@ import SPFKMetadataBase
 |---------|-------------|
 | [spfk-audio-base](https://github.com/ryanfrancesconi/spfk-audio-base) | Shared audio type definitions |
 | [spfk-utils](https://github.com/ryanfrancesconi/spfk-utils) | Foundation utilities and extensions |
+| [spfk-video](https://github.com/ryanfrancesconi/spfk-video) | `VideoTrackProperties` on a media description |
 
 ## About
 
