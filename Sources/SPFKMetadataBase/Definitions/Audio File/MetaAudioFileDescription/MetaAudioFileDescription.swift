@@ -68,13 +68,6 @@ public struct MetaAudioFileDescription: Hashable, Sendable {
     /// alongside ``isAVPlayable`` so a saved playlist does not re-probe.
     public var isDecodable: Bool = false
 
-    /// Whether **anything** can play this file, which is what a status icon should reflect.
-    ///
-    /// ``isAVPlayable`` answers only whether AVFoundation can open the container, which is narrower
-    /// than the question a user is asking.
-    public var isPlayable: Bool {
-        isAVPlayable || isDecodable
-    }
 
     #if os(macOS)
     public init(
@@ -251,3 +244,5 @@ extension MetaAudioFileDescription {
         return bextDescription != old
     }
 }
+
+extension MetaAudioFileDescription: MediaFilePlayability {}
