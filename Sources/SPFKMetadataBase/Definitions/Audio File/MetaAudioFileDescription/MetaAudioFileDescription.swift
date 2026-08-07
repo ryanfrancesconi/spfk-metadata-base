@@ -62,6 +62,20 @@ public struct MetaAudioFileDescription: Hashable, Sendable {
     /// without re-probing on every decode.
     public var isAVPlayable: Bool = true
 
+    /// Whether a decoder outside AVFoundation can read this file's audio.
+    ///
+    /// Set at parse from the container's own codec identifier rather than its extension. Persisted
+    /// alongside ``isAVPlayable`` so a saved playlist does not re-probe.
+    public var isDecodable: Bool = false
+
+    /// Whether **anything** can play this file, which is what a status icon should reflect.
+    ///
+    /// ``isAVPlayable`` answers only whether AVFoundation can open the container, which is narrower
+    /// than the question a user is asking.
+    public var isPlayable: Bool {
+        isAVPlayable || isDecodable
+    }
+
     #if os(macOS)
     public init(
         url: URL,
@@ -122,6 +136,7 @@ extension MetaAudioFileDescription: Codable {
         case markerCollection
         case imageDescription
         case isAVPlayable
+        case isDecodable
     }
 
     public init(from decoder: any Decoder) throws {
@@ -141,6 +156,11 @@ extension MetaAudioFileDescription: Codable {
         markerCollection = try container.decodeIfPresent(AudioMarkerDescriptionCollection.self, forKey: .markerCollection) ?? .init()
         imageDescription = try container.decodeIfPresent(ImageDescription.self, forKey: .imageDescription) ?? .init()
         isAVPlayable = try container.decodeIfPresent(Bool.self, forKey: .isAVPlayable) ?? true
+        // Absent on anything stored before this field, where the load gate asked the container
+        // instead. Reproduced so a saved playlist keeps playing until the next parse replaces it
+        // with the codec's answer.
+        isDecodable = try container.decodeIfPresent(Bool.self, forKey: .isDecodable)
+            ?? (fileType?.isMatroska == true)
     }
 
     public func encode(to encoder: any Encoder) throws {
@@ -160,6 +180,7 @@ extension MetaAudioFileDescription: Codable {
         try container.encode(markerCollection, forKey: .markerCollection)
         try container.encode(imageDescription, forKey: .imageDescription)
         try container.encode(isAVPlayable, forKey: .isAVPlayable)
+        try container.encode(isDecodable, forKey: .isDecodable)
     }
 }
 
