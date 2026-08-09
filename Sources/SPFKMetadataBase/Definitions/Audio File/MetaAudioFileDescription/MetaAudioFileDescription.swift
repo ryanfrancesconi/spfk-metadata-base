@@ -32,6 +32,14 @@ public struct MetaAudioFileDescription: Hashable, Sendable {
     /// rotation). `nil` for pure-audio files.
     public var videoTrack: VideoTrackProperties?
 
+    /// Every selectable audio track, in stored order. Empty for a file whose tracks have not been
+    /// read, and one element for the ordinary single-track case — a caller offering a choice needs
+    /// two or more.
+    ///
+    /// Read alongside ``videoTrack`` and by the same container-agnostic route, so a `.mkv` lists
+    /// its tracks as readily as an `.mp4`.
+    public var audioTracks: [AudioTrackDescription] = []
+
     /// QuickTime user-data (GPS, capture device, creation date). `nil` for files with no
     /// QuickTime user-data.
     public var quickTimeUserData: QuickTimeUserData?
@@ -121,6 +129,7 @@ extension MetaAudioFileDescription: Codable {
         case fileType
         case audioFormat
         case videoTrack
+        case audioTracks
         case quickTimeUserData
         case tagProperties
         case bextDescription
@@ -141,6 +150,7 @@ extension MetaAudioFileDescription: Codable {
         fileType = try container.decodeIfPresent(AudioFileType.self, forKey: .fileType)
         audioFormat = try container.decodeIfPresent(AudioFormatProperties.self, forKey: .audioFormat)
         videoTrack = try container.decodeIfPresent(VideoTrackProperties.self, forKey: .videoTrack)
+        audioTracks = try container.decodeIfPresent([AudioTrackDescription].self, forKey: .audioTracks) ?? []
         quickTimeUserData = try container.decodeIfPresent(QuickTimeUserData.self, forKey: .quickTimeUserData)
         tagProperties = try container.decodeIfPresent(TagProperties.self, forKey: .tagProperties) ?? .init()
         bextDescription = try container.decodeIfPresent(BEXTDescription.self, forKey: .bextDescription)
@@ -165,6 +175,10 @@ extension MetaAudioFileDescription: Codable {
         try container.encodeIfPresent(fileType, forKey: .fileType)
         try container.encodeIfPresent(audioFormat, forKey: .audioFormat)
         try container.encodeIfPresent(videoTrack, forKey: .videoTrack)
+
+        if audioTracks.isEmpty == false {
+            try container.encode(audioTracks, forKey: .audioTracks)
+        }
         try container.encodeIfPresent(quickTimeUserData, forKey: .quickTimeUserData)
         try container.encode(tagProperties, forKey: .tagProperties)
         try container.encodeIfPresent(bextDescription, forKey: .bextDescription)
