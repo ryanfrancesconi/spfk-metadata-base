@@ -5,10 +5,11 @@ import Foundation
 extension AudioMarkerDescription {
     /// Maps markers from a source timeline onto the timeline a trim produces.
     ///
-    /// Markers outside the kept range are dropped, and the rest shift back by `inPoint` so they
-    /// keep pointing at the same audio. A region whose end falls past the kept range is clamped to
-    /// `newDuration` when one is given — an end beyond the file's own duration is not a position
-    /// anything can resolve.
+    /// The kept range is half-open: a marker on `inPoint` survives and lands at 0, one on
+    /// `outPoint` is dropped. A region overlapping the range is kept and clipped to it, so a
+    /// region straddling `inPoint` starts at 0 rather than disappearing. A region's end is bounded
+    /// by `newDuration` when one is given — an end beyond the file's own duration is not a
+    /// position anything can resolve.
     ///
     /// - Parameters:
     ///   - inPoint: start of the kept range, in source-timeline seconds.
@@ -21,7 +22,12 @@ extension AudioMarkerDescription {
         newDuration: TimeInterval? = nil
     ) -> [AudioMarkerDescription] {
         descriptions.compactMap { description in
-            guard description.startTime >= inPoint else { return nil }
+            // A point marker has only its start to place it; a region also survives on its end,
+            // which is what keeps one spanning the in-point from being thrown away.
+            let overlapsInPoint = description.startTime >= inPoint
+                || (description.endTime.map { $0 > inPoint } ?? false)
+
+            guard overlapsInPoint else { return nil }
             if outPoint > 0, description.startTime >= outPoint { return nil }
 
             var copy = description

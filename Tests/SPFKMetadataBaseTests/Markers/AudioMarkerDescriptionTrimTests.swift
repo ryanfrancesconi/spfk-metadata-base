@@ -103,4 +103,76 @@ final class AudioMarkerDescriptionTrimTests {
 
         #expect(adjusted.first?.endTime == nil)
     }
+
+    /// The range clips a region rather than discarding it: the audio under a region spanning the
+    /// in-point is still in the file, so the marker still describes something.
+    @Test func aRegionSpanningTheInPointIsKeptAndStartsAtZero() {
+        let adjusted = AudioMarkerDescription.adjustedForTrim(
+            [marker("spans", 10, 60)],
+            inPoint: 30,
+            outPoint: 0,
+            newDuration: 100
+        )
+
+        #expect(adjusted.first?.startTime == 0)
+        #expect(adjusted.first?.endTime == 30)
+    }
+
+    /// A region wider than the trim on both sides becomes the whole trimmed file.
+    @Test func aRegionSpanningTheWholeTrimCoversTheNewDuration() {
+        let adjusted = AudioMarkerDescription.adjustedForTrim(
+            [marker("everything", 2, 90)],
+            inPoint: 10,
+            outPoint: 40,
+            newDuration: 30
+        )
+
+        #expect(adjusted.first?.startTime == 0)
+        #expect(adjusted.first?.endTime == 30)
+    }
+
+    @Test func aRegionEndingBeforeTheInPointIsDropped() {
+        let adjusted = AudioMarkerDescription.adjustedForTrim(
+            [marker("early", 2, 4)],
+            inPoint: 10,
+            outPoint: 0
+        )
+
+        #expect(adjusted.isEmpty)
+    }
+
+    /// The kept range is half-open at both ends. A region finishing exactly where the range opens
+    /// survives no more than a point marker sitting exactly where it closes.
+    @Test func aRegionEndingExactlyOnTheInPointIsDropped() {
+        let adjusted = AudioMarkerDescription.adjustedForTrim(
+            [marker("touches", 2, 10)],
+            inPoint: 10,
+            outPoint: 0
+        )
+
+        #expect(adjusted.isEmpty)
+    }
+
+    @Test func aMarkerExactlyOnTheInPointIsKeptAtZero() {
+        let adjusted = AudioMarkerDescription.adjustedForTrim(
+            [marker("onInPoint", 10)],
+            inPoint: 10,
+            outPoint: 0
+        )
+
+        #expect(adjusted.map(\.startTime) == [0])
+    }
+
+    /// Nothing survives, and the caller gets an empty set rather than the originals — which is
+    /// what lets it leave a file with no chapter track alone instead of writing pre-trim times.
+    @Test func everyMarkerOutsideTheKeptRangeYieldsNothing() {
+        let adjusted = AudioMarkerDescription.adjustedForTrim(
+            [marker("before", 1), marker("alsoBefore", 2, 3), marker("after", 90)],
+            inPoint: 10,
+            outPoint: 20,
+            newDuration: 10
+        )
+
+        #expect(adjusted.isEmpty)
+    }
 }
