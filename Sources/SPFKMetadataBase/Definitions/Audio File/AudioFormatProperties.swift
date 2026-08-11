@@ -103,15 +103,26 @@ public struct AudioFormatProperties: Hashable, Sendable {
         bitRateDescription = "\(bitRate) kbit/s"
     }
 
-    private mutating func updateSampleRateDescription() {
+    /// `sampleRate` in kHz, to one decimal place, with a whole number written without one:
+    /// 44100 → `44.1`, 48000 → `48`. The unit is not included, so a caller composing a longer
+    /// sentence gets the number alone.
+    ///
+    /// Static because a rate being described is often not one of these properties — a converter
+    /// reporting a rate it could not honor has two, and neither belongs to a file yet.
+    /// **Interpolating the rate itself into a `localized()` key formats it `%lf`**, which renders
+    /// 44100 as `44.100000`.
+    public static func kHzDescription(for sampleRate: Double) -> String {
         let kHz = (sampleRate / 1000).truncated(decimalPlaces: 1)
-        var kHzString = kHz.string
 
-        if kHz.truncatingRemainder(dividingBy: 1) == 0 {
-            kHzString = kHz.int.string
+        guard kHz.truncatingRemainder(dividingBy: 1) != 0 else {
+            return kHz.int.string
         }
 
-        sampleRateDescription = "\(kHzString) kHz"
+        return kHz.string
+    }
+
+    private mutating func updateSampleRateDescription() {
+        sampleRateDescription = "\(Self.kHzDescription(for: sampleRate)) kHz"
     }
 
     private mutating func updateFormatDescription() {
