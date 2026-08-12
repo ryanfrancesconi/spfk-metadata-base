@@ -18,6 +18,7 @@ let package = Package(
         .package(url: "https://github.com/ryanfrancesconi/spfk-utils", from: "1.6.1"),
         .package(url: "https://github.com/ryanfrancesconi/spfk-video", from: "1.1.0"),
         .package(url: "https://github.com/ryanfrancesconi/spfk-testing", from: "1.1.0"),
+        .package(url: "https://github.com/orchetect/swift-timecode", from: "3.0.0"),
     ],
     targets: [
         .target(
@@ -26,6 +27,7 @@ let package = Package(
                 .product(name: "SPFKAudioBase", package: "spfk-audio-base"),
                 .product(name: "SPFKUtils", package: "spfk-utils"),
                 .product(name: "SPFKVideo", package: "spfk-video"),
+                .product(name: "SwiftTimecode", package: "swift-timecode"),
             ]
         ),
         .testTarget(
