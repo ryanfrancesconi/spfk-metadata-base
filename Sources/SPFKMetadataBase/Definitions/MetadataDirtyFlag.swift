@@ -13,4 +13,8 @@ public enum MetadataDirtyFlag: String, Hashable, Sendable, Codable {
     case xmp
     /// Markers — format-specific write (WaveFileC for WAV, chapter utils for others)
     case markers
+
+    /// Finder color/label changed. Stored in extended attributes rather than in the file, so it
+    /// is the one flag an external attribute change can overwrite.
+    case finderTags
 }
