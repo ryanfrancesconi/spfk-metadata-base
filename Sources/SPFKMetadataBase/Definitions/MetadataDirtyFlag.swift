@@ -4,7 +4,10 @@
 ///
 /// Used as a `Set<MetadataDirtyFlag>` to track what needs writing.
 /// The save orchestration layer decides which subsystem handles each flag.
-public enum MetadataDirtyFlag: String, Hashable, Sendable, Codable {
+///
+/// **Declaration order is a storage format.** The set is persisted as a bitmask whose bit is the
+/// case's position in `allCases`, so a new case goes on the end and an existing one never moves.
+public enum MetadataDirtyFlag: String, CaseIterable, Hashable, Sendable, Codable {
     /// Tags, BEXT, iXML — one MetaAudioFileDescription.save() call
     case metadata
     /// Embedded artwork
