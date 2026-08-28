@@ -17,7 +17,21 @@ public enum MetadataDirtyFlag: String, CaseIterable, Hashable, Sendable, Codable
     /// Markers — format-specific write (WaveFileC for WAV, chapter utils for others)
     case markers
 
-    /// Finder color/label changed. Stored in extended attributes rather than in the file, so it
-    /// is the one flag an external attribute change can overwrite.
+    /// Finder color/label changed. Stored in extended attributes rather than in the file.
     case finderTags
+
+    /// The `uchg` lock flag changed. A BSD file flag rather than anything in the data stream, and
+    /// applied by `save` around the other writes: clearing it comes first, since every write below
+    /// depends on it, and setting it comes last, for the same reason.
+    case lock
+}
+
+extension MetadataDirtyFlag {
+    /// The flags an attributes-only external change can overwrite -- those held outside the file's
+    /// data stream, where refreshing from disk replaces them wholesale.
+    ///
+    /// `.metadata`, `.image`, `.xmp` and `.markers` all live in the data stream, which an
+    /// attributes-only change does not touch. A file observer conflicts on this set and refreshes
+    /// otherwise; conflicting regardless would mark a whole playlist over a Finder tag write.
+    public static let attributeBacked: Set<MetadataDirtyFlag> = [.finderTags, .lock]
 }
