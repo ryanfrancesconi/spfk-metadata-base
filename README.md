@@ -27,6 +27,8 @@ For file reading/writing, marker parsing, and BEXT I/O, use [SPFKMetadata](https
 | **ID3FrameKey** | 80+ case enum for ID3v2.4 frame identifiers |
 | **InfoFrameKey** | 90+ case enum for RIFF INFO chunk tags |
 | **TagFrameKey** | Protocol shared by both frame key types |
+| **TagValueChange** | One tag value that differs between two `TagData`. An absent key is carried as `""` rather than `nil`, so an added and a cleared value are both ordinary changes with one side empty |
+| **TagValueConstraint** | How a tag value string is validated and clamped |
 
 ### Audio File Definitions
 
@@ -40,21 +42,13 @@ For file reading/writing, marker parsing, and BEXT I/O, use [SPFKMetadata](https
 | **TagPropertiesContainerModel** | Protocol for types that contain tag properties |
 | **MediaFilePlayability** | Whether a file can be played, and by which of the two paths |
 | **MetadataDirtyFlag** | Which parts of a description have unsaved edits |
+| **StartTimecodeResolution** / **StartTimecodeSource** | A start timecode together with the carrier it came from |
 
 #### MediaFilePlayability
 
-Playability is two questions, not one, because the answers diverge for Matroska:
-
-```swift
-public protocol MediaFilePlayability {
-    var isAVPlayable: Bool { get }   // AVFoundation can open it
-    var isDecodable: Bool { get }    // a demuxer + decoder can
-}
-
-public extension MediaFilePlayability {
-    var isPlayable: Bool { isAVPlayable || isDecodable }
-}
-```
+Playability is two questions, not one, because the answers diverge for Matroska: whether
+AVFoundation can open the file, and whether a demuxer and decoder can. A file is playable if either
+is true.
 
 **Neither is derivable from the path extension.** A `.mkv` whose audio codec has no decoder is not
 playable despite being a Matroska file, and a `.mov` AVFoundation refuses is not playable despite
@@ -68,6 +62,7 @@ A UI showing a "cannot play" state reads `isPlayable`; a caller choosing between
 |------|-------------|
 | **AudioMarkerDescription** | Format-agnostic marker struct with name, start/end time, color, and markerID |
 | **AudioMarkerDescriptionCollection** | Ordered collection with insert, remove, update, sort, and automatic ID assignment |
+| **AudioMarkerType** | Structural classification of a marker |
 
 ## Installation
 
@@ -86,6 +81,7 @@ import SPFKMetadataBase
 | [spfk-audio-base](https://github.com/ryanfrancesconi/spfk-audio-base) | Shared audio type definitions |
 | [spfk-utils](https://github.com/ryanfrancesconi/spfk-utils) | Foundation utilities and extensions |
 | [spfk-video](https://github.com/ryanfrancesconi/spfk-video) | `VideoTrackProperties` on a media description |
+| [swift-timecode](https://github.com/orchetect/swift-timecode) | Timecode parsing and formatting |
 
 ## About
 
