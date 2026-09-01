@@ -194,6 +194,15 @@ extension MetaAudioFileDescription: Codable {
 // MARK: - Comparison
 
 extension MetaAudioFileDescription {
+    /// `==` plus the marker fields it cannot see.
+    ///
+    /// `AudioMarkerDescription.==` is identity by `markerID`, so the synthesized `==` reports two
+    /// descriptions equal when a marker was renamed, recolored or moved. Anything deciding whether
+    /// a value still needs writing has to ask this instead.
+    public func hasContentChanges(from other: MetaAudioFileDescription) -> Bool {
+        self != other || markerCollection.hasContentChanges(from: other.markerCollection)
+    }
+
     /// Compares all metadata properties except `imageDescription`.
     ///
     /// Image dirtiness is tracked separately (via `isImageDirty` on `PlaylistElement`),
