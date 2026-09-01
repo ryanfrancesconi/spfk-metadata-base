@@ -203,11 +203,14 @@ extension MetaAudioFileDescription {
         self != other || markerCollection.hasContentChanges(from: other.markerCollection)
     }
 
-    /// Compares all metadata properties except `imageDescription`.
+    /// Compares the metadata properties that `MetadataDirtyFlag.metadata` writes -- tags, BEXT and
+    /// iXML -- so callers deriving that flag get an answer scoped to it.
     ///
-    /// Image dirtiness is tracked separately (via `isImageDirty` on `PlaylistElement`),
-    /// and `ImageDescription` thumbnail data is non-deterministic across re-encodes,
-    /// so excluding it avoids false-positive dirty flags.
+    /// `imageDescription` and `markerCollection` are excluded because each has its own flag and its
+    /// own writer, and the mutation that changes one sets that flag itself. Markers additionally
+    /// cannot be compared here at all: `AudioMarkerDescription` is equal by `markerID`, so this
+    /// could only ever see a marker added or removed and never one renamed, recolored or moved.
+    /// ``hasContentChanges(from:)`` is the comparison that sees all of it.
     public func isEqualExcludingImage(to other: MetaAudioFileDescription) -> Bool {
         guard url == other.url &&
             fileType == other.fileType &&
@@ -215,8 +218,7 @@ extension MetaAudioFileDescription {
             tagProperties == other.tagProperties &&
             bextDescription == other.bextDescription &&
             iXMLMetadata == other.iXMLMetadata &&
-            xmpMetadata == other.xmpMetadata &&
-            markerCollection == other.markerCollection
+            xmpMetadata == other.xmpMetadata
         else { return false }
         #if os(macOS)
         return urlProperties == other.urlProperties

@@ -227,4 +227,18 @@ struct MetaAudioFileDescriptionTests {
 
         #expect(!a.isEqualExcludingImage(to: b))
     }
+
+    /// Markers have their own dirty flag and their own writer, so a marker difference is not a
+    /// `.metadata` difference -- and the mutation that made it is what declares `.markers`.
+    @Test func isEqualExcludingImageTrueWhenOnlyMarkersDiffer() {
+        var a = makeDescription()
+        let b = makeDescription()
+
+        a.markerCollection = AudioMarkerDescriptionCollection(markerDescriptions: [
+            AudioMarkerDescription(name: "Intro", startTime: 0),
+        ])
+
+        #expect(a.isEqualExcludingImage(to: b))
+        #expect(a.hasContentChanges(from: b))
+    }
 }
