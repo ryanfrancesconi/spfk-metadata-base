@@ -76,6 +76,10 @@ public struct MetaAudioFileDescription: Hashable, Sendable {
     /// alongside ``isAVPlayable`` so a saved playlist does not re-probe.
     public var isDecodable: Bool = false
 
+    /// Whether the content is DRM-protected. Set at parse from the asset, since `isAVPlayable`
+    /// stays true for such a file and only a player finds out.
+    public var isProtected: Bool = false
+
 
     #if os(macOS)
     public init(
@@ -139,6 +143,7 @@ extension MetaAudioFileDescription: Codable {
         case imageDescription
         case isAVPlayable
         case isDecodable
+        case isProtected
     }
 
     public init(from decoder: any Decoder) throws {
@@ -164,6 +169,7 @@ extension MetaAudioFileDescription: Codable {
         // with the codec's answer.
         isDecodable = try container.decodeIfPresent(Bool.self, forKey: .isDecodable)
             ?? (fileType?.isMatroska == true)
+        isProtected = try container.decodeIfPresent(Bool.self, forKey: .isProtected) ?? false
     }
 
     public func encode(to encoder: any Encoder) throws {
@@ -188,6 +194,7 @@ extension MetaAudioFileDescription: Codable {
         try container.encode(imageDescription, forKey: .imageDescription)
         try container.encode(isAVPlayable, forKey: .isAVPlayable)
         try container.encode(isDecodable, forKey: .isDecodable)
+        try container.encode(isProtected, forKey: .isProtected)
     }
 }
 

@@ -14,11 +14,15 @@ public protocol MediaFilePlayability {
 
     /// Whether a decoder outside AVFoundation can read this file's essential stream.
     var isDecodable: Bool { get }
+
+    /// Whether the content is DRM-protected (FairPlay). Independent of the other two: AVFoundation
+    /// opens such a container and reports it playable, and only a player finds out otherwise.
+    var isProtected: Bool { get }
 }
 
 public extension MediaFilePlayability {
     /// Whether anything can play this file, which is what a status icon should reflect.
     var isPlayable: Bool {
-        isAVPlayable || isDecodable
+        (isAVPlayable || isDecodable) && !isProtected
     }
 }
