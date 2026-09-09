@@ -248,7 +248,7 @@ extension MetaAudioFileDescription {
         tagProperties.customTag(for: key)
     }
 
-    /// Sets a standard tag value. Pass `nil` to remove the tag.
+    /// Sets a standard tag value. Removal goes through ``tagProperties`` with a `nil` value.
     public mutating func set(tag key: TagKey, value: String) {
         tagProperties.set(tag: key, value: value)
     }
