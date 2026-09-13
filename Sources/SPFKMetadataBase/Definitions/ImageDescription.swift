@@ -2,6 +2,7 @@
 
 import CoreImage
 import Foundation
+import SPFKImage
 import SPFKUtils
 
 /// Container for embedded audio file artwork with thumbnail generation.

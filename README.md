@@ -79,6 +79,7 @@ import SPFKMetadataBase
 | Package | Description |
 |---------|-------------|
 | [spfk-audio-base](https://github.com/ryanfrancesconi/spfk-audio-base) | Shared audio type definitions |
+| [spfk-image](https://github.com/ryanfrancesconi/spfk-image) | Artwork thumbnail decoding, resizing and PNG encoding |
 | [spfk-utils](https://github.com/ryanfrancesconi/spfk-utils) | Foundation utilities and extensions |
 | [spfk-video](https://github.com/ryanfrancesconi/spfk-video) | `VideoTrackProperties` on a media description |
 | [swift-timecode](https://github.com/orchetect/swift-timecode) | Timecode parsing and formatting |

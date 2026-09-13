@@ -15,6 +15,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/ryanfrancesconi/spfk-audio-base", from: "1.6.1"),
+        .package(url: "https://github.com/ryanfrancesconi/spfk-image", from: "0.1.0"),
         .package(url: "https://github.com/ryanfrancesconi/spfk-utils", from: "1.6.1"),
         .package(url: "https://github.com/ryanfrancesconi/spfk-video", from: "1.1.0"),
         .package(url: "https://github.com/ryanfrancesconi/spfk-testing", from: "1.1.0"),
@@ -25,6 +26,7 @@ let package = Package(
             name: "SPFKMetadataBase",
             dependencies: [
                 .product(name: "SPFKAudioBase", package: "spfk-audio-base"),
+                .product(name: "SPFKImage", package: "spfk-image"),
                 .product(name: "SPFKUtils", package: "spfk-utils"),
                 .product(name: "SPFKVideo", package: "spfk-video"),
                 .product(name: "SwiftTimecode", package: "swift-timecode"),
