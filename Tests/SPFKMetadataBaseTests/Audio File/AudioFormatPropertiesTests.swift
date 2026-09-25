@@ -88,6 +88,12 @@ struct AudioFormatPropertiesTests {
         #expect(props.formatDescription == "96 kHz, 24 bit, Mono")
     }
 
+    /// 22050 keeps both decimals rather than rounding to a rate that doesn't exist.
+    @Test func formatDescriptionMono22kHz() {
+        let props = AudioFormatProperties(channelCount: 1, sampleRate: 22050, duration: 1.0)
+        #expect(props.formatDescription == "22.05 kHz, Mono")
+    }
+
     @Test func formatDescriptionNoChannels() {
         let props = AudioFormatProperties(
             channelCount: 0,
