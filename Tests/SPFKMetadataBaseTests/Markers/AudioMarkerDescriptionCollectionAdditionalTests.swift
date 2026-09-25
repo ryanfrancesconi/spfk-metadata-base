@@ -239,4 +239,68 @@ struct AudioMarkerDescriptionCollectionAdditionalTests {
         #expect(!names.contains("Duplicate"))
         #expect(names.contains("New"))
     }
+
+    // MARK: - mergeColors
+
+    @Test func mergeColorsById() throws {
+        let red = try #require(HexColor(string: "FF0000FF"))
+        let previous = AudioMarkerDescriptionCollection(markerDescriptions: [
+            AudioMarkerDescription(name: "A", startTime: 0, markerID: 0, hexColor: red),
+        ])
+        var fresh = AudioMarkerDescriptionCollection(markerDescriptions: [
+            AudioMarkerDescription(name: "A", startTime: 0, markerID: 0),
+        ])
+        fresh.mergeColors(from: previous)
+        #expect(fresh.markerDescriptions[0].hexColor?.stringValue == "FF0000FF")
+    }
+
+    @Test func mergeColorsFallbackByNameAndTime() throws {
+        let blue = try #require(HexColor(string: "0000FFFF"))
+        // previous has markerID 5; fresh has a different ID (99) but same name+startTime
+        let previous = AudioMarkerDescriptionCollection(markerDescriptions: [
+            AudioMarkerDescription(name: "B", startTime: 2.5, markerID: 5, hexColor: blue),
+        ])
+        var fresh = AudioMarkerDescriptionCollection(markerDescriptions: [
+            AudioMarkerDescription(name: "B", startTime: 2.5, markerID: 99),
+        ])
+        fresh.mergeColors(from: previous)
+        #expect(fresh.markerDescriptions[0].hexColor?.stringValue == "0000FFFF")
+    }
+
+    @Test func mergeColorsPreservesExistingColor() throws {
+        let red = try #require(HexColor(string: "FF0000FF"))
+        let green = try #require(HexColor(string: "00FF00FF"))
+        let previous = AudioMarkerDescriptionCollection(markerDescriptions: [
+            AudioMarkerDescription(name: "A", startTime: 0, markerID: 0, hexColor: red),
+        ])
+        var fresh = AudioMarkerDescriptionCollection(markerDescriptions: [
+            AudioMarkerDescription(name: "A", startTime: 0, markerID: 0, hexColor: green),
+        ])
+        fresh.mergeColors(from: previous)
+        // existing color (green) must not be overwritten by previous (red)
+        #expect(fresh.markerDescriptions[0].hexColor?.stringValue == "00FF00FF")
+    }
+
+    // MARK: - insert
+
+    @Test func insertAssignsSequentialIDs() throws {
+        var collection = AudioMarkerDescriptionCollection(markerDescriptions: [
+            AudioMarkerDescription(name: "Marker 1", startTime: 0),
+            AudioMarkerDescription(name: "Marker 2", startTime: 1),
+            AudioMarkerDescription(name: "Marker 3", startTime: 2),
+        ])
+
+        try collection.insert(markerDescriptions: [
+            AudioMarkerDescription(name: "Marker 4", startTime: 3)
+        ])
+
+        // startTime exists, so this marker should be ignored
+        try collection.insert(markerDescriptions: [
+            AudioMarkerDescription(name: "Marker 5", startTime: 3)
+        ])
+
+        #expect(collection.count == 4)
+        #expect(collection.allIDs == [0, 1, 2, 3])
+        #expect(collection.highestID == 3)
+    }
 }

@@ -152,6 +152,18 @@ struct BEXTTimeReferenceTests {
         #expect(desc.timeReference == 88200)
     }
 
+    /// 25 hours at 48 kHz exceeds a UInt32, so the low word rolls over into the high one.
+    @Test func timeReferenceOverflowsIntoTheHighWord() {
+        var desc = BEXTDescription()
+
+        let value: UInt64 = 25 * 60 * 60 * 48000
+        desc.timeReference = value
+
+        #expect(desc.timeReferenceHigh == 1)
+        #expect(desc.timeReferenceLow == 25_032_704)
+        #expect(desc.timeReference == value)
+    }
+
     @Test func timeReferenceNil() {
         var desc = BEXTDescription()
         #expect(desc.timeReference == nil)
@@ -313,6 +325,42 @@ struct BEXTDictionaryTests {
         #expect(desc.umid == "UMID_VALUE")
         #expect(desc.sequenceDescription == "A description")
         #expect(desc.version == 2)
+    }
+
+    @Test func setLoudnessViaDict() {
+        var desc = BEXTDescription()
+        desc.dictionary = [
+            .loudnessIntegrated: "-14.0",
+            .loudnessRange: "9.5",
+            .maxTruePeakLevel: "-1.0",
+            .maxMomentaryLoudness: "-10.0",
+            .maxShortTermLoudness: "-12.0",
+        ]
+
+        #expect(desc.loudnessDescription.loudnessIntegrated == -14.0)
+        #expect(desc.loudnessDescription.loudnessRange == 9.5)
+        #expect(desc.loudnessDescription.maxTruePeakLevel == -1.0)
+        #expect(desc.loudnessDescription.maxMomentaryLoudness == -10.0)
+        #expect(desc.loudnessDescription.maxShortTermLoudness == -12.0)
+    }
+
+    @Test func setTimeReferenceViaDict() {
+        var desc = BEXTDescription()
+        desc.dictionary = [
+            .timeReferenceSamples: "88200"
+        ]
+
+        #expect(desc.timeReference == 88200)
+    }
+
+    @Test func dictionaryGetLoudness() {
+        var desc = BEXTDescription()
+        desc.loudnessDescription.loudnessIntegrated = -23.0
+        desc.loudnessDescription.loudnessRange = -14.0
+
+        let dict = desc.dictionary
+        #expect(dict[.loudnessIntegrated] != nil)
+        #expect(dict[.loudnessRange] != nil)
     }
 
     @Test func dictionaryInitializer() {
