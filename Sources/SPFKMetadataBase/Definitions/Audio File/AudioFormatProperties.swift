@@ -30,13 +30,13 @@ public struct AudioFormatProperties: Hashable, Sendable {
     /// Combined format summary (e.g., "48 kHz, 24 bit, Stereo").
     public private(set) var formatDescription: String = ""
 
-    /// Channel layout label (e.g., "Mono", "Stereo", "6 Channel").
+    /// Channel layout label (e.g., "Mono", "Stereo", "6 Channels").
     public private(set) var channelsDescription: String = ""
 
-    /// Bit rate label (e.g., "320 kbit/s"). Empty for uncompressed formats.
+    /// Bit rate label (e.g., "320 kbps"). Empty for uncompressed formats.
     public private(set) var bitRateDescription: String = ""
 
-    /// Sample rate expressed in kHz
+    /// Sample rate label (e.g., "44.1 kHz").
     public private(set) var sampleRateDescription: String = ""
 
     public init(
@@ -77,21 +77,7 @@ public struct AudioFormatProperties: Hashable, Sendable {
     }
 
     private mutating func updateChannelsDescription() {
-        guard channelCount > 0 else {
-            channelsDescription = ""
-            return
-        }
-
-        var out = "Stereo"
-
-        if channelCount == 1 {
-            out = "Mono"
-
-        } else if channelCount > 2 {
-            out = "\(channelCount) Channel"
-        }
-
-        channelsDescription = out
+        channelsDescription = AudioTerminology.channels(Int(channelCount))
     }
 
     private mutating func updateBitRateDescription() {
@@ -100,36 +86,18 @@ public struct AudioFormatProperties: Hashable, Sendable {
             return
         }
 
-        bitRateDescription = "\(bitRate) kbit/s"
-    }
-
-    /// `sampleRate` in kHz, to one decimal place, with a whole number written without one:
-    /// 44100 → `44.1`, 48000 → `48`. The unit is not included, so a caller composing a longer
-    /// sentence gets the number alone.
-    ///
-    /// Static because a rate being described is often not one of these properties — a converter
-    /// reporting a rate it could not honor has two, and neither belongs to a file yet.
-    /// **Interpolating the rate itself into a `localized()` key formats it `%lf`**, which renders
-    /// 44100 as `44.100000`.
-    public static func kHzDescription(for sampleRate: Double) -> String {
-        let kHz = (sampleRate / 1000).truncated(decimalPlaces: 1)
-
-        guard kHz.truncatingRemainder(dividingBy: 1) != 0 else {
-            return kHz.int.string
-        }
-
-        return kHz.string
+        bitRateDescription = AudioTerminology.bitRate(kbps: Int(bitRate))
     }
 
     private mutating func updateSampleRateDescription() {
-        sampleRateDescription = "\(Self.kHzDescription(for: sampleRate)) kHz"
+        sampleRateDescription = AudioTerminology.sampleRate(sampleRate)
     }
 
     private mutating func updateFormatDescription() {
         var out = sampleRateDescription
 
         if let bitsPerChannel {
-            out += bitsPerChannel > 0 ? ", \(bitsPerChannel) bit" : ""
+            out += bitsPerChannel > 0 ? ", " + AudioTerminology.bitDepth(bitsPerChannel) : ""
         }
 
         if bitRate != nil, !bitRateDescription.isEmpty {
