@@ -30,6 +30,10 @@ public struct AudioMarkerDescriptionCollection: Hashable, Sendable {
     }
 }
 
+/// Its pasteboard type, `com.spongefork.serializable.AudioMarkerDescriptionCollection`, is wire
+/// format shared between the markers panel and the waveform.
+extension AudioMarkerDescriptionCollection: Serializable {}
+
 extension AudioMarkerDescriptionCollection: Codable {
     enum CodingKeys: String, CodingKey {
         case markerDescriptions
