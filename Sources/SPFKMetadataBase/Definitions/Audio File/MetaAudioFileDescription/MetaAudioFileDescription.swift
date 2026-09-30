@@ -4,6 +4,7 @@ import CoreImage
 import Foundation
 import SPFKAudioBase
 import SPFKUtils
+import SPFKVideo
 
 /// Top-level metadata container for an audio file.
 ///

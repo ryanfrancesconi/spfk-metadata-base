@@ -2,6 +2,7 @@
 
 import Foundation
 import SPFKAudioBase
+import SPFKVideo
 import Testing
 
 @testable import SPFKMetadataBase
