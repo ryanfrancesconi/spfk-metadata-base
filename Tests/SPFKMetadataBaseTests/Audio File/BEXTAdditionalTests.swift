@@ -69,14 +69,19 @@ struct BEXTCodableTests {
         #expect(decoded.loudnessDescription.maxShortTermLoudness == -18.0)
     }
 
-    @Test func codableV0DoesNotDecodeLoudness() throws {
+    /// Raising the version is the file writer's job, so a copy keeps fields the version predates.
+    @Test func codableKeepsFieldsTheVersionDoesNotAnnounce() throws {
         var original = BEXTDescription()
         original.version = 0
+        original.umid = "TESTUMID123"
+        original.loudnessDescription.loudnessIntegrated = -23.0
 
-        let data = try JSONEncoder().encode(original)
-        let decoded = try JSONDecoder().decode(BEXTDescription.self, from: data)
+        let encoder = PropertyListEncoder()
+        encoder.outputFormat = .binary
+        let data = try encoder.encode(original)
+        let decoded = try PropertyListDecoder().decode(BEXTDescription.self, from: data)
 
-        #expect(decoded.loudnessDescription.loudnessIntegrated == nil)
+        #expect(decoded == original)
     }
 
     @Test func codableEmpty() throws {

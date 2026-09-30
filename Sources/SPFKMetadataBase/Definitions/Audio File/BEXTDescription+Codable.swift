@@ -36,13 +36,9 @@ extension BEXTDescription: Codable {
         timeReferenceHigh = try? container.decodeIfPresent(UInt64.self, forKey: .timeReferenceHigh)
         sampleRate = try? container.decodeIfPresent(Double.self, forKey: .sampleRate)
 
-        if version >= 1 {
-            umid = try? container.decodeIfPresent(String.self, forKey: .umid)
-        }
+        umid = try? container.decodeIfPresent(String.self, forKey: .umid)
 
-        if version >= 2,
-            let value = try? container.decodeIfPresent(LoudnessDescription.self, forKey: .loudnessDescription)
-        {
+        if let value = try? container.decodeIfPresent(LoudnessDescription.self, forKey: .loudnessDescription) {
             loudnessDescription = value
         }
     }
@@ -61,13 +57,8 @@ extension BEXTDescription: Codable {
         try? container.encodeIfPresent(timeReferenceHigh, forKey: .timeReferenceHigh)
         try? container.encodeIfPresent(sampleRate, forKey: .sampleRate)
 
-        if version >= 1 {
-            try? container.encodeIfPresent(umid, forKey: .umid)
-        }
-
-        if version >= 2 {
-            try? container.encodeIfPresent(loudnessDescription, forKey: .loudnessDescription)
-        }
+        try? container.encodeIfPresent(umid, forKey: .umid)
+        try? container.encodeIfPresent(loudnessDescription, forKey: .loudnessDescription)
     }
 }
 

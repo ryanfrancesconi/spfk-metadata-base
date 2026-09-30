@@ -13,7 +13,8 @@ public struct BEXTDescription: Hashable, Sendable {
     /// The EBU Tech 3285 version written by default (version 2, which adds loudness fields).
     public static let defaultVersionString = "2"
 
-    /// BWF Version 0, 1, or 2. This will be set based on the content provided.
+    /// The BWF version (0, 1 or 2) read from or written to the file. The file writer raises it to
+    /// fit a UMID or loudness; the model never changes it.
     public var version: Int16 = 0
 
     /// A free description of the sequence.
