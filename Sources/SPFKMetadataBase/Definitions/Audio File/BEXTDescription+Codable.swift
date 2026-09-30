@@ -26,19 +26,19 @@ extension BEXTDescription: Codable {
 
         version = try container.decodeIfPresent(Int16.self, forKey: .version) ?? 0
 
-        sequenceDescription = try? container.decodeIfPresent(String.self, forKey: .sequenceDescription)
-        codingHistory = try? container.decodeIfPresent(String.self, forKey: .codingHistory)
-        originator = try? container.decodeIfPresent(String.self, forKey: .originator)
-        originationDate = try? container.decodeIfPresent(String.self, forKey: .originationDate)
-        originationTime = try? container.decodeIfPresent(String.self, forKey: .originationTime)
-        originatorReference = try? container.decodeIfPresent(String.self, forKey: .originatorReference)
-        timeReferenceLow = try? container.decodeIfPresent(UInt64.self, forKey: .timeReferenceLow)
-        timeReferenceHigh = try? container.decodeIfPresent(UInt64.self, forKey: .timeReferenceHigh)
-        sampleRate = try? container.decodeIfPresent(Double.self, forKey: .sampleRate)
+        sequenceDescription = try container.decodeIfPresent(String.self, forKey: .sequenceDescription)
+        codingHistory = try container.decodeIfPresent(String.self, forKey: .codingHistory)
+        originator = try container.decodeIfPresent(String.self, forKey: .originator)
+        originationDate = try container.decodeIfPresent(String.self, forKey: .originationDate)
+        originationTime = try container.decodeIfPresent(String.self, forKey: .originationTime)
+        originatorReference = try container.decodeIfPresent(String.self, forKey: .originatorReference)
+        timeReferenceLow = try container.decodeIfPresent(UInt64.self, forKey: .timeReferenceLow)
+        timeReferenceHigh = try container.decodeIfPresent(UInt64.self, forKey: .timeReferenceHigh)
+        sampleRate = try container.decodeIfPresent(Double.self, forKey: .sampleRate)
 
-        umid = try? container.decodeIfPresent(String.self, forKey: .umid)
+        umid = try container.decodeIfPresent(String.self, forKey: .umid)
 
-        if let value = try? container.decodeIfPresent(LoudnessDescription.self, forKey: .loudnessDescription) {
+        if let value = try container.decodeIfPresent(LoudnessDescription.self, forKey: .loudnessDescription) {
             loudnessDescription = value
         }
     }
@@ -47,18 +47,18 @@ extension BEXTDescription: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         try container.encode(version, forKey: .version)
-        try? container.encodeIfPresent(sequenceDescription, forKey: .sequenceDescription)
-        try? container.encodeIfPresent(codingHistory, forKey: .codingHistory)
-        try? container.encodeIfPresent(originator, forKey: .originator)
-        try? container.encodeIfPresent(originationDate, forKey: .originationDate)
-        try? container.encodeIfPresent(originationTime, forKey: .originationTime)
-        try? container.encodeIfPresent(originatorReference, forKey: .originatorReference)
-        try? container.encodeIfPresent(timeReferenceLow, forKey: .timeReferenceLow)
-        try? container.encodeIfPresent(timeReferenceHigh, forKey: .timeReferenceHigh)
-        try? container.encodeIfPresent(sampleRate, forKey: .sampleRate)
+        try container.encodeIfPresent(sequenceDescription, forKey: .sequenceDescription)
+        try container.encodeIfPresent(codingHistory, forKey: .codingHistory)
+        try container.encodeIfPresent(originator, forKey: .originator)
+        try container.encodeIfPresent(originationDate, forKey: .originationDate)
+        try container.encodeIfPresent(originationTime, forKey: .originationTime)
+        try container.encodeIfPresent(originatorReference, forKey: .originatorReference)
+        try container.encodeIfPresent(timeReferenceLow, forKey: .timeReferenceLow)
+        try container.encodeIfPresent(timeReferenceHigh, forKey: .timeReferenceHigh)
+        try container.encodeIfPresent(sampleRate, forKey: .sampleRate)
 
-        try? container.encodeIfPresent(umid, forKey: .umid)
-        try? container.encodeIfPresent(loudnessDescription, forKey: .loudnessDescription)
+        try container.encodeIfPresent(umid, forKey: .umid)
+        try container.encodeIfPresent(loudnessDescription, forKey: .loudnessDescription)
     }
 }
 

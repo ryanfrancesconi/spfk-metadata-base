@@ -133,8 +133,8 @@ extension AudioFormatProperties: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         channelCount = try container.decode(AVAudioChannelCount.self, forKey: .channelCount)
         sampleRate = try container.decode(Double.self, forKey: .sampleRate)
-        bitsPerChannel = try? container.decodeIfPresent(Int.self, forKey: .bitsPerChannel)
-        bitRate = try? container.decodeIfPresent(Int32.self, forKey: .bitRate)
+        bitsPerChannel = try container.decodeIfPresent(Int.self, forKey: .bitsPerChannel)
+        bitRate = try container.decodeIfPresent(Int32.self, forKey: .bitRate)
         duration = try container.decode(TimeInterval.self, forKey: .duration)
 
         initialize()
@@ -147,7 +147,7 @@ extension AudioFormatProperties: Codable {
         try container.encode(sampleRate, forKey: .sampleRate)
         try container.encode(duration, forKey: .duration)
 
-        try? container.encodeIfPresent(bitsPerChannel, forKey: .bitsPerChannel)
-        try? container.encodeIfPresent(bitRate, forKey: .bitRate)
+        try container.encodeIfPresent(bitsPerChannel, forKey: .bitsPerChannel)
+        try container.encodeIfPresent(bitRate, forKey: .bitRate)
     }
 }
