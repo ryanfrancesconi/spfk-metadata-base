@@ -268,3 +268,20 @@ struct AudioMarkerDescriptionSameTimeOrderTests {
         #expect(results.count == 1)
     }
 }
+
+// MARK: - Decoding an invalid time
+
+struct AudioMarkerDescriptionDecodedTimeTests {
+    @Test func aDecodedNaNTimeStartsAtZero() throws {
+        var marker = AudioMarkerDescription(name: "Pasted", startTime: 1, endTime: 2)
+        marker.startTime = .nan
+        marker.endTime = .nan
+
+        let encoder = PropertyListEncoder()
+        encoder.outputFormat = .binary
+        let decoded = try PropertyListDecoder().decode(AudioMarkerDescription.self, from: encoder.encode(marker))
+
+        #expect(decoded.startTime == 0)
+        #expect(decoded.endTime == nil)
+    }
+}

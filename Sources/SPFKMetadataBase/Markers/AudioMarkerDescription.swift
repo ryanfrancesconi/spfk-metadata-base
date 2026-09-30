@@ -130,13 +130,16 @@ extension AudioMarkerDescription {
 
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        name = try container.decodeIfPresent(String.self, forKey: .name)
-        startTime = try container.decode(TimeInterval.self, forKey: .startTime)
-        endTime = try container.decodeIfPresent(TimeInterval.self, forKey: .endTime)
-        sampleRate = try container.decodeIfPresent(Double.self, forKey: .sampleRate)
-        markerID = try container.decodeIfPresent(Int.self, forKey: .markerID)
-        hexColor = try container.decodeIfPresent(HexColor.self, forKey: .hexColor)
-        markerType = try container.decodeIfPresent(AudioMarkerType.self, forKey: .markerType) ?? .cue
+
+        try self.init(
+            name: container.decodeIfPresent(String.self, forKey: .name),
+            startTime: container.decode(TimeInterval.self, forKey: .startTime),
+            endTime: container.decodeIfPresent(TimeInterval.self, forKey: .endTime),
+            sampleRate: container.decodeIfPresent(Double.self, forKey: .sampleRate),
+            markerID: container.decodeIfPresent(Int.self, forKey: .markerID),
+            hexColor: container.decodeIfPresent(HexColor.self, forKey: .hexColor),
+            markerType: container.decodeIfPresent(AudioMarkerType.self, forKey: .markerType) ?? .cue
+        )
     }
 
     public func encode(to encoder: any Encoder) throws {
