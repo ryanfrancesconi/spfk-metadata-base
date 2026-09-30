@@ -12,6 +12,8 @@ import SPFKBase
 /// (e.g., `INAM`). Tags that don't match any case are stored as custom tags keyed by their raw string.
 ///
 /// Supports lookup by ``taglibKey`` (uppercase), ``displayName`` (title-cased), ``id3Frame``, and ``infoFrame``.
+///
+/// The raw values are persisted; renaming a case is a data migration.
 public enum TagKey: String, CaseIterable, Codable, Comparable, Sendable {
     public static func < (lhs: TagKey, rhs: TagKey) -> Bool {
         lhs.rawValue.standardCompare(with: rhs.rawValue)

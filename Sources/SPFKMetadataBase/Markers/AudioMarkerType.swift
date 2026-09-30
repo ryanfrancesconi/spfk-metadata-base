@@ -3,6 +3,8 @@
 import Foundation
 
 /// Structural classification of an audio marker.
+///
+/// The raw values are persisted; renaming a case is a data migration.
 public enum AudioMarkerType: String, Codable, Sendable, CaseIterable {
     /// A point marker — `endTime` is nil.
     case cue

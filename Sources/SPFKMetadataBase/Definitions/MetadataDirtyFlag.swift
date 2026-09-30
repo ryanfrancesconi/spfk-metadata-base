@@ -7,6 +7,7 @@
 ///
 /// **Declaration order is a storage format.** The set is persisted as a bitmask whose bit is the
 /// case's position in `allCases`, so a new case goes on the end and an existing one never moves.
+/// The raw values are persisted too; renaming a case is a data migration.
 public enum MetadataDirtyFlag: String, CaseIterable, Hashable, Sendable, Codable {
     /// Tags, BEXT, iXML — one MetaAudioFileDescription.save() call
     case metadata
