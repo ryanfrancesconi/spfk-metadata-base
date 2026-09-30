@@ -272,20 +272,15 @@ extension TagKeyTests {
         let invalidTags: [String: String] = ["TCOP": "2010 BOOM Library-Cinematic Metal Construction Kit", "TDOR": "2010", "TKEY": "impact_p0_brass_bell.wav", "TRCK": "0", "COMM": "Impact - Metal - Soft - High - Small. Brass bells. Dry. Original Pitch.", "TSSE": "Soundminer", "ARCHIVALLOCATION": "", "TPE1": "BOOM Library", "TALB": "Cinematic Metal Construction Kit", "TIT1": "www.boomlibrary.com", "TCON": "BELLS", "TOWN": "Cinematic Metal Construction Kit", "TIT2": "BELLMisc_Impact Brass Bell P0_B00M_CMCK.wav", "TPUB": "www.boomlibrary.com", "TPE2": "Cinematic Metal Construction Kit", "TDRC": "2010", "TIT3": "All sound effects are copyright BOOM Library - all rights reserved", "TOAL": "www.boomlibrary.com"]
     
         for item in invalidTags {
-            if let key = ID3FrameKey(value: item.key) {
-                Log.debug("ID3", key, item)
+            if ID3FrameKey(value: item.key) != nil {
                 continue
             }
             
-            if let key = InfoFrameKey(value: item.key) {
-                Log.debug("INFO", key, item)
+            if InfoFrameKey(value: item.key) != nil {
                 continue
             }
             
-            let frame = TagKey(taglibKey: item.key)
-            
-            Log.debug(item, frame)
-
+            _ = TagKey(taglibKey: item.key)
         }
     }
 }

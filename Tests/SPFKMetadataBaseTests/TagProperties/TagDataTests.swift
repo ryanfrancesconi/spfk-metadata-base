@@ -9,8 +9,6 @@ struct TagDataTests: TestCaseModel {
         for item in TagKey.allCases {
             let displayName = item.displayName
 
-            Log.debug(displayName)
-
             let new = TagKey(displayName: displayName)
 
             #expect(item == new)
@@ -29,15 +27,12 @@ struct TagDataTests: TestCaseModel {
         let replace = [data1, data2, data3].merge(scheme: .replace)
         let combine = [data1, data2, data3].merge(scheme: .combine)
 
-        Log.debug("preserve", preserve)
         #expect(preserve.tags[.title] == "value1")
         #expect(preserve.customTags["CUSTOMTAG1"] == "CUSTOMVALUE1")
 
-        Log.debug("replace", replace)
         #expect(replace.tags[.title] == "value3")
         #expect(replace.customTags["CUSTOMTAG1"] == "CUSTOMVALUE3")
 
-        Log.debug("combine", combine)
         #expect(combine.tags[.title] == "value1, value2, value3")
         #expect(combine.customTags["CUSTOMTAG1"] == "CUSTOMVALUE1, CUSTOMVALUE2, CUSTOMVALUE3")
     }
