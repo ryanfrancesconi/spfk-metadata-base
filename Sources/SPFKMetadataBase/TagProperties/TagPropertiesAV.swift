@@ -20,8 +20,10 @@ public struct TagPropertiesAV: Hashable, Codable, Sendable {
         let metadata = try await Self.loadMetadata(from: asset)
 
         for item in metadata {
+            // Every TXXX shares one frame code, so they would all land on the same custom key.
             guard let id3key = item.key as? String,
-                let id3Frame = ID3FrameKey(rawValue: id3key),
+                let id3Frame = ID3FrameKey(value: id3key),
+                id3Frame != .userDefined,
                 let value = try? await Self.loadValue(for: item)
             else { continue }
 
