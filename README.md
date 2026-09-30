@@ -19,13 +19,13 @@ For file reading/writing, marker parsing, and BEXT I/O, use [SPFKMetadata](https
 
 | Type | Description |
 |------|-------------|
-| **TagKey** | 100+ case enum — canonical key type mapping to ID3 frames and RIFF INFO tags |
+| **TagKey** | Case enum — canonical key type mapping to ID3 frames and RIFF INFO tags |
 | **TagProperties** | Struct wrapping `TagData` with `tagLibPropertyMap` for bridge interop |
 | **TagPropertiesAV** | AVFoundation-based tag reader (read-only) |
 | **TagData** | Container with `TagKeyDictionary` and custom tags, with merge support |
 | **TagGroup** | Enum grouping TagKeys into logical sets (common, music, loudness, etc.) |
-| **ID3FrameKey** | 80+ case enum for ID3v2.4 frame identifiers |
-| **InfoFrameKey** | 90+ case enum for RIFF INFO chunk tags |
+| **ID3FrameKey** | Case enum for ID3v2.4 frame identifiers |
+| **InfoFrameKey** | Case enum for RIFF INFO chunk tags |
 | **TagFrameKey** | Protocol shared by both frame key types |
 | **TagValueChange** | One tag value that differs between two `TagData`. An absent key is carried as `""` rather than `nil`, so an added and a cleared value are both ordinary changes with one side empty |
 | **TagValueConstraint** | How a tag value string is validated and clamped |
