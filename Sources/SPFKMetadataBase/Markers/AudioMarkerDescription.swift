@@ -46,17 +46,29 @@ public struct AudioMarkerDescription: Hashable, Sendable, Equatable, Comparable,
             && hexColor == other.hexColor
     }
 
+    /// By start time, then name (an unnamed marker first), then `markerID` (none first).
     public static func < (lhs: Self, rhs: Self) -> Bool {
-        guard lhs.startTime != rhs.startTime else {
-            if let name1 = lhs.name, let name2 = rhs.name {
-                return name1.standardCompare(with: name2)
-            }
-
-            // If either name is nil, they can't be ordered by name
-            return false
+        guard lhs.startTime == rhs.startTime else {
+            return lhs.startTime < rhs.startTime
         }
 
-        return lhs.startTime < rhs.startTime
+        switch (lhs.name, rhs.name) {
+        case let (name1?, name2?):
+            if name1.standardCompare(with: name2) { return true }
+            if name2.standardCompare(with: name1) { return false }
+        case (nil, _?):
+            return true
+        case (_?, nil):
+            return false
+        case (nil, nil):
+            break
+        }
+
+        switch (lhs.markerID, rhs.markerID) {
+        case let (id1?, id2?): return id1 < id2
+        case (nil, _?): return true
+        default: return false
+        }
     }
 
     /// Display name of the marker.

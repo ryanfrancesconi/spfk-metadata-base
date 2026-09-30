@@ -237,3 +237,34 @@ struct AudioMarkerDescriptionStringTests {
         #expect(!m.description.contains("..."))
     }
 }
+
+// MARK: - Ordering at the same start time
+
+struct AudioMarkerDescriptionSameTimeOrderTests {
+    private let markers = [
+        AudioMarkerDescription(name: nil, startTime: 1),
+        AudioMarkerDescription(name: "x", startTime: 1),
+        AudioMarkerDescription(name: "y", startTime: 1),
+    ]
+
+    private var permutations: [[AudioMarkerDescription]] {
+        let (a, b, c) = (markers[0], markers[1], markers[2])
+        return [[a, b, c], [a, c, b], [b, a, c], [b, c, a], [c, a, b], [c, b, a]]
+    }
+
+    @Test func everyInputOrderSortsTheSame() {
+        let orders = Set(permutations.map { $0.sorted().map { $0.name ?? "<nil>" } })
+
+        #expect(orders == [["<nil>", "x", "y"]])
+    }
+
+    @Test func everyInputOrderNumbersAndNamesTheSame() {
+        let results = Set(permutations.map { input in
+            var collection = AudioMarkerDescriptionCollection()
+            collection.update(markerDescriptions: input)
+            return collection.markerDescriptions.map { "\($0.name ?? "<nil>")#\($0.markerID ?? -1)" }
+        })
+
+        #expect(results.count == 1)
+    }
+}
