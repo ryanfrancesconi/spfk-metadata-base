@@ -380,6 +380,80 @@ struct BEXTDictionaryTests {
     }
 }
 
+// MARK: - Clearing BEXT fields
+
+struct BEXTClearingTests {
+    private func populated() -> BEXTDescription {
+        var bext = BEXTDescription()
+        bext.version = 2
+        bext.timeReference = 88200
+        bext.loudnessDescription.loudnessIntegrated = -23
+        bext.loudnessDescription.loudnessRange = 9.5
+        bext.loudnessDescription.maxTruePeakLevel = -1
+        bext.loudnessDescription.maxMomentaryLoudness = -10
+        bext.loudnessDescription.maxShortTermLoudness = -12
+        return bext
+    }
+
+    @Test(arguments: [nil, ""] as [String?])
+    func emptyingANumericFieldClearsIt(value: String?) {
+        let numericKeys = BEXTDescription.Key.allCases.filter(\.isNumeric)
+        #expect(numericKeys.isNotEmpty)
+
+        for key in numericKeys {
+            var bext = populated()
+            #expect(bext[key] != nil, "\(key)")
+
+            bext[key] = value
+            #expect(bext[key] == nil, "\(key)")
+        }
+    }
+
+    @Test func emptyingTheTimeReferenceClearsBothWords() {
+        var bext = populated()
+        bext[.timeReferenceSamples] = ""
+
+        #expect(bext.timeReferenceLow == nil)
+        #expect(bext.timeReferenceHigh == nil)
+    }
+
+    @Test func textThatIsNotANumberKeepsTheOldValue() {
+        var bext = populated()
+        bext[.loudnessIntegrated] = "abc"
+
+        #expect(bext.loudnessDescription.loudnessIntegrated == -23)
+        #expect(!BEXTDescription.Key.loudnessIntegrated.accepts("abc"))
+        #expect(BEXTDescription.Key.loudnessIntegrated.accepts(""))
+        #expect(BEXTDescription.Key.loudnessIntegrated.accepts(nil))
+        #expect(!BEXTDescription.Key.timeReferenceSamples.accepts("-1"))
+        #expect(BEXTDescription.Key.originator.accepts("abc"))
+    }
+
+    @Test func clearingThroughMergeIsAChange() {
+        var description = MetaAudioFileDescription(url: URL(fileURLWithPath: "/tmp/test.wav"), bextDescription: populated())
+
+        let changed = description.merge(bext: [.loudnessIntegrated: ""])
+
+        #expect(changed)
+        #expect(description.bextDescription?.loudnessDescription.loudnessIntegrated == nil)
+    }
+
+    @Test func formattedTimeReferenceIsReadOnly() {
+        #expect(!BEXTDescription.Key.timeReferenceString.isEditable)
+    }
+
+    /// A field whose combined form reads as nil must survive a write to another key.
+    @Test func aSingleKeyWriteTouchesOnlyItsKey() {
+        var bext = BEXTDescription()
+        bext.timeReferenceLow = 5
+        bext.timeReferenceHigh = nil
+
+        bext[.originator] = "x"
+
+        #expect(bext.timeReferenceLow == 5)
+    }
+}
+
 // MARK: - BEXTDescription.defaultVersionString
 
 struct BEXTDefaultVersionTests {

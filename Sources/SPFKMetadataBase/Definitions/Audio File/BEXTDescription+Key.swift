@@ -29,9 +29,31 @@ extension BEXTDescription {
         case version
         case codingHistory
 
-        /// Whether this field can be edited by the user. Version and coding history are read-only.
+        /// Whether this field can be edited by the user. Version and the formatted time reference are read-only.
         public var isEditable: Bool {
-            self != .version
+            self != .version && self != .timeReferenceString
+        }
+
+        /// Whether this field holds a number, which an empty value clears.
+        public var isNumeric: Bool {
+            switch self {
+            case .loudnessIntegrated, .loudnessRange, .maxTruePeakLevel, .maxMomentaryLoudness,
+                 .maxShortTermLoudness, .timeReferenceSamples:
+                true
+            default:
+                false
+            }
+        }
+
+        /// Whether setting `value` takes effect: always for text, and for a number when it is empty or parses.
+        public func accepts(_ value: String?) -> Bool {
+            guard isNumeric, let value, value.isNotEmpty else { return true }
+
+            switch self {
+            case .maxTruePeakLevel: return value.float != nil
+            case .timeReferenceSamples: return value.uInt64 != nil
+            default: return value.double != nil
+            }
         }
 
         /// Whether this field typically contains multi-line text and should use a multi-line editor.
@@ -116,7 +138,7 @@ extension BEXTDescription {
         }
 
         set {
-            dictionary[key] = newValue
+            apply(newValue, for: key)
         }
     }
 
@@ -143,64 +165,50 @@ extension BEXTDescription {
         }
 
         set {
-            if let value = newValue[.version], let unwrapped = value?.int16 {
+            for (key, value) in newValue {
+                apply(value, for: key)
+            }
+        }
+    }
+
+    /// Numbers clear on `nil` or empty text and ignore text that doesn't parse; text fields take the value as is.
+    private mutating func apply(_ value: String?, for key: Key) {
+        guard key.accepts(value) else { return }
+
+        switch key {
+        case .version:
+            if let unwrapped = value?.int16 {
                 version = unwrapped
             }
-
-            if let value = newValue[.originator] {
-                originator = value
-            }
-
-            if let value = newValue[.originatorReference] {
-                originatorReference = value
-            }
-
-            if let value = newValue[.originationDate] {
-                originationDate = value
-            }
-
-            if let value = newValue[.originationTime] {
-                originationTime = value
-            }
-
-            if let value = newValue[.umid] {
-                umid = value
-            }
-
-            if let value = newValue[.description] {
-                sequenceDescription = value
-            }
-
-            if let value = newValue[.loudnessIntegrated], let unwrapped = value?.double {
-                loudnessDescription.loudnessIntegrated = unwrapped
-            }
-
-            if let value = newValue[.loudnessRange], let unwrapped = value?.double {
-                loudnessDescription.loudnessRange = unwrapped
-            }
-
-            if let value = newValue[.maxTruePeakLevel], let unwrapped = value?.float {
-                loudnessDescription.maxTruePeakLevel = unwrapped
-            }
-
-            if let value = newValue[.maxMomentaryLoudness], let unwrapped = value?.double {
-                loudnessDescription.maxMomentaryLoudness = unwrapped
-            }
-
-            if let value = newValue[.maxShortTermLoudness], let unwrapped = value?.double {
-                loudnessDescription.maxShortTermLoudness = unwrapped
-            }
-
-            if let value = newValue[.timeReferenceSamples], let unwrapped = value?.uInt64 {
-                timeReference = unwrapped
-            }
-
-            if let value = newValue[.timeReferenceString], let value {
+        case .originator:
+            originator = value
+        case .originatorReference:
+            originatorReference = value
+        case .originationDate:
+            originationDate = value
+        case .originationTime:
+            originationTime = value
+        case .umid:
+            umid = value
+        case .description:
+            sequenceDescription = value
+        case .codingHistory:
+            codingHistory = value
+        case .loudnessIntegrated:
+            loudnessDescription.loudnessIntegrated = value?.double
+        case .loudnessRange:
+            loudnessDescription.loudnessRange = value?.double
+        case .maxTruePeakLevel:
+            loudnessDescription.maxTruePeakLevel = value?.float
+        case .maxMomentaryLoudness:
+            loudnessDescription.maxMomentaryLoudness = value?.double
+        case .maxShortTermLoudness:
+            loudnessDescription.maxShortTermLoudness = value?.double
+        case .timeReferenceSamples:
+            timeReference = value?.uInt64
+        case .timeReferenceString:
+            if let value {
                 Log.debug("Ignored: timeReference (\(value)) isn't settable via the dictionary")
-            }
-
-            if let value = newValue[.codingHistory] {
-                codingHistory = value
             }
         }
     }
