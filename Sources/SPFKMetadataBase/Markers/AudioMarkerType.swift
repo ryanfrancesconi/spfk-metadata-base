@@ -13,7 +13,7 @@ public enum AudioMarkerType: String, Codable, Sendable, CaseIterable {
     /// Used for chapters, extraction regions, and any other start/end annotation.
     case region
 
-    /// A detection preview region — runtime only, never written to disk.
+    /// A detection preview region — runtime only; callers filter it out before a write.
     /// Rendered with reduced opacity to distinguish from committed `.region` markers.
     /// Promoted to `.region` when the user confirms via "Write Markers".
     case pendingRegion

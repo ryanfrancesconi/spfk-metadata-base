@@ -44,6 +44,7 @@ extension MetaAudioFileDescription {
     /// **A carrier stating `00:00:00:00` wins over a later one stating something else.** Presence
     /// is the test, not non-zero-ness: a file whose timecode track says it starts at zero is making
     /// a claim, and falling through to XMP there would offset a file that declared it shouldn't be.
+    /// The exception is `bext`, where zero means unset.
     ///
     /// - Parameters:
     ///   - xmpStartTimecode: `XMPDynamicMedia.startTimecodeResolved`, or `nil` when the file has no

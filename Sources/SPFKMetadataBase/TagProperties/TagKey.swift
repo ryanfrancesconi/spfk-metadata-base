@@ -5,7 +5,7 @@
 import Foundation
 import SPFKBase
 
-/// Canonical tag key enum with 100+ cases covering ID3v2, RIFF INFO, and custom TXXX frames.
+/// Canonical tag key enum covering ID3v2, RIFF INFO, and custom TXXX frames.
 ///
 /// Serves as the unified key type for reading and writing audio metadata across all supported formats.
 /// Each case maps to both an ``ID3FrameKey`` (e.g., `TIT2`) and, where applicable, an ``InfoFrameKey``

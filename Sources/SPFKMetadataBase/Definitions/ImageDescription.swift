@@ -80,7 +80,7 @@ extension ImageDescription: Codable {
 
 extension ImageDescription {
     /// Creates a PNG thumbnail of the given image, scaled to the specified size.
-    /// Returns `nil` if the source image is too small (< 64px in either dimension).
+    /// Returns `nil` if the source image is too small (64px or smaller in either dimension).
     public static func createThumbnail(cgImage: CGImage, size: CGSize = .init(equal: 64)) async -> Data? {
         let task = Task<Data?, Error>(priority: .userInitiated) {
             guard cgImage.width > 64, cgImage.height > 64,

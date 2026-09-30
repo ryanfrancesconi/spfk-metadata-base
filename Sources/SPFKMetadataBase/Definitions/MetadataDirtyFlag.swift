@@ -13,7 +13,7 @@ public enum MetadataDirtyFlag: String, CaseIterable, Hashable, Sendable, Codable
     case metadata
     /// Embedded artwork
     case image
-    /// XMP sidecar — separate XMP write call
+    /// Embedded XMP — written by a separate XMP call
     case xmp
     /// Markers — format-specific write (WaveFileC for WAV, chapter utils for others)
     case markers

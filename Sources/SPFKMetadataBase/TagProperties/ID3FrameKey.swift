@@ -4,7 +4,7 @@ import Foundation
 
 // swiftformat:disable consecutiveSpaces
 
-/// ID3v2.4 frame identifiers (80+ cases) mapping camelCase names to four-character frame IDs
+/// ID3v2.4 frame identifiers mapping camelCase names to four-character frame IDs
 /// (e.g., `.title` → `"TIT2"`, `.artist` → `"TPE1"`).
 ///
 /// Conforms to ``TagFrameKey`` for shared lookup and display name logic.

@@ -4,7 +4,7 @@ import Foundation
 
 // swiftformat:disable consecutiveSpaces
 
-/// RIFF INFO chunk tag identifiers (90+ cases) mapping camelCase names to four-character INFO keys
+/// RIFF INFO chunk tag identifiers mapping camelCase names to four-character INFO keys
 /// (e.g., `.title` → `"INAM"`, `.artist` → `"IART"`).
 ///
 /// Conforms to ``TagFrameKey`` for shared lookup and display name logic.
