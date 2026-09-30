@@ -125,6 +125,52 @@ struct TagPropertiesContainerModelTests {
         #expect(data.customTags[InfoFrameKey.cinematographer.taglibKey] == "Roger Deakins")
     }
 
+    // MARK: - Read-side text normalization
+
+    enum TextSetter: CaseIterable, Sendable {
+        case taglibKey, id3Frame, infoFrame
+
+        func set(_ value: String, on data: inout TagData) {
+            switch self {
+            case .taglibKey: data.set(taglibKey: "COMMENT", value: value)
+            case .id3Frame: data.set(id3Frame: .comment, value: value)
+            case .infoFrame: data.set(infoFrame: .comment, value: value)
+            }
+        }
+    }
+
+    static let verbatimValues: [String] = [
+        "Line one\nLine two",
+        "a\tb",
+        "a\r\nb",
+        "\u{1F468}\u{200D}\u{1F469}\u{200D}\u{1F467}",
+        "می\u{200C}خواهم",
+        "\u{200F}abc",
+        "soft\u{00AD}hyphen",
+        "  padded  ",
+    ]
+
+    @Test(arguments: TextSetter.allCases, verbatimValues)
+    func setterKeepsTextVerbatim(setter: TextSetter, value: String) {
+        var data = TagData()
+        setter.set(value, on: &data)
+        #expect(data.tags[.comment] == value)
+    }
+
+    @Test(arguments: TextSetter.allCases)
+    func setterKeepsJoinedEmojiAsOneCharacter(setter: TextSetter) {
+        var data = TagData()
+        setter.set("\u{1F468}\u{200D}\u{1F469}\u{200D}\u{1F467}", on: &data)
+        #expect(data.tags[.comment]?.count == 1)
+    }
+
+    @Test(arguments: TextSetter.allCases)
+    func setterStripsOtherC0Controls(setter: TextSetter) {
+        var data = TagData()
+        setter.set("a\u{0}b\u{1}c\u{1F}d", on: &data)
+        #expect(data.tags[.comment] == "abcd")
+    }
+
     // MARK: - description
 
     @Test func descriptionOutput() {

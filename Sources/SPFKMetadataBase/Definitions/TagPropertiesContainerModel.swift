@@ -1,7 +1,6 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/spfk-metadata-base
 
 import Foundation
-import SwiftExtensions
 
 /// Dictionary mapping ``TagKey`` enum cases to their string values.
 public typealias TagKeyDictionary = [TagKey: String]
@@ -131,9 +130,9 @@ extension TagPropertiesContainerModel {
 extension TagPropertiesContainerModel {
     /// Sets a tag by its TagLib property key (e.g., "TITLE").
     /// Routes to ``tags`` if a matching ``TagKey`` exists, otherwise to ``customTags``.
-    /// Control characters are stripped and the value is trimmed.
+    /// C0 control characters other than tab, line feed and carriage return are removed.
     public mutating func set(taglibKey key: String, value: String) {
-        let value = value.removing(.controlCharacters).trimmed
+        let value = value.removingC0ControlsExceptLineBreaksAndTabs
 
         guard let frame = TagKey(taglibKey: key) else {
             customTags[key] = value
@@ -144,9 +143,9 @@ extension TagPropertiesContainerModel {
     }
 
     /// Sets a tag by its ``ID3FrameKey``. User-defined frames (TXXX) are routed to ``customTags``.
-    /// Control characters are stripped and the value is trimmed.
+    /// C0 control characters other than tab, line feed and carriage return are removed.
     public mutating func set(id3Frame key: ID3FrameKey, value: String) {
-        let value = value.removing(.controlCharacters).trimmed
+        let value = value.removingC0ControlsExceptLineBreaksAndTabs
 
         if key == .userDefined {
             customTags[key.rawValue] = value
@@ -162,9 +161,9 @@ extension TagPropertiesContainerModel {
     }
 
     /// Sets a tag by its ``InfoFrameKey``. Routes to ``tags`` if a matching ``TagKey`` exists.
-    /// Control characters are stripped and the value is trimmed.
+    /// C0 control characters other than tab, line feed and carriage return are removed.
     public mutating func set(infoFrame key: InfoFrameKey, value: String) {
-        let value = value.removing(.controlCharacters).trimmed
+        let value = value.removingC0ControlsExceptLineBreaksAndTabs
 
         if let frame = TagKey(infoFrame: key) {
             tags[frame] = value
@@ -172,5 +171,17 @@ extension TagPropertiesContainerModel {
         }
 
         customTags[key.taglibKey] = value
+    }
+}
+
+extension String {
+    /// Drops U+0000–U+001F except tab, line feed and carriage return. Format characters such as
+    /// zero-width joiners and bidi marks are kept.
+    var removingC0ControlsExceptLineBreaksAndTabs: String {
+        var scalars = String.UnicodeScalarView()
+        for scalar in unicodeScalars where scalar.value >= 0x20 || scalar == "\t" || scalar == "\n" || scalar == "\r" {
+            scalars.append(scalar)
+        }
+        return String(scalars)
     }
 }
