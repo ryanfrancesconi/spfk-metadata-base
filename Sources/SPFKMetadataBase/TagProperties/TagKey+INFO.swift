@@ -46,6 +46,9 @@ extension TagKey {
 
     public var infoAlternates: [InfoFrameKey] {
         switch self {
+        case .encodedBy:
+            [.encodedBy]
+
         case .trackNumber:
             [.trackNumber2, .trackNumber3]
 

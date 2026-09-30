@@ -161,11 +161,13 @@ extension TagPropertiesContainerModel {
     }
 
     /// Sets a tag by its ``InfoFrameKey``. Routes to ``tags`` if a matching ``TagKey`` exists.
+    /// An alternate frame never replaces a value already set, so the primary frame wins in either order.
     /// C0 control characters other than tab, line feed and carriage return are removed.
     public mutating func set(infoFrame key: InfoFrameKey, value: String) {
         let value = value.removingC0ControlsExceptLineBreaksAndTabs
 
         if let frame = TagKey(infoFrame: key) {
+            guard frame.infoFrame == key || tags[frame] == nil else { return }
             tags[frame] = value
             return
         }

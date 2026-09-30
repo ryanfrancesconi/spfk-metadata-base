@@ -171,6 +171,41 @@ struct TagPropertiesContainerModelTests {
         #expect(data.tags[.comment] == "abcd")
     }
 
+    // MARK: - Frame mapping
+
+    @Test func copyrightURLMapsToItsID3Frame() {
+        #expect(TagKey.copyrightURL.id3Frame == .copyrightUrl)
+    }
+
+    @Test func id3CopyrightURLFrameReadsIntoCopyrightURL() {
+        var data = TagData()
+        data.set(id3Frame: .copyrightUrl, value: "x")
+        #expect(data.tags[.copyrightURL] == "x")
+        #expect(data.customTags.isEmpty)
+    }
+
+    @Test func infoEncodedByReadsIntoEncodedBy() {
+        var data = TagData()
+        data.set(infoFrame: .encodedBy, value: "x")
+        #expect(data.tags[.encodedBy] == "x")
+        #expect(data.customTags.isEmpty)
+    }
+
+    @Test(arguments: [true, false])
+    func infoTechnicianWinsOverEncodedByInEitherOrder(technicianFirst: Bool) {
+        var data = TagData()
+
+        if technicianFirst {
+            data.set(infoFrame: .technician, value: "primary")
+            data.set(infoFrame: .encodedBy, value: "alternate")
+        } else {
+            data.set(infoFrame: .encodedBy, value: "alternate")
+            data.set(infoFrame: .technician, value: "primary")
+        }
+
+        #expect(data.tags[.encodedBy] == "primary")
+    }
+
     // MARK: - description
 
     @Test func descriptionOutput() {
