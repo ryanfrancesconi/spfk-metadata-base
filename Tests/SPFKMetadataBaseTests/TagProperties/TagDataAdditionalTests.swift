@@ -95,8 +95,7 @@ struct TagDataAdditionalTests {
 
     /// Merging is a **union** of keys, not an intersection: a key present on only one element
     /// survives. The multi-select Tags editor depends on this -- a tag on one file of five is
-    /// still shown, with divergence marking telling the user the value is only one of several --
-    /// and the doc comment on the call site claimed the opposite until 2026-08-02.
+    /// still shown, with divergence marking telling the user the value is only one of several.
     @Test func mergeUnionsKeysRatherThanIntersectingThem() {
         let data1 = TagData(tags: [.title: "Only on first"])
         let data2 = TagData(tags: [.album: "Only on second"], customTags: ["CUSTOM": "Only here"])
