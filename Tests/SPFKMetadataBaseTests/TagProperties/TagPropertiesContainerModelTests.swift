@@ -26,6 +26,13 @@ struct TagPropertiesContainerModelTests {
         #expect(!data.contains(key: .artist))
     }
 
+    @Test func containsOnlyTheUserDefinedKeyThatIsSet() {
+        var data = TagData()
+        data[.keywords] = "k"
+        #expect(data.contains(key: .keywords))
+        #expect(!data.contains(key: .loudnessIntegrated))
+    }
+
     @Test func containsKeys() {
         let data = TagData(tags: [.title: "Test", .album: "Album", .artist: "Artist"])
         #expect(data.contains(keys: [.title, .album]))

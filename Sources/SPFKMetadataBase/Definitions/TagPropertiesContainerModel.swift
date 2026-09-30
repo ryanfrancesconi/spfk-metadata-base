@@ -26,9 +26,9 @@ extension TagPropertiesContainerModel {
         }
     }
 
-    /// Returns `true` if a tag matching the given key's ID3 frame exists.
+    /// Returns `true` if the given tag is set.
     public func contains(key: TagKey) -> Bool {
-        tags.contains { $0.key.id3Frame == key.id3Frame }
+        tags[key] != nil
     }
 
     /// Returns `true` if all of the given tag keys are present.
