@@ -126,7 +126,7 @@ public struct BEXTDescription: Hashable, Sendable {
     }
 
     /// EBU R128 loudness values (integrated, range, true peak, momentary, short-term).
-    /// Only populated when ``version`` >= 2.
+    /// A file's chunk carries them from version 2; setting any raises the version written.
     public var loudnessDescription: LoudnessDescription = .init()
 
     /// Sample rate used to convert ``timeReference`` (samples) to seconds.
