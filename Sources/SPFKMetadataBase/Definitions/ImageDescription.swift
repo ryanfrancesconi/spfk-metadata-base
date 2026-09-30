@@ -53,6 +53,10 @@ extension ImageDescription: Equatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.description == rhs.description
     }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(description)
+    }
 }
 
 // MARK: - Codable
