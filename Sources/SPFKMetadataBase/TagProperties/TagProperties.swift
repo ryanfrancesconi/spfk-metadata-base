@@ -23,8 +23,8 @@ public struct TagProperties: Hashable, Codable, Sendable {
             dict[item.key.taglibKey] = item.value
         }
 
-        // Custom ID3, TXXX
-        for item in data.customTags {
+        // Custom ID3, TXXX. A standard tag wins over a custom one spelled the same.
+        for item in data.customTags where dict[item.key.uppercased()] == nil {
             dict[item.key.uppercased()] = item.value
         }
 

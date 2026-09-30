@@ -19,6 +19,19 @@ struct TagPropertiesTests {
         #expect(map[TagKey.artist.taglibKey] == "My Artist")
     }
 
+    @Test(arguments: [
+        (TagKey.encodedBy, "ENCODEDBY"),
+        (TagKey.encodedBy, "encodedby"),
+        (TagKey.copyrightURL, "COPYRIGHTURL"),
+    ])
+    func tagLibPropertyMapStandardTagWinsOverCustomOfSameName(key: TagKey, customKey: String) {
+        var props = TagProperties()
+        props.set(tag: key, value: "A")
+        props.set(customTag: customKey, value: "B")
+
+        #expect(props.tagLibPropertyMap[key.taglibKey] == "A")
+    }
+
     @Test func tagLibPropertyMapCustomTags() {
         var props = TagProperties()
         props.set(customTag: "myCustomKey", value: "Custom Value")
