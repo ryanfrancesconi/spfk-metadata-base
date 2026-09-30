@@ -207,9 +207,7 @@ extension BEXTDescription {
         case .timeReferenceSamples:
             timeReference = value?.uInt64
         case .timeReferenceString:
-            if let value {
-                Log.debug("Ignored: timeReference (\(value)) isn't settable via the dictionary")
-            }
+            break // derived from timeReferenceSamples
         }
     }
 }

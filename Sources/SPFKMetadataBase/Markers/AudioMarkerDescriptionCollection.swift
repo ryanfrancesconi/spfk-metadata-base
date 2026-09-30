@@ -6,8 +6,8 @@ import SPFKBase
 
 /// Ordered, ID-managed collection of ``AudioMarkerDescription`` values.
 ///
-/// Maintains markers sorted by time, assigns sequential IDs on insert, and deduplicates
-/// by start time. Supports insert, remove, update, and sort operations.
+/// Maintains markers sorted by time and assigns sequential IDs on insert.
+/// ``insert(markerDescriptions:)`` skips markers whose start time is already present.
 public struct AudioMarkerDescriptionCollection: Hashable, Sendable {
     /// The sorted array of markers.
     public private(set) var markerDescriptions: [AudioMarkerDescription] = []
@@ -42,7 +42,6 @@ extension AudioMarkerDescriptionCollection: Codable {
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         try update(markerDescriptions: container.decode([AudioMarkerDescription].self, forKey: .markerDescriptions))
-        sort()
     }
 
     public func encode(to encoder: any Encoder) throws {
@@ -72,8 +71,8 @@ extension AudioMarkerDescriptionCollection {
                 nextID += 1
             }
 
-            if sorted[i].name == nil {
-                sorted[i].name = "Marker \(sorted[i].markerID!)"
+            if sorted[i].name == nil, let markerID = sorted[i].markerID {
+                sorted[i].name = "Marker \(markerID)"
             }
         }
 
@@ -103,10 +102,6 @@ extension AudioMarkerDescriptionCollection {
     {
         let nextID = highestID + 1
         var markerDescription = markerDescription
-
-        guard !allIDs.contains(nextID) else {
-            throw NSError(description: "ID \(nextID) is already in the collection: \(allIDs)")
-        }
 
         markerDescription.markerID = nextID
 
