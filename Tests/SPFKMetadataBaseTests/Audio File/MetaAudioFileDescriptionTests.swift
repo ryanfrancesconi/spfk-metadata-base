@@ -241,4 +241,46 @@ struct MetaAudioFileDescriptionTests {
         #expect(a.isEqualExcludingImage(to: b))
         #expect(a.hasContentChanges(from: b))
     }
+
+    // MARK: - hasMetadataChanges
+
+    @Test func hasMetadataChangesFalseForFieldsWithTheirOwnWriter() {
+        let base = makeDescription()
+
+        var xmp = base
+        xmp.xmpMetadata = "<x:xmpmeta xmlns:x=\"adobe:ns:meta/\"/>"
+        #expect(!xmp.hasMetadataChanges(from: base))
+
+        var markers = base
+        markers.markerCollection = AudioMarkerDescriptionCollection(markerDescriptions: [
+            AudioMarkerDescription(name: "Intro", startTime: 0),
+        ])
+        #expect(!markers.hasMetadataChanges(from: base))
+
+        var image = base
+        image.imageDescription.description = "Front Cover"
+        #expect(!image.hasMetadataChanges(from: base))
+
+        #if os(macOS)
+        var finderTags = base
+        finderTags.urlProperties.finderTags = .init(tags: [.init(tagColor: .red)])
+        #expect(!finderTags.hasMetadataChanges(from: base))
+        #endif
+    }
+
+    @Test func hasMetadataChangesTrueForTagsBEXTAndIXML() {
+        let base = makeDescription()
+
+        var tags = base
+        tags.set(tag: .title, value: "Different")
+        #expect(tags.hasMetadataChanges(from: base))
+
+        var bext = base
+        bext.merge(bext: [.description: "BWF description"])
+        #expect(bext.hasMetadataChanges(from: base))
+
+        var ixml = base
+        ixml.iXMLMetadata = "<BWFXML/>"
+        #expect(ixml.hasMetadataChanges(from: base))
+    }
 }

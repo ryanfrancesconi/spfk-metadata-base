@@ -210,6 +210,13 @@ extension MetaAudioFileDescription {
         self != other || markerCollection.hasContentChanges(from: other.markerCollection)
     }
 
+    /// Whether the fields a `.metadata` save writes differ: tags, BEXT and iXML.
+    public func hasMetadataChanges(from other: MetaAudioFileDescription) -> Bool {
+        tagProperties != other.tagProperties
+            || bextDescription != other.bextDescription
+            || iXMLMetadata != other.iXMLMetadata
+    }
+
     /// Compares the metadata properties that `MetadataDirtyFlag.metadata` writes -- tags, BEXT and
     /// iXML -- so callers deriving that flag get an answer scoped to it.
     ///
