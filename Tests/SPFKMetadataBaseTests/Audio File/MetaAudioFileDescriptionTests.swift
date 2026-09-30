@@ -186,66 +186,11 @@ struct MetaAudioFileDescriptionTests {
         #expect(decoded.quickTimeUserData == nil)
     }
 
-    // MARK: - isEqualExcludingImage
-
-    @Test func isEqualExcludingImageTrueForIdentical() {
-        let a = makeDescription()
-        let b = makeDescription()
-
-        #expect(a.isEqualExcludingImage(to: b))
-    }
-
-    @Test func isEqualExcludingImageTrueWhenOnlyImageDiffers() {
-        var a = makeDescription()
-        var b = makeDescription()
-
-        // Give them different thumbnail data
-        a.imageDescription.description = "Front Cover"
-        b.imageDescription.description = "Back Cover"
-
-        // Full equality should fail
-        #expect(a != b)
-
-        // But excluding image they should still match
-        #expect(a.isEqualExcludingImage(to: b))
-    }
-
-    @Test func isEqualExcludingImageFalseWhenTagsDiffer() {
-        var a = makeDescription()
-        let b = makeDescription()
-
-        a.set(tag: .title, value: "Different")
-
-        #expect(!a.isEqualExcludingImage(to: b))
-    }
-
-    @Test func isEqualExcludingImageFalseWhenBextDiffers() {
-        var a = makeDescription()
-        let b = makeDescription()
-
-        a.merge(bext: [.description: "BWF description"])
-
-        #expect(!a.isEqualExcludingImage(to: b))
-    }
-
-    /// Markers have their own dirty flag and their own writer, so a marker difference is not a
-    /// `.metadata` difference -- and the mutation that made it is what declares `.markers`.
-    @Test func isEqualExcludingImageTrueWhenOnlyMarkersDiffer() {
-        var a = makeDescription()
-        let b = makeDescription()
-
-        a.markerCollection = AudioMarkerDescriptionCollection(markerDescriptions: [
-            AudioMarkerDescription(name: "Intro", startTime: 0),
-        ])
-
-        #expect(a.isEqualExcludingImage(to: b))
-        #expect(a.hasContentChanges(from: b))
-    }
-
     // MARK: - hasMetadataChanges
 
     @Test func hasMetadataChangesFalseForFieldsWithTheirOwnWriter() {
         let base = makeDescription()
+        #expect(!makeDescription().hasMetadataChanges(from: base))
 
         var xmp = base
         xmp.xmpMetadata = "<x:xmpmeta xmlns:x=\"adobe:ns:meta/\"/>"
@@ -256,6 +201,7 @@ struct MetaAudioFileDescriptionTests {
             AudioMarkerDescription(name: "Intro", startTime: 0),
         ])
         #expect(!markers.hasMetadataChanges(from: base))
+        #expect(markers.hasContentChanges(from: base))
 
         var image = base
         image.imageDescription.description = "Front Cover"
