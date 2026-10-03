@@ -24,6 +24,16 @@ struct TagKeyTests {
         #expect(TagKey.replayGainAlbumPeak.taglibKey == "REPLAYGAIN_ALBUM_PEAK")
         #expect(TagKey.replayGainAlbumRange.taglibKey == "REPLAYGAIN_ALBUM_RANGE")
         #expect(TagKey.replayGainReferenceLoudness.taglibKey == "REPLAYGAIN_REFERENCE_LOUDNESS")
+        #expect(TagKey.r128TrackGain.taglibKey == "R128_TRACK_GAIN")
+        #expect(TagKey.r128AlbumGain.taglibKey == "R128_ALBUM_GAIN")
+    }
+
+    /// RFC 7845: an integer from -32768 to 32767. A value that is not an integer is left alone.
+    @Test func r128GainIsClampedToInt16() {
+        #expect(TagKey.r128TrackGain.valueConstraint?.apply(to: "40000") == "32767")
+        #expect(TagKey.r128AlbumGain.valueConstraint?.apply(to: "-40000") == "-32768")
+        #expect(TagKey.r128TrackGain.valueConstraint?.apply(to: "-2340") == nil)
+        #expect(TagKey.r128TrackGain.valueConstraint?.apply(to: "-2.3 dB") == nil)
     }
 
     // MARK: - id3Frame mapping
@@ -95,6 +105,8 @@ struct TagKeyTests {
         #expect(TagKey(taglibKey: "ALBUM") == .album)
         #expect(TagKey(taglibKey: "ARTIST") == .artist)
         #expect(TagKey(taglibKey: "REPLAYGAIN_TRACK_GAIN") == .replayGainTrackGain)
+        #expect(TagKey(taglibKey: "R128_TRACK_GAIN") == .r128TrackGain)
+        #expect(TagKey(taglibKey: "R128_ALBUM_GAIN") == .r128AlbumGain)
     }
 
     @Test func initFromTaglibKeyNil() {

@@ -60,7 +60,9 @@ struct TagGroupTests {
         let keys = TagGroup.replayGain.keys
         #expect(keys.contains(.replayGainTrackGain))
         #expect(keys.contains(.replayGainAlbumGain))
-        #expect(keys.count == 7)
+        #expect(keys.contains(.r128TrackGain))
+        #expect(keys.contains(.r128AlbumGain))
+        #expect(keys.count == 9)
     }
 
     @Test func utilityTagsContents() {

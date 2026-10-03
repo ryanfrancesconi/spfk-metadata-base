@@ -40,6 +40,8 @@ extension TagKey {
         switch self {
         case .rating:   .intClamped(TagKey.ratingRange)
         case .bpm:      .bpm
+        case .r128TrackGain, .r128AlbumGain:
+            .intClamped(Int(Int16.min) ... Int(Int16.max))
         default:        nil
         }
     }

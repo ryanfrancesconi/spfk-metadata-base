@@ -117,6 +117,11 @@ public enum TagKey: String, CaseIterable, Codable, Comparable, Sendable {
     case replayGainAlbumRange
     case replayGainReferenceLoudness
 
+    // Opus gain, RFC 7845. Q7.8 integers relative to the OpusHead output gain, referenced to -23 LUFS.
+
+    case r128TrackGain
+    case r128AlbumGain
+
     // UCS - Universal Category System
 
     case ucsCategory
@@ -159,6 +164,8 @@ extension TagKey {
         case .ucsCategory:          "UCS Category"
         case .ucsSubcategory:       "UCS Subcategory"
         case .ucsCatID:             "UCS CatID"
+        case .r128TrackGain:        "R128 Track Gain"
+        case .r128AlbumGain:        "R128 Album Gain"
 
         //
         default:
@@ -183,6 +190,8 @@ extension TagKey {
         case .replayGainAlbumPeak:          "REPLAYGAIN_ALBUM_PEAK"
         case .replayGainAlbumRange:         "REPLAYGAIN_ALBUM_RANGE"
         case .replayGainReferenceLoudness:  "REPLAYGAIN_REFERENCE_LOUDNESS"
+        case .r128TrackGain:                "R128_TRACK_GAIN"
+        case .r128AlbumGain:                "R128_ALBUM_GAIN"
         default:
             rawValue.uppercased()
         }

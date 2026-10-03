@@ -23,7 +23,7 @@ extension TagKey {
             .loudness
 
         case .replayGainAlbumGain, .replayGainAlbumPeak, .replayGainAlbumRange, .replayGainReferenceLoudness,
-             .replayGainTrackGain, .replayGainTrackPeak, .replayGainTrackRange:
+             .replayGainTrackGain, .replayGainTrackPeak, .replayGainTrackRange, .r128TrackGain, .r128AlbumGain:
             .replayGain
 
         case .artistWebpage, .audioSourceWebpage, .fileWebpage, .isrc, .paymentWebpage,
