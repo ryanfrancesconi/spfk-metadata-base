@@ -11,9 +11,6 @@ import SPFKVideo
 /// Aggregates tag properties, audio format info, BEXT data, iXML, markers, and embedded artwork
 /// into a single `Codable`, `Sendable` type. Use `init(parsing:)` to read all metadata from a URL,
 /// and `save(dirtyFlags:)` to write changes back (both in `SPFKMetadata`).
-///
-/// WAV files are handled through the `WaveFileC` bridge for BEXT, INFO, and marker support.
-/// All other formats use TagLib and AVFoundation.
 public struct MetaAudioFileDescription: Hashable, Sendable {
     /// The file URL this description was parsed from or will be saved to.
     public var url: URL

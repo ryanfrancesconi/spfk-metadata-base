@@ -7,12 +7,12 @@ import SPFKUtils
 /// Format-agnostic tag container backed by ``TagData``.
 ///
 /// Stores ID3v2, RIFF INFO, Vorbis Comment, and custom tag fields in a unified
-/// ``TagData`` container. File I/O via TagLib is provided in `TagProperties+IO`.
+/// ``TagData`` container. File I/O is in `SPFKMetadata`.
 public struct TagProperties: Hashable, Codable, Sendable {
     /// The underlying tag storage. Use ``TagPropertiesContainerModel`` accessors for mutation.
     public var data = TagData()
 
-    /// Audio format properties (sample rate, channels, etc.) read alongside the tags by TagLib.
+    /// Audio format properties (sample rate, channels, etc.) read alongside the tags.
     public var audioProperties: AudioFormatProperties?
 
     public var tagLibPropertyMap: [String: String] {

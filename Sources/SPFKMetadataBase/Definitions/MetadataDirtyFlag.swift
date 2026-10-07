@@ -9,13 +9,13 @@
 /// case's position in `allCases`, so a new case goes on the end and an existing one never moves.
 /// The raw values are persisted too; renaming a case is a data migration.
 public enum MetadataDirtyFlag: String, CaseIterable, Hashable, Sendable, Codable {
-    /// Tags, BEXT, iXML — one MetaAudioFileDescription.save() call
+    /// Tags, BEXT and iXML
     case metadata
     /// Embedded artwork
     case image
     /// Embedded XMP — written by a separate XMP call
     case xmp
-    /// Markers — format-specific write (WaveFileC for WAV, chapter utils for others)
+    /// Markers, which some formats store as chapters
     case markers
 
     /// Finder color/label changed. Stored in extended attributes rather than in the file, so it
