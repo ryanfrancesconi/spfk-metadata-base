@@ -6,7 +6,7 @@
 
 Pure Swift audio metadata data types extracted from [SPFKMetadata](https://github.com/ryanfrancesconi/spfk-metadata). No C++, TagLib, or libsndfile dependency — suitable for lightweight consumers that need metadata type definitions without file I/O.
 
-For file reading/writing, marker parsing, and BEXT I/O, use [SPFKMetadata](https://github.com/ryanfrancesconi/spfk-metadata) which depends on this package and adds I/O capabilities.
+For reading and writing files, use [SPFKMetadata](https://github.com/ryanfrancesconi/spfk-metadata), which depends on this package and re-exports it.
 
 ## Requirements
 
@@ -39,6 +39,10 @@ For file reading/writing, marker parsing, and BEXT I/O, use [SPFKMetadata](https
 | **BEXTDescription** | Broadcast Wave Extension (BWF) chunk wrapper (v0/v1/v2) |
 | **BEXTDescription.Key** | Enum of BEXT field keys with dictionary-style subscript access |
 | **ImageDescription** | Embedded artwork container with CGImage and Codable conformance |
+| **EmbeddedArtwork** | A file's picture with its stored type, description and picture type |
+| **WaveFileProperties** | A WAV's format and BEXT chunk, without its tags, markers or artwork |
+| **MetadataError** | A metadata read or write that failed, naming the operation and the component |
+| **UnstorableMetadataError** | A save asked for something the file's container has no writer for |
 | **TagPropertiesContainerModel** | Protocol for types that contain tag properties |
 | **MediaFilePlayability** | Whether a file can be played, and by which of the two paths |
 | **MetadataDirtyFlag** | Which parts of a description have unsaved edits |
@@ -56,6 +60,20 @@ being a native container — so both are measured from the file rather than infe
 A UI showing a "cannot play" state reads `isPlayable`; a caller choosing between `FilePlayer` and
 `StreamPlayer` reads `isAVPlayable`.
 
+### iXML (BWFXML)
+
+The [iXML](http://www.ixml.info) model. `IXMLMetadata.xml` serializes the modeled fields and the raw USER, ASWG and STEINBERG containers; other elements in the source document are not carried through.
+
+| Type | Description |
+|------|-------------|
+| **IXMLMetadata** | The document: production, speed, track list, loudness, BEXT mirror, history, user, ASWG and location. `init(xml:)` parses, `.xml` serializes |
+| **IXMLTagDescriptor** | One field for a generic editor: display name, section, XML tag, read-only status and edit style; the registry of every field |
+| **IXMLSection** | The sections a descriptor belongs to |
+| **IXMLElement** | Element names, with an `AEXMLElement` subscript for child access |
+| **IXMLUserFields** | The Soundminer USER container, keeping fields it does not model |
+| **UCSUserFields** | UCS category, subcategory and CatID from the USER container |
+| **IXMLASWGFields** | The ASWG container |
+
 ### Markers
 
 | Type | Description |
@@ -67,7 +85,7 @@ A UI showing a "cannot play" state reads `isPlayable`; a caller choosing between
 ## Installation
 
 ```swift
-.package(url: "https://github.com/ryanfrancesconi/spfk-metadata-base", from: "0.0.1")
+.package(url: "https://github.com/ryanfrancesconi/spfk-metadata-base", from: "1.18.0")
 ```
 
 ```swift
@@ -79,6 +97,7 @@ import SPFKMetadataBase
 | Package | Description |
 |---------|-------------|
 | [spfk-audio-base](https://github.com/ryanfrancesconi/spfk-audio-base) | Shared audio type definitions |
+| [AEXML](https://github.com/tadija/AEXML) | XML parsing and writing for the iXML model |
 | [spfk-image](https://github.com/ryanfrancesconi/spfk-image) | Artwork thumbnail decoding, resizing and PNG encoding |
 | [spfk-utils](https://github.com/ryanfrancesconi/spfk-utils) | Foundation utilities and extensions |
 | [spfk-video](https://github.com/ryanfrancesconi/spfk-video) | `VideoTrackProperties` on a media description |
