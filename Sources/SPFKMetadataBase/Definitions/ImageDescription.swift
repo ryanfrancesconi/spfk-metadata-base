@@ -10,8 +10,28 @@ import SPFKUtils
 /// The full-resolution `CGImage` and thumbnail image are transient — excluded from `Codable`.
 /// Only the text ``description`` is serialized. Image data is persisted via `ImageDataStore`.
 public struct ImageDescription: Sendable, Hashable {
-    /// The full-resolution embedded artwork. Not encoded.
-    public var cgImage: CGImage?
+    /// The full-resolution embedded artwork. Not encoded. Setting a different image drops
+    /// ``storedPicture``.
+    public var cgImage: CGImage? {
+        didSet {
+            if cgImage !== oldValue { storedPicture = nil }
+        }
+    }
+
+    /// The artwork as the file stores it, held while ``cgImage`` is the image it decodes to, so a
+    /// save that leaves the picture alone writes these bytes back rather than re-encoding them.
+    public private(set) var storedPicture: StoredPicture?
+
+    /// Encoded artwork and its MIME type, as read from a file.
+    public struct StoredPicture: Sendable, Hashable {
+        public let data: Data
+        public let mimeType: String
+
+        public init(data: Data, mimeType: String) {
+            self.data = data
+            self.mimeType = mimeType
+        }
+    }
 
     /// A downscaled thumbnail of the artwork, created from ``thumbnailData`` or set via ``setThumbnailImage(_:)``.
     public private(set) var thumbnailImage: CGImage?
@@ -39,6 +59,12 @@ public struct ImageDescription: Sendable, Hashable {
         if let thumbnailData {
             thumbnailImage = try? CGImage.create(from: thumbnailData)
         }
+    }
+
+    /// Sets ``cgImage`` to `image`, decoded from `picture`.
+    public mutating func setImage(_ image: CGImage, storedAs picture: StoredPicture) {
+        cgImage = image
+        storedPicture = picture
     }
 
     /// Sets the thumbnail image directly, for use when hydrating from the image cache.
