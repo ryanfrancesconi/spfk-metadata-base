@@ -38,6 +38,10 @@ public struct MetaAudioFileDescription: Hashable, Sendable {
     /// its tracks as readily as an `.mp4`.
     public var audioTracks: [AudioTrackDescription] = []
 
+    /// The `VideoTrackProperties.currentParserVersion` the track readers last ran at, including a
+    /// run that found nothing; nil when they never have. A store re-reads a row stamped behind it.
+    public var trackReaderVersion: Int?
+
     /// QuickTime user-data (GPS, capture device, creation date). `nil` for files with no
     /// QuickTime user-data.
     public var quickTimeUserData: QuickTimeUserData?
@@ -135,6 +139,7 @@ extension MetaAudioFileDescription: Codable {
         case audioFormat
         case videoTrack
         case audioTracks
+        case trackReaderVersion
         case quickTimeUserData
         case tagProperties
         case bextDescription
@@ -158,6 +163,7 @@ extension MetaAudioFileDescription: Codable {
         audioFormat = try container.decodeIfPresent(AudioFormatProperties.self, forKey: .audioFormat)
         videoTrack = try container.decodeIfPresent(VideoTrackProperties.self, forKey: .videoTrack)
         audioTracks = try container.decodeIfPresent([AudioTrackDescription].self, forKey: .audioTracks) ?? []
+        trackReaderVersion = try container.decodeIfPresent(Int.self, forKey: .trackReaderVersion)
         quickTimeUserData = try container.decodeIfPresent(QuickTimeUserData.self, forKey: .quickTimeUserData)
         tagProperties = try container.decodeIfPresent(TagProperties.self, forKey: .tagProperties) ?? .init()
         bextDescription = try container.decodeIfPresent(BEXTDescription.self, forKey: .bextDescription)
@@ -189,6 +195,7 @@ extension MetaAudioFileDescription: Codable {
         if audioTracks.isEmpty == false {
             try container.encode(audioTracks, forKey: .audioTracks)
         }
+        try container.encodeIfPresent(trackReaderVersion, forKey: .trackReaderVersion)
         try container.encodeIfPresent(quickTimeUserData, forKey: .quickTimeUserData)
         try container.encode(tagProperties, forKey: .tagProperties)
         try container.encodeIfPresent(bextDescription, forKey: .bextDescription)
