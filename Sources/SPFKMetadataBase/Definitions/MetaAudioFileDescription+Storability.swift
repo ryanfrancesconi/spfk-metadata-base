@@ -3,25 +3,6 @@
 import Foundation
 import SPFKAudioBase
 
-/// A save asked for changes the file's container has no writer for. Retrying cannot succeed.
-public struct UnstorableMetadataError: LocalizedError, Hashable, Sendable {
-    public let fileType: AudioFileType?
-
-    /// The requested flags the container cannot store: `.metadata`, `.image` or `.markers`.
-    public let flags: Set<MetadataDirtyFlag>
-
-    public init(fileType: AudioFileType?, flags: Set<MetadataDirtyFlag>) {
-        self.fileType = fileType
-        self.flags = flags
-    }
-
-    public var errorDescription: String? {
-        let name = fileType?.pathExtension.uppercased() ?? "These"
-        let what = flags == [.markers] ? "markers" : "metadata"
-        return "\(name) files can't store \(what)"
-    }
-}
-
 extension MetaAudioFileDescription {
     /// Whether tags, BEXT, iXML and artwork can be written into this file.
     public var canStoreTags: Bool {

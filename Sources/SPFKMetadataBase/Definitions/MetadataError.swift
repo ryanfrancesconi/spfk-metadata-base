@@ -5,8 +5,8 @@ import SPFKAudioBase
 
 /// A metadata read or write that failed, naming which part of the file it was for.
 ///
-/// A save asking for something the container cannot store throws `UnstorableMetadataError`, and a
-/// locked file `FileLockError`; neither is a case here.
+/// A save throws ``incompleteSave(written:failures:)`` for what it left out, and a locked file
+/// `FileLockError`, which is not a case here.
 public enum MetadataError: LocalizedError, Hashable, Sendable {
     /// No reader or writer exists for this type, or the type could not be determined (`nil`).
     case unsupportedFormat(AudioFileType?, MetadataComponent)
@@ -16,6 +16,12 @@ public enum MetadataError: LocalizedError, Hashable, Sendable {
     case writeFailed(MetadataComponent, URL)
     case copyFailed(MetadataComponent, from: URL, to: URL)
     case removeFailed(MetadataComponent, URL)
+    /// The container has no writer for these flags (`.metadata`, `.image` or `.markers`). Retrying
+    /// cannot succeed.
+    case unstorable(AudioFileType?, Set<MetadataDirtyFlag>)
+    /// A save that wrote `written` and left the rest as the file has it, each part for the reason in
+    /// `failures`: not read, not written, or `unstorable`. `written` may be empty.
+    case incompleteSave(written: Set<MetadataDirtyFlag>, failures: [MetadataError])
 
     public var errorDescription: String? {
         switch self {
@@ -43,6 +49,14 @@ public enum MetadataError: LocalizedError, Hashable, Sendable {
 
         case let .removeFailed(component, url):
             return "Failed to remove \(component.noun) from \(url.path)"
+
+        case let .unstorable(fileType, flags):
+            let name = fileType?.pathExtension.uppercased() ?? "These"
+            let what = flags == [.markers] ? "markers" : "metadata"
+            return "\(name) files can't store \(what)"
+
+        case let .incompleteSave(_, failures):
+            return failures.compactMap(\.errorDescription).joined(separator: "; ")
         }
     }
 }

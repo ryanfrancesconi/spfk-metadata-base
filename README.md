@@ -43,8 +43,7 @@ For reading and writing files, use [SPFKMetadata](https://github.com/ryanfrances
 | **EmbeddedArtwork** | A file's picture with its stored type, description and picture type |
 | **WaveFileProperties** | A WAV's format and BEXT chunk, without its tags, markers or artwork |
 | **MetadataComponent** | A part of a file's metadata read and written on its own, and the dirty flag that writes it |
-| **MetadataError** | A metadata read or write that failed, naming the operation and the component |
-| **UnstorableMetadataError** | A save asked for something the file's container has no writer for |
+| **MetadataError** | A metadata read or write that failed, naming the operation and the component; a save that left parts out lists them, with the flags it did write |
 | **MetadataReadStatus** | The components a parse could not read, which a save leaves as the file has them; encoded with the description, so it survives storage |
 | **TagPropertiesContainerModel** | Protocol for types that contain tag properties |
 | **MediaFilePlayability** | Whether a file can be played, and by which of the two paths |
