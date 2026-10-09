@@ -58,7 +58,7 @@ public struct MetaAudioFileDescription: Hashable, Sendable {
     public var markerCollection: AudioMarkerDescriptionCollection = .init()
 
     /// Embedded artwork and its thumbnail. The full `CGImage` is excluded from `Codable` serialization.
-    public var imageDescription: ImageDescription = .init()
+    public var imageDescription: ArtworkDescription = .init()
 
     /// Whether the file can be opened by `AVAudioFile` for playback.
     ///
@@ -164,7 +164,7 @@ extension MetaAudioFileDescription: Codable {
         iXMLMetadata = try container.decodeIfPresent(String.self, forKey: .iXMLMetadata)
         xmpMetadata = try container.decodeIfPresent(String.self, forKey: .xmpMetadata)
         markerCollection = try container.decodeIfPresent(AudioMarkerDescriptionCollection.self, forKey: .markerCollection) ?? .init()
-        imageDescription = try container.decodeIfPresent(ImageDescription.self, forKey: .imageDescription) ?? .init()
+        imageDescription = try container.decodeIfPresent(ArtworkDescription.self, forKey: .imageDescription) ?? .init()
         isAVPlayable = try container.decodeIfPresent(Bool.self, forKey: .isAVPlayable) ?? true
         // Absent on anything stored before this field, where the load gate asked the container
         // instead. Reproduced so a saved playlist keeps playing until the next parse replaces it
@@ -173,8 +173,7 @@ extension MetaAudioFileDescription: Codable {
             ?? (fileType?.isMatroska == true)
         isProtected = try container.decodeIfPresent(Bool.self, forKey: .isProtected) ?? false
 
-        let readFailures = try container.decodeIfPresent([MetadataComponent].self, forKey: .readFailures)
-        readStatus = MetadataReadStatus(failed: Set(readFailures ?? []))
+        readStatus = try container.decodeIfPresent(MetadataReadStatus.self, forKey: .readFailures) ?? MetadataReadStatus()
     }
 
     public func encode(to encoder: any Encoder) throws {
@@ -202,8 +201,7 @@ extension MetaAudioFileDescription: Codable {
         try container.encode(isProtected, forKey: .isProtected)
 
         if readStatus.failed.isEmpty == false {
-            let ordered = MetadataComponent.allCases.filter(readStatus.failed.contains)
-            try container.encode(ordered, forKey: .readFailures)
+            try container.encode(readStatus, forKey: .readFailures)
         }
     }
 }
@@ -220,7 +218,7 @@ extension MetaAudioFileDescription {
         self != other || markerCollection.hasContentChanges(from: other.markerCollection)
     }
 
-    /// Whether the fields a `.metadata` save writes differ: tags, BEXT and iXML.
+    /// Whether the fields a `.tags` save writes differ: tags, BEXT and iXML.
     public func hasMetadataChanges(from other: MetaAudioFileDescription) -> Bool {
         tagProperties != other.tagProperties
             || bextDescription != other.bextDescription

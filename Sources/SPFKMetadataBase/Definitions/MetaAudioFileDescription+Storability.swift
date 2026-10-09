@@ -23,7 +23,7 @@ extension MetaAudioFileDescription {
         var result = Set<MetadataDirtyFlag>()
 
         if !canStoreTags {
-            result.formUnion(dirtyFlags.intersection([.metadata, .image]))
+            result.formUnion(dirtyFlags.intersection([.tags, .image]))
         }
 
         if !canStoreMarkers, dirtyFlags.contains(.markers) {

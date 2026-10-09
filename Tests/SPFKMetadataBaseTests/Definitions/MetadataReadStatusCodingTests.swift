@@ -37,12 +37,22 @@ final class MetadataReadStatusCodingTests {
         #expect(decoded.readStatus.failed.isEmpty)
     }
 
+    /// The status encodes itself, in declaration order whatever order it was built in, so both
+    /// products' descriptions store the same form.
+    @Test func theStatusEncodesAsItsComponentNamesInOrder() throws {
+        let status = MetadataReadStatus(failed: [.xmp, .tags, .markers])
+        let data = try JSONEncoder().encode(status)
+
+        #expect(try JSONDecoder().decode([String].self, from: data) == ["tags", "markers", "xmp"])
+        #expect(try JSONDecoder().decode(MetadataReadStatus.self, from: data) == status)
+    }
+
     /// The stored names are on-disk format: a renamed case would turn a refused save into a decode
     /// failure for every row holding it.
     @Test func eachComponentKeepsItsStoredName() throws {
         let expected: [(MetadataComponent, String)] = [
             (.tags, "tags"), (.rating, "rating"), (.artwork, "artwork"), (.markers, "markers"),
-            (.bext, "bext"), (.ixml, "ixml"), (.xmp, "xmp"),
+            (.bext, "bext"), (.ixml, "ixml"), (.xmp, "xmp"), (.finderTags, "finderTags"),
         ]
 
         #expect(expected.map(\.0) == MetadataComponent.allCases)

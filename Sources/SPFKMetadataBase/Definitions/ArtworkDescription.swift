@@ -9,7 +9,7 @@ import SPFKUtils
 ///
 /// The full-resolution `CGImage` and thumbnail image are transient — excluded from `Codable`.
 /// Only the text ``description`` is serialized. Image data is persisted via `ImageDataStore`.
-public struct ImageDescription: Sendable, Hashable {
+public struct ArtworkDescription: Sendable, Hashable {
     /// The full-resolution embedded artwork. Not encoded. Setting a different image drops
     /// ``storedPicture``.
     public var cgImage: CGImage? {
@@ -75,7 +75,7 @@ public struct ImageDescription: Sendable, Hashable {
 
 // MARK: - Equatable
 
-extension ImageDescription: Equatable {
+extension ArtworkDescription: Equatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.description == rhs.description
     }
@@ -87,7 +87,7 @@ extension ImageDescription: Equatable {
 
 // MARK: - Codable
 
-extension ImageDescription: Codable {
+extension ArtworkDescription: Codable {
     enum CodingKeys: String, CodingKey {
         case description
     }
@@ -104,7 +104,7 @@ extension ImageDescription: Codable {
     }
 }
 
-extension ImageDescription {
+extension ArtworkDescription {
     /// Creates a PNG thumbnail of the given image, scaled to the specified size.
     /// Returns `nil` if the source image is too small (64px or smaller in either dimension).
     public static func createThumbnail(cgImage: CGImage, size: CGSize = .init(equal: 64)) async -> Data? {

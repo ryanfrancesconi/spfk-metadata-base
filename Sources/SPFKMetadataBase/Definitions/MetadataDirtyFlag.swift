@@ -1,16 +1,17 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/spfk-metadata-base
 
-/// Identifies which aspects of an audio file's metadata have unsaved changes.
+/// Identifies which aspects of a file's metadata have unsaved changes, in both products.
 ///
 /// Used as a `Set<MetadataDirtyFlag>` to track what needs writing.
 /// The save orchestration layer decides which subsystem handles each flag.
 ///
 /// **Declaration order is a storage format.** The set is persisted as a bitmask whose bit is the
 /// case's position in `allCases`, so a new case goes on the end and an existing one never moves.
-/// The raw values are persisted too; renaming a case is a data migration.
+/// The raw values are persisted too: a case keeps its raw value when its Swift name changes.
 public enum MetadataDirtyFlag: String, CaseIterable, Hashable, Sendable, Codable {
-    /// Tags, BEXT and iXML
-    case metadata
+    /// Tags, the rating, BEXT and iXML. In TorchTag, a Tags-tab field in whichever store backs the
+    /// file (XMP, or TagLib for Matroska).
+    case tags = "metadata"
     /// Embedded artwork
     case image
     /// Embedded XMP — written by a separate XMP call

@@ -39,15 +39,15 @@ For reading and writing files, use [SPFKMetadata](https://github.com/ryanfrances
 | **AudioFormatProperties** | Channel count, sample rate, bit depth, bit rate, and duration |
 | **BEXTDescription** | Broadcast Wave Extension (BWF) chunk wrapper (v0/v1/v2) |
 | **BEXTDescription.Key** | Enum of BEXT field keys with dictionary-style subscript access |
-| **ImageDescription** | Embedded artwork container with CGImage and Codable conformance; keeps the bytes the file stored while the image is unchanged, so a save writes them back as they were |
+| **ArtworkDescription** | Embedded artwork container with CGImage and Codable conformance; keeps the bytes the file stored while the image is unchanged, so a save writes them back as they were |
 | **EmbeddedArtwork** | A file's picture with its stored type, description and picture type |
 | **WaveFileProperties** | A WAV's format and BEXT chunk, without its tags, markers or artwork |
 | **MetadataComponent** | A part of a file's metadata read and written on its own, and the dirty flag that writes it |
-| **MetadataError** | A metadata read or write that failed, naming the operation and the component; a save that left parts out lists them, with the flags it did write |
-| **MetadataReadStatus** | The components a parse could not read, which a save leaves as the file has them; encoded with the description, so it survives storage |
+| **MetadataError** | A metadata read or write that failed, naming the operation and the component; a save that left parts out lists them, with the components it did write. Its file-type payload is a `UTType`, so either product can throw it |
+| **MetadataReadStatus** | The components a parse could not read, which a save leaves as the file has them; `Codable` as the failed components' names, which both products' descriptions store |
 | **TagPropertiesContainerModel** | Protocol for types that contain tag properties |
 | **MediaFilePlayability** | Whether a file can be played, and by which of the two paths |
-| **MetadataDirtyFlag** | Which parts of a description have unsaved edits |
+| **MetadataDirtyFlag** | Which parts of a description have unsaved edits, in both products |
 | **StartTimecodeResolution** / **StartTimecodeSource** | A start timecode together with the carrier it came from |
 
 #### MediaFilePlayability

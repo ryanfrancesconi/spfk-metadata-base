@@ -1,9 +1,9 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/spfk-metadata-base
 
 import Foundation
-import SPFKAudioBase
 @testable import SPFKMetadataBase
 import Testing
+import UniformTypeIdentifiers
 
 @Suite("MetadataError")
 struct MetadataErrorTests {
@@ -12,7 +12,7 @@ struct MetadataErrorTests {
 
     @Test func unsupportedFormatNamesTheType() {
         #expect(
-            MetadataError.unsupportedFormat(.ogg, .markers).errorDescription
+            MetadataError.unsupportedFormat(UTType(filenameExtension: "ogg"), .markers).errorDescription
                 == "Unsupported file type for markers: OGG"
         )
         #expect(
@@ -57,6 +57,19 @@ struct MetadataErrorTests {
         #expect(MetadataError.readFailed(.tags, url) != .readFailed(.tags, other))
         #expect(MetadataError.readFailed(.tags, url) != .writeFailed(.tags, url))
         #expect(MetadataError.unsupportedFormat(.mp3, .markers) != .unsupportedFormat(nil, .markers))
+        #expect(MetadataError.saveFailed(url) != .saveFailed(other))
+    }
+
+    /// A save that wrote nothing, and a parse that could not open the file, name no component.
+    @Test func wholeFileFailuresNameNoComponent() {
+        #expect(MetadataError.saveFailed(url).errorDescription == "Failed to save /tmp/a.wav")
+        #expect(MetadataError.openFailed(url).errorDescription == "Failed to open /tmp/a.wav")
+    }
+
+    /// The file type is any media type, so a video or image save can throw it too.
+    @Test func unstorableNamesAnyMediaType() {
+        #expect(MetadataError.unstorable(.mpeg4Movie, [.tags]).errorDescription == "MP4 files can't store metadata")
+        #expect(MetadataError.unstorable(nil, [.markers]).errorDescription == "These files can't store markers")
     }
 
     @Test func surfacesThroughLocalizedDescription() {

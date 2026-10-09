@@ -20,3 +20,16 @@ public struct MetadataReadStatus: Hashable, Sendable {
         !failed.contains(component)
     }
 }
+
+/// Encoded as the failed components' names in declaration order. A description stores it only when
+/// something failed, so a clean row has no key and an absent key decodes clean.
+extension MetadataReadStatus: Codable {
+    public init(from decoder: any Decoder) throws {
+        failed = try Set(decoder.singleValueContainer().decode([MetadataComponent].self))
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(MetadataComponent.allCases.filter(failed.contains))
+    }
+}

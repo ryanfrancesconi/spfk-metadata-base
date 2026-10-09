@@ -3,11 +3,11 @@ import Testing
 
 @testable import SPFKMetadataBase
 
-struct ImageDescriptionCodableTests {
+struct ArtworkDescriptionCodableTests {
     @Test func codableRoundTripEmpty() throws {
-        let original = ImageDescription()
+        let original = ArtworkDescription()
         let data = try JSONEncoder().encode(original)
-        let decoded = try JSONDecoder().decode(ImageDescription.self, from: data)
+        let decoded = try JSONDecoder().decode(ArtworkDescription.self, from: data)
 
         #expect(decoded.thumbnailData == nil)
         #expect(decoded.description == nil)
@@ -15,21 +15,21 @@ struct ImageDescriptionCodableTests {
     }
 
     @Test func codableWithDescription() throws {
-        var original = ImageDescription()
+        var original = ArtworkDescription()
         original.description = "Album art"
 
         let data = try JSONEncoder().encode(original)
-        let decoded = try JSONDecoder().decode(ImageDescription.self, from: data)
+        let decoded = try JSONDecoder().decode(ArtworkDescription.self, from: data)
 
         #expect(decoded.description == "Album art")
     }
 
     @Test func codableWithThumbnailData() throws {
-        var original = ImageDescription()
+        var original = ArtworkDescription()
         original.description = "Test"
 
         let data = try JSONEncoder().encode(original)
-        let decoded = try JSONDecoder().decode(ImageDescription.self, from: data)
+        let decoded = try JSONDecoder().decode(ArtworkDescription.self, from: data)
 
         // cgImage is deliberately not encoded
         #expect(decoded.cgImage == nil)
@@ -37,33 +37,33 @@ struct ImageDescriptionCodableTests {
     }
 }
 
-struct ImageDescriptionEquatableTests {
+struct ArtworkDescriptionEquatableTests {
     @Test func equalWhenBothEmpty() {
-        let a = ImageDescription()
-        let b = ImageDescription()
+        let a = ArtworkDescription()
+        let b = ArtworkDescription()
         #expect(a == b)
     }
 
     @Test func equalWithSameDescription() {
-        var a = ImageDescription()
+        var a = ArtworkDescription()
         a.description = "Test"
-        var b = ImageDescription()
+        var b = ArtworkDescription()
         b.description = "Test"
         #expect(a == b)
     }
 
     @Test func notEqualDifferentDescription() {
-        var a = ImageDescription()
+        var a = ArtworkDescription()
         a.description = "A"
-        var b = ImageDescription()
+        var b = ArtworkDescription()
         b.description = "B"
         #expect(a != b)
     }
 }
 
-struct ImageDescriptionInitTests {
+struct ArtworkDescriptionInitTests {
     @Test func defaultInit() {
-        let desc = ImageDescription()
+        let desc = ArtworkDescription()
         #expect(desc.cgImage == nil)
         #expect(desc.thumbnailImage == nil)
         #expect(desc.thumbnailData == nil)
