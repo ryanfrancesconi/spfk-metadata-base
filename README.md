@@ -105,6 +105,7 @@ import SPFKMetadataBase
 | [spfk-utils](https://github.com/ryanfrancesconi/spfk-utils) | Foundation utilities and extensions |
 | [spfk-video](https://github.com/ryanfrancesconi/spfk-video) | `VideoTrackProperties` on a media description |
 | [swift-timecode](https://github.com/orchetect/swift-timecode) | Timecode parsing and formatting |
+| [spfk-base](https://github.com/ryanfrancesconi/spfk-base) | Common extensions and logging (test target only) |
 
 ## About
 

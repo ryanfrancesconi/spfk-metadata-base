@@ -18,6 +18,7 @@ let package = Package(
         .package(url: "https://github.com/ryanfrancesconi/spfk-image", from: "0.1.0"),
         .package(url: "https://github.com/ryanfrancesconi/spfk-utils", from: "1.6.1"),
         .package(url: "https://github.com/ryanfrancesconi/spfk-video", from: "1.1.0"),
+        .package(url: "https://github.com/ryanfrancesconi/spfk-base", from: "1.2.2"),
         .package(url: "https://github.com/ryanfrancesconi/spfk-testing", from: "1.1.0"),
         .package(url: "https://github.com/orchetect/swift-timecode", from: "3.0.0"),
         .package(url: "https://github.com/tadija/AEXML", from: "4.6.0"),
@@ -39,6 +40,7 @@ let package = Package(
             dependencies: [
                 "SPFKMetadataBase",
                 .product(name: "SPFKImage", package: "spfk-image"),
+                .product(name: "SPFKBase", package: "spfk-base"),
                 .product(name: "SPFKTesting", package: "spfk-testing"),
                 .product(name: "SPFKVideo", package: "spfk-video"),
             ]
