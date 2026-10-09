@@ -87,7 +87,7 @@ The [iXML](http://www.ixml.info) model. `IXMLMetadata.xml` writes the modeled fi
 ## Installation
 
 ```swift
-.package(url: "https://github.com/ryanfrancesconi/spfk-metadata-base", from: "1.18.0")
+.package(url: "https://github.com/ryanfrancesconi/spfk-metadata-base", from: "2.0.0")
 ```
 
 ```swift
@@ -105,6 +105,7 @@ import SPFKMetadataBase
 | [spfk-video](https://github.com/ryanfrancesconi/spfk-video) | `VideoTrackProperties` on a media description |
 | [swift-timecode](https://github.com/orchetect/swift-timecode) | Timecode parsing and formatting |
 | [spfk-base](https://github.com/ryanfrancesconi/spfk-base) | Common extensions and logging (test target only) |
+| [spfk-testing](https://github.com/ryanfrancesconi/spfk-testing) | Test fixtures (test target only) |
 
 ## About
 
