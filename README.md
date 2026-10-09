@@ -44,6 +44,7 @@ For reading and writing files, use [SPFKMetadata](https://github.com/ryanfrances
 | **WaveFileProperties** | A WAV's format and BEXT chunk, without its tags, markers or artwork |
 | **MetadataError** | A metadata read or write that failed, naming the operation and the component |
 | **UnstorableMetadataError** | A save asked for something the file's container has no writer for |
+| **MetadataReadStatus** | The components a parse could not read, which a save leaves as the file has them |
 | **TagPropertiesContainerModel** | Protocol for types that contain tag properties |
 | **MediaFilePlayability** | Whether a file can be played, and by which of the two paths |
 | **MetadataDirtyFlag** | Which parts of a description have unsaved edits |

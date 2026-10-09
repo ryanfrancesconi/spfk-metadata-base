@@ -21,6 +21,8 @@ public enum MetadataError: LocalizedError, Hashable, Sendable {
 
     /// No reader or writer exists for this type, or the type could not be determined (`nil`).
     case unsupportedFormat(AudioFileType?, Component)
+    /// Also thrown by a save for a component the parse could not read, which the save leaves as
+    /// the file has it (`MetaAudioFileDescription.readStatus`).
     case readFailed(Component, URL)
     case writeFailed(Component, URL)
     case copyFailed(Component, from: URL, to: URL)

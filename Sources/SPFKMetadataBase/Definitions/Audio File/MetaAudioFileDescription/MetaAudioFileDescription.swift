@@ -78,6 +78,9 @@ public struct MetaAudioFileDescription: Hashable, Sendable {
     /// stays true for such a file and only a player finds out.
     public var isProtected: Bool = false
 
+    /// The components the parse could not read. Not encoded, so a description decoded from
+    /// storage reports none.
+    public var readStatus = MetadataReadStatus()
 
     #if os(macOS)
     public init(
