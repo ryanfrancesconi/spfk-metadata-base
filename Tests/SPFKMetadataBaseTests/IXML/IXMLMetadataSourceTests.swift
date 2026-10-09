@@ -46,17 +46,26 @@ struct IXMLMetadataSourceTests {
         #expect(try IXMLMetadata(xml: chunk) == IXMLMetadata(xml: normalized))
     }
 
-    @Test func sameDocumentComparesContent() throws {
-        #expect(try IXMLMetadata.isSameDocument(chunk, normalized))
-        #expect(IXMLMetadata.isSameDocument(nil, nil))
-        #expect(IXMLMetadata.isSameDocument(nil, ""))
-        #expect(!IXMLMetadata.isSameDocument(chunk, nil))
-        #expect(!IXMLMetadata.isSameDocument(chunk, chunk.replacingOccurrences(of: "Before", with: "After")))
+    @Test func uneditedTextMatchesExactly() {
+        #expect(IXMLMetadata.isUnedited(chunk, stored: chunk))
+        #expect(IXMLMetadata.isUnedited(nil, stored: nil))
+        #expect(IXMLMetadata.isUnedited("", stored: nil))
+        #expect(!IXMLMetadata.isUnedited(nil, stored: chunk))
+        #expect(!IXMLMetadata.isUnedited(chunk.replacingOccurrences(of: "Before", with: "After"), stored: chunk))
     }
 
-    @Test func sameDocumentComparesUnparseableTextExactly() {
+    @Test func commentOrWhitespaceEditIsAnEdit() {
+        #expect(!IXMLMetadata.isUnedited(chunk.replacingOccurrences(of: "<!-- Written by another recorder -->\n", with: ""), stored: chunk))
+        #expect(!IXMLMetadata.isUnedited(chunk.replacingOccurrences(of: "\r\n", with: ""), stored: chunk))
+    }
+
+    @Test func reserializedFormOfTheStoredTextIsUnedited() throws {
+        #expect(try IXMLMetadata.isUnedited(normalized, stored: chunk))
+    }
+
+    @Test func unparseableStoredTextMatchesOnlyExactly() {
         let malformed = "<BWFXML><PROJECT>Before</PROJECT>"
-        #expect(IXMLMetadata.isSameDocument(malformed, malformed))
-        #expect(!IXMLMetadata.isSameDocument(malformed, malformed + " "))
+        #expect(IXMLMetadata.isUnedited(malformed, stored: malformed))
+        #expect(!IXMLMetadata.isUnedited(malformed + " ", stored: malformed))
     }
 }

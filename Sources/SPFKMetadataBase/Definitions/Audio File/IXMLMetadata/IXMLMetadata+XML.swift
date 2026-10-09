@@ -23,18 +23,19 @@ extension IXMLMetadata {
         return rendered
     }
 
-    /// Whether two chunks hold the same document once parsed. Text that does not parse is compared
-    /// as is; nil and empty are the same absent chunk.
-    public static func isSameDocument(_ lhs: String?, _ rhs: String?) -> Bool {
-        let lhs = lhs?.isEmpty == true ? nil : lhs
-        let rhs = rhs?.isEmpty == true ? nil : rhs
+    /// Whether `held` still holds the chunk text `stored`, so a save need not write it. Nil and empty
+    /// are the same absent chunk.
+    public static func isUnedited(_ held: String?, stored: String?) -> Bool {
+        let held = held?.isEmpty == true ? nil : held
+        let stored = stored?.isEmpty == true ? nil : stored
 
-        guard lhs != rhs else { return true }
-        guard let lhs, let rhs,
-              let left = try? document(xml: lhs), let right = try? document(xml: rhs)
-        else { return false }
+        guard held != stored else { return true }
+        guard let held, let stored else { return false }
 
-        return left.xml == right.xml
+        // A data migration: earlier parses held iXML re-serialized rather than as stored, and a
+        // persisted library row may still hold that form. This branch can be removed once no such
+        // rows remain.
+        return (try? document(xml: stored))?.xml == held
     }
 
     /// ``document`` with the modeled properties applied, serialized.
