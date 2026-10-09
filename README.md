@@ -22,6 +22,7 @@ For reading and writing files, use [SPFKMetadata](https://github.com/ryanfrances
 | **TagKey** | Case enum — canonical key type mapping to ID3 frames and RIFF INFO tags |
 | **TagProperties** | Struct wrapping `TagData` with `tagLibPropertyMap` for bridge interop |
 | **TagPropertiesAV** | AVFoundation-based tag reader (read-only) |
+| **AVMetadataProbe** / **AVMetadataProbeItem** | Every metadata keyspace and item a file declares, as AVFoundation reports them, before mapping to `TagKey` |
 | **TagData** | Container with `TagKeyDictionary` and custom tags, with merge support |
 | **TagGroup** | Enum grouping TagKeys into logical sets (common, music, loudness, etc.) |
 | **ID3FrameKey** | Case enum for ID3v2.4 frame identifiers |
@@ -34,11 +35,11 @@ For reading and writing files, use [SPFKMetadata](https://github.com/ryanfrances
 
 | Type | Description |
 |------|-------------|
-| **MetaAudioFileDescription** | Top-level Codable struct aggregating tags, audio format, BEXT, iXML, markers, and artwork |
+| **MetaAudioFileDescription** | Top-level Codable struct aggregating tags, audio format, BEXT, iXML, markers, artwork, XMP, and the video track, audio tracks and QuickTime user data |
 | **AudioFormatProperties** | Channel count, sample rate, bit depth, bit rate, and duration |
 | **BEXTDescription** | Broadcast Wave Extension (BWF) chunk wrapper (v0/v1/v2) |
 | **BEXTDescription.Key** | Enum of BEXT field keys with dictionary-style subscript access |
-| **ImageDescription** | Embedded artwork container with CGImage and Codable conformance |
+| **ImageDescription** | Embedded artwork container with CGImage and Codable conformance; keeps the bytes the file stored while the image is unchanged, so a save writes them back as they were |
 | **EmbeddedArtwork** | A file's picture with its stored type, description and picture type |
 | **WaveFileProperties** | A WAV's format and BEXT chunk, without its tags, markers or artwork |
 | **MetadataError** | A metadata read or write that failed, naming the operation and the component |
@@ -52,7 +53,8 @@ For reading and writing files, use [SPFKMetadata](https://github.com/ryanfrances
 
 Playability is two questions, not one, because the answers diverge for Matroska: whether
 AVFoundation can open the file, and whether a demuxer and decoder can. A file is playable if either
-is true.
+is true and it is not DRM-protected (`isProtected`): AVFoundation opens a FairPlay container and
+reports it playable, so protection is a separate input.
 
 **Neither is derivable from the path extension.** A `.mkv` whose audio codec has no decoder is not
 playable despite being a Matroska file, and a `.mov` AVFoundation refuses is not playable despite
@@ -62,7 +64,7 @@ A UI showing a "cannot play" state reads `isPlayable`; a caller choosing between
 
 ### iXML (BWFXML)
 
-The [iXML](http://www.ixml.info) model. `IXMLMetadata.xml` serializes the modeled fields and the raw USER, ASWG and STEINBERG containers; other elements in the source document are not carried through.
+The [iXML](http://www.ixml.info) model. `IXMLMetadata.xml` writes the modeled fields and the raw USER, ASWG and STEINBERG containers back into a copy of the parsed document: a nil or empty value removes its element, and elements the model does not cover are kept in place. LOUDNESS is kept as read unless `loudnessDescription` changed, in which case it is rebuilt from the model.
 
 | Type | Description |
 |------|-------------|
