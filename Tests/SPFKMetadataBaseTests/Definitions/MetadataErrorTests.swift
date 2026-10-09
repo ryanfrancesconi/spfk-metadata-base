@@ -36,7 +36,7 @@ struct MetadataErrorTests {
     @Test func writeSentencesAreUnchanged() {
         #expect(MetadataError.writeFailed(.bext, url).errorDescription == "Failed to write BEXT chunk to /tmp/a.wav")
         #expect(
-            MetadataError.writeFailed(.xmpPacket, url).errorDescription
+            MetadataError.writeFailed(.xmp, url).errorDescription
                 == "Failed to write the XMP packet to /tmp/a.wav"
         )
     }

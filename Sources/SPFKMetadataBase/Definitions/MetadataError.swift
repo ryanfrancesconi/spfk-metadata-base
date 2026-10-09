@@ -9,14 +9,17 @@ import SPFKAudioBase
 /// locked file `FileLockError`; neither is a case here.
 public enum MetadataError: LocalizedError, Hashable, Sendable {
     /// The part of a file's metadata an operation addressed.
-    public enum Component: Hashable, Sendable {
+    ///
+    /// Stored by `MetaAudioFileDescription.readStatus`: the names are a storage format, and so is
+    /// the declaration order (a bitmask in ShadowTag's library). Append a case; never rename or move one.
+    public enum Component: String, CaseIterable, Codable, Hashable, Sendable {
         case tags
         case rating
         case artwork
         case markers
         case bext
         case ixml
-        case xmpPacket
+        case xmp
     }
 
     /// No reader or writer exists for this type, or the type could not be determined (`nil`).
@@ -68,7 +71,7 @@ extension MetadataError.Component {
         case .markers: "markers"
         case .bext: "BEXT chunk"
         case .ixml: "iXML chunk"
-        case .xmpPacket: "the XMP packet"
+        case .xmp: "the XMP packet"
         }
     }
 }

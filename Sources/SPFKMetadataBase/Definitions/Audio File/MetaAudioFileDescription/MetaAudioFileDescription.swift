@@ -78,8 +78,8 @@ public struct MetaAudioFileDescription: Hashable, Sendable {
     /// stays true for such a file and only a player finds out.
     public var isProtected: Bool = false
 
-    /// The components the parse could not read. Not encoded, so a description decoded from
-    /// storage reports none.
+    /// The components the parse could not read. Encoded only when there are any, so a
+    /// description stored without the key decodes as read.
     public var readStatus = MetadataReadStatus()
 
     #if os(macOS)
@@ -145,6 +145,7 @@ extension MetaAudioFileDescription: Codable {
         case isAVPlayable
         case isDecodable
         case isProtected
+        case readFailures
     }
 
     public init(from decoder: any Decoder) throws {
@@ -171,6 +172,9 @@ extension MetaAudioFileDescription: Codable {
         isDecodable = try container.decodeIfPresent(Bool.self, forKey: .isDecodable)
             ?? (fileType?.isMatroska == true)
         isProtected = try container.decodeIfPresent(Bool.self, forKey: .isProtected) ?? false
+
+        let readFailures = try container.decodeIfPresent([MetadataError.Component].self, forKey: .readFailures)
+        readStatus = MetadataReadStatus(failed: Set(readFailures ?? []))
     }
 
     public func encode(to encoder: any Encoder) throws {
@@ -196,6 +200,11 @@ extension MetaAudioFileDescription: Codable {
         try container.encode(isAVPlayable, forKey: .isAVPlayable)
         try container.encode(isDecodable, forKey: .isDecodable)
         try container.encode(isProtected, forKey: .isProtected)
+
+        if readStatus.failed.isEmpty == false {
+            let ordered = MetadataError.Component.allCases.filter(readStatus.failed.contains)
+            try container.encode(ordered, forKey: .readFailures)
+        }
     }
 }
 
