@@ -64,7 +64,7 @@ A UI showing a "cannot play" state reads `isPlayable`; a caller choosing between
 
 ### iXML (BWFXML)
 
-The [iXML](http://www.ixml.info) model. `IXMLMetadata.xml` writes the modeled fields and the raw USER, ASWG and STEINBERG containers back into a copy of the parsed document: a nil or empty value removes its element, and elements the model does not cover are kept in place. LOUDNESS is kept as read unless `loudnessDescription` changed, in which case it is rebuilt from the model.
+The [iXML](http://www.ixml.info) model. `IXMLMetadata.xml` writes the modeled fields and the raw USER, ASWG and STEINBERG containers back into a copy of the parsed document: a nil or empty value removes its element, and elements the model does not cover are kept in place. LOUDNESS is kept as read unless `loudnessDescription` changed, in which case it is rebuilt from the model. A document no modeled value changed comes back as the text `init(xml:)` parsed, comments and CDATA included; an edit re-serializes it, which drops both. `IXMLMetadata.isSameDocument(_:_:)` compares two chunks' text once parsed.
 
 | Type | Description |
 |------|-------------|

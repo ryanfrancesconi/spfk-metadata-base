@@ -10,7 +10,35 @@ extension IXMLMetadata {
     /// and elements the type does not model are kept in place. LOUDNESS is kept as read unless
     /// ``loudnessDescription`` changed; a changed one is rebuilt from the model, to two decimal
     /// places and without the element's unmodeled children.
+    ///
+    /// The text parsed by ``init(xml:)``, comments and CDATA included, while the result would not
+    /// differ from it; any edit re-serializes the whole document, which drops both.
     public var xml: String {
+        let rendered = rendered
+
+        if let parsedText, rendered == document.xml {
+            return parsedText
+        }
+
+        return rendered
+    }
+
+    /// Whether two chunks hold the same document once parsed. Text that does not parse is compared
+    /// as is; nil and empty are the same absent chunk.
+    public static func isSameDocument(_ lhs: String?, _ rhs: String?) -> Bool {
+        let lhs = lhs?.isEmpty == true ? nil : lhs
+        let rhs = rhs?.isEmpty == true ? nil : rhs
+
+        guard lhs != rhs else { return true }
+        guard let lhs, let rhs,
+              let left = try? document(xml: lhs), let right = try? document(xml: rhs)
+        else { return false }
+
+        return left.xml == right.xml
+    }
+
+    /// ``document`` with the modeled properties applied, serialized.
+    var rendered: String {
         let (doc, root) = editableCopy()
 
         set(root, .ixmlVersion, version)

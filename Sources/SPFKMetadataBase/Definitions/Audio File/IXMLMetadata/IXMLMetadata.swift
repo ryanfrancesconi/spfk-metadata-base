@@ -9,11 +9,14 @@ import SPFKBase
 /// ``xml`` writes the modeled properties back into the parsed document.
 public struct IXMLMetadata: Equatable, Sendable {
     public static func == (lhs: IXMLMetadata, rhs: IXMLMetadata) -> Bool {
-        lhs.xml == rhs.xml
+        lhs.rendered == rhs.rendered
     }
 
     /// The document parsed from, never mutated; ``xml`` edits a copy so unmodeled elements survive.
     public private(set) var document: AEXMLDocument
+
+    /// The text ``init(xml:)`` parsed, which ``xml`` returns while no modeled value differs from it.
+    var parsedText: String?
 
     // MARK: - Top-Level Properties
 
@@ -137,6 +140,7 @@ public struct IXMLMetadata: Equatable, Sendable {
     public init(xml: String) throws {
         let doc = try Self.document(xml: xml)
         self.init(document: doc)
+        parsedText = xml
     }
 
     /// Parses without trimming, so every value keeps its text as read -- line breaks and edge
