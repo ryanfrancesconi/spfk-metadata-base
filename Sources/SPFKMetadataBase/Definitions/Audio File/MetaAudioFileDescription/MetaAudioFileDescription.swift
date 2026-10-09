@@ -173,7 +173,7 @@ extension MetaAudioFileDescription: Codable {
             ?? (fileType?.isMatroska == true)
         isProtected = try container.decodeIfPresent(Bool.self, forKey: .isProtected) ?? false
 
-        let readFailures = try container.decodeIfPresent([MetadataError.Component].self, forKey: .readFailures)
+        let readFailures = try container.decodeIfPresent([MetadataComponent].self, forKey: .readFailures)
         readStatus = MetadataReadStatus(failed: Set(readFailures ?? []))
     }
 
@@ -202,7 +202,7 @@ extension MetaAudioFileDescription: Codable {
         try container.encode(isProtected, forKey: .isProtected)
 
         if readStatus.failed.isEmpty == false {
-            let ordered = MetadataError.Component.allCases.filter(readStatus.failed.contains)
+            let ordered = MetadataComponent.allCases.filter(readStatus.failed.contains)
             try container.encode(ordered, forKey: .readFailures)
         }
     }

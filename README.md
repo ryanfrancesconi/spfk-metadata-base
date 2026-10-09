@@ -42,6 +42,7 @@ For reading and writing files, use [SPFKMetadata](https://github.com/ryanfrances
 | **ImageDescription** | Embedded artwork container with CGImage and Codable conformance; keeps the bytes the file stored while the image is unchanged, so a save writes them back as they were |
 | **EmbeddedArtwork** | A file's picture with its stored type, description and picture type |
 | **WaveFileProperties** | A WAV's format and BEXT chunk, without its tags, markers or artwork |
+| **MetadataComponent** | A part of a file's metadata read and written on its own, and the dirty flag that writes it |
 | **MetadataError** | A metadata read or write that failed, naming the operation and the component |
 | **UnstorableMetadataError** | A save asked for something the file's container has no writer for |
 | **MetadataReadStatus** | The components a parse could not read, which a save leaves as the file has them; encoded with the description, so it survives storage |

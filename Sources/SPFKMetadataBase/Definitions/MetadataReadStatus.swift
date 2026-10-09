@@ -9,14 +9,14 @@ import Foundation
 /// a save stays refused until a successful re-read; empty for a description built by hand.
 public struct MetadataReadStatus: Hashable, Sendable {
     /// Components whose reader could not open the file.
-    public var failed: Set<MetadataError.Component> = []
+    public var failed: Set<MetadataComponent> = []
 
-    public init(failed: Set<MetadataError.Component> = []) {
+    public init(failed: Set<MetadataComponent> = []) {
         self.failed = failed
     }
 
     /// Whether the description holds the file's own value for `component`, so a save may write it.
-    public func holdsFileValue(of component: MetadataError.Component) -> Bool {
+    public func holdsFileValue(of component: MetadataComponent) -> Bool {
         !failed.contains(component)
     }
 }

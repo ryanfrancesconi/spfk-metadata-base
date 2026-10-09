@@ -8,28 +8,14 @@ import SPFKAudioBase
 /// A save asking for something the container cannot store throws `UnstorableMetadataError`, and a
 /// locked file `FileLockError`; neither is a case here.
 public enum MetadataError: LocalizedError, Hashable, Sendable {
-    /// The part of a file's metadata an operation addressed.
-    ///
-    /// Stored by `MetaAudioFileDescription.readStatus`: the names are a storage format, and so is
-    /// the declaration order (a bitmask in ShadowTag's library). Append a case; never rename or move one.
-    public enum Component: String, CaseIterable, Codable, Hashable, Sendable {
-        case tags
-        case rating
-        case artwork
-        case markers
-        case bext
-        case ixml
-        case xmp
-    }
-
     /// No reader or writer exists for this type, or the type could not be determined (`nil`).
-    case unsupportedFormat(AudioFileType?, Component)
+    case unsupportedFormat(AudioFileType?, MetadataComponent)
     /// Also thrown by a save for a component the parse could not read, which the save leaves as
     /// the file has it (`MetaAudioFileDescription.readStatus`).
-    case readFailed(Component, URL)
-    case writeFailed(Component, URL)
-    case copyFailed(Component, from: URL, to: URL)
-    case removeFailed(Component, URL)
+    case readFailed(MetadataComponent, URL)
+    case writeFailed(MetadataComponent, URL)
+    case copyFailed(MetadataComponent, from: URL, to: URL)
+    case removeFailed(MetadataComponent, URL)
 
     public var errorDescription: String? {
         switch self {
@@ -57,21 +43,6 @@ public enum MetadataError: LocalizedError, Hashable, Sendable {
 
         case let .removeFailed(component, url):
             return "Failed to remove \(component.noun) from \(url.path)"
-        }
-    }
-}
-
-extension MetadataError.Component {
-    /// The wording `MetadataError.errorDescription` uses mid-sentence.
-    var noun: String {
-        switch self {
-        case .tags: "tags"
-        case .rating: "the rating"
-        case .artwork: "artwork"
-        case .markers: "markers"
-        case .bext: "BEXT chunk"
-        case .ixml: "iXML chunk"
-        case .xmp: "the XMP packet"
         }
     }
 }

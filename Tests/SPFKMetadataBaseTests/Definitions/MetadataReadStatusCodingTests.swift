@@ -40,12 +40,12 @@ final class MetadataReadStatusCodingTests {
     /// The stored names are on-disk format: a renamed case would turn a refused save into a decode
     /// failure for every row holding it.
     @Test func eachComponentKeepsItsStoredName() throws {
-        let expected: [(MetadataError.Component, String)] = [
+        let expected: [(MetadataComponent, String)] = [
             (.tags, "tags"), (.rating, "rating"), (.artwork, "artwork"), (.markers, "markers"),
             (.bext, "bext"), (.ixml, "ixml"), (.xmp, "xmp"),
         ]
 
-        #expect(expected.map(\.0) == MetadataError.Component.allCases)
+        #expect(expected.map(\.0) == MetadataComponent.allCases)
 
         for (component, name) in expected {
             #expect(component.rawValue == name)
