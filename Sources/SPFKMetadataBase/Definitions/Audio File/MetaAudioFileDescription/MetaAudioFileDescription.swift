@@ -62,7 +62,7 @@ public struct MetaAudioFileDescription: Hashable, Sendable {
     public var markerCollection: AudioMarkerDescriptionCollection = .init()
 
     /// Embedded artwork and its thumbnail. The full `CGImage` is excluded from `Codable` serialization.
-    public var imageDescription: ArtworkDescription = .init()
+    public var artwork: ArtworkDescription = .init()
 
     /// Whether the file can be opened by `AVAudioFile` for playback.
     ///
@@ -146,7 +146,7 @@ extension MetaAudioFileDescription: Codable {
         case iXMLMetadata
         case xmpMetadata
         case markerCollection
-        case imageDescription
+        case artwork = "imageDescription"
         case isAVPlayable
         case isDecodable
         case isProtected
@@ -170,7 +170,7 @@ extension MetaAudioFileDescription: Codable {
         iXMLMetadata = try container.decodeIfPresent(String.self, forKey: .iXMLMetadata)
         xmpMetadata = try container.decodeIfPresent(String.self, forKey: .xmpMetadata)
         markerCollection = try container.decodeIfPresent(AudioMarkerDescriptionCollection.self, forKey: .markerCollection) ?? .init()
-        imageDescription = try container.decodeIfPresent(ArtworkDescription.self, forKey: .imageDescription) ?? .init()
+        artwork = try container.decodeIfPresent(ArtworkDescription.self, forKey: .artwork) ?? .init()
         isAVPlayable = try container.decodeIfPresent(Bool.self, forKey: .isAVPlayable) ?? true
         // Absent on anything stored before this field, where the load gate asked the container
         // instead. Reproduced so a saved playlist keeps playing until the next parse replaces it
@@ -202,7 +202,7 @@ extension MetaAudioFileDescription: Codable {
         try container.encodeIfPresent(iXMLMetadata, forKey: .iXMLMetadata)
         try container.encodeIfPresent(xmpMetadata, forKey: .xmpMetadata)
         try container.encode(markerCollection, forKey: .markerCollection)
-        try container.encode(imageDescription, forKey: .imageDescription)
+        try container.encode(artwork, forKey: .artwork)
         try container.encode(isAVPlayable, forKey: .isAVPlayable)
         try container.encode(isDecodable, forKey: .isDecodable)
         try container.encode(isProtected, forKey: .isProtected)

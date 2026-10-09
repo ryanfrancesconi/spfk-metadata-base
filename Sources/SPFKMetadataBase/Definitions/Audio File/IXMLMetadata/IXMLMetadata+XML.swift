@@ -32,9 +32,8 @@ extension IXMLMetadata {
         guard held != stored else { return true }
         guard let held, let stored else { return false }
 
-        // A data migration: earlier parses held iXML re-serialized rather than as stored, and a
-        // persisted library row may still hold that form. This branch can be removed once no such
-        // rows remain.
+        // A persisted library row may hold iXML re-serialized rather than as stored. This branch
+        // can be removed once no such rows remain.
         return (try? document(xml: stored))?.xml == held
     }
 

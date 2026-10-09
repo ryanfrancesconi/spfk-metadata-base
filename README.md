@@ -24,7 +24,6 @@ For reading and writing files, use [SPFKMetadata](https://github.com/ryanfrances
 | **TagPropertiesAV** | AVFoundation-based tag reader (read-only) |
 | **AVMetadataProbe** / **AVMetadataProbeItem** | Every metadata keyspace and item a file declares, as AVFoundation reports them, before mapping to `TagKey` |
 | **TagData** | Container with `TagKeyDictionary` and custom tags, with merge support |
-| **TagGroup** | Enum grouping TagKeys into logical sets (common, music, loudness, etc.) |
 | **ID3FrameKey** | Case enum for ID3v2.4 frame identifiers |
 | **InfoFrameKey** | Case enum for RIFF INFO chunk tags |
 | **TagFrameKey** | Protocol shared by both frame key types |

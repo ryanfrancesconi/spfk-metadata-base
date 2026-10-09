@@ -108,7 +108,7 @@ extension ArtworkDescription {
     /// Creates a PNG thumbnail of the given image, scaled to the specified size.
     /// Returns `nil` if the source image is too small (64px or smaller in either dimension).
     public static func createThumbnail(cgImage: CGImage, size: CGSize = .init(equal: 64)) async -> Data? {
-        let task = Task<Data?, Error>(priority: .userInitiated) {
+        let task = Task<Data?, Never>(priority: .userInitiated) {
             guard cgImage.width > 64, cgImage.height > 64,
                 let rescaledImage = cgImage.scaled(to: size)
             else { return nil }
@@ -116,7 +116,7 @@ extension ArtworkDescription {
             return rescaledImage.pngRepresentation
         }
 
-        return try? await task.value
+        return await task.value
     }
 
     /// Replaces the current artwork and regenerates the thumbnail.

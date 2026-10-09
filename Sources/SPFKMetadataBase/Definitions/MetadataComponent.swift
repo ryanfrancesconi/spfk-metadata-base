@@ -24,7 +24,7 @@ extension MetadataComponent {
     public var dirtyFlag: MetadataDirtyFlag {
         switch self {
         case .tags, .rating, .bext, .ixml: .tags
-        case .artwork: .image
+        case .artwork: .artwork
         case .markers: .markers
         case .xmp: .xmp
         case .finderTags: .finderTags

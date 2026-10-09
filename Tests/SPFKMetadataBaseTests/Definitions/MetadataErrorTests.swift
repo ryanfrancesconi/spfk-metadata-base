@@ -21,9 +21,9 @@ struct MetadataErrorTests {
         )
     }
 
-    // The tag sentences are the ones conversion's failure report and ShadowTag already show.
+    // Conversion's failure report and ShadowTag show these sentences.
 
-    @Test func tagSentencesAreUnchanged() {
+    @Test func tagSentences() {
         #expect(MetadataError.readFailed(.tags, url).errorDescription == "Failed to load tag file: /tmp/a.wav")
         #expect(MetadataError.writeFailed(.tags, url).errorDescription == "Failed to update tags in /tmp/a.wav")
         #expect(
@@ -33,7 +33,7 @@ struct MetadataErrorTests {
         #expect(MetadataError.removeFailed(.tags, url).errorDescription == "Failed to removeAll tags in /tmp/a.wav")
     }
 
-    @Test func writeSentencesAreUnchanged() {
+    @Test func writeSentences() {
         #expect(MetadataError.writeFailed(.bext, url).errorDescription == "Failed to write BEXT chunk to /tmp/a.wav")
         #expect(
             MetadataError.writeFailed(.xmp, url).errorDescription

@@ -205,7 +205,7 @@ struct MetaAudioFileDescriptionTests {
         #expect(markers.hasContentChanges(from: base))
 
         var image = base
-        image.imageDescription.description = "Front Cover"
+        image.artwork.description = "Front Cover"
         #expect(!image.hasMetadataChanges(from: base))
 
         #if os(macOS)

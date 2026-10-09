@@ -8,14 +8,14 @@ extension MetaAudioFileDescription {
     /// The best available image for display: embedded artwork, else the file's Quick Look thumbnail.
     public var bestAvailableImage: CGImage? {
         #if os(macOS)
-        imageDescription.cgImage ?? url.bestImageRepresentation?.cgImage
+        artwork.cgImage ?? url.bestImageRepresentation?.cgImage
         #else
-        imageDescription.cgImage
+        artwork.cgImage
         #endif
     }
     
     public var bestOriginalImage: CGImage? {
-        imageDescription.cgImage ?? imageDescription.thumbnailImage
+        artwork.cgImage ?? artwork.thumbnailImage
     }
 
     /// The BPM (beats per minute) value from the `.bpm` tag. Setting this updates the underlying tag string.

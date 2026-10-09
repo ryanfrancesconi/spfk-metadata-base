@@ -13,7 +13,7 @@ public enum MetadataDirtyFlag: String, CaseIterable, Hashable, Sendable, Codable
     /// file (XMP, or TagLib for Matroska).
     case tags = "metadata"
     /// Embedded artwork
-    case image
+    case artwork = "image"
     /// Embedded XMP — written by a separate XMP call
     case xmp
     /// Markers, which some formats store as chapters

@@ -30,6 +30,6 @@ struct MetadataComponentTests {
         #expect(MetadataDirtyFlag.tags.isFullyWritten(by: [.tags, .rating, .bext, .ixml, .markers]))
         #expect(!MetadataDirtyFlag.tags.isFullyWritten(by: [.tags, .bext, .ixml]))
         #expect(MetadataDirtyFlag.markers.isFullyWritten(by: [.markers]))
-        #expect(!MetadataDirtyFlag.image.isFullyWritten(by: []))
+        #expect(!MetadataDirtyFlag.artwork.isFullyWritten(by: []))
     }
 }
