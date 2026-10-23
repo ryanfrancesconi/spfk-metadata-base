@@ -5,9 +5,10 @@ import Foundation
 extension IXMLMetadata {
     /// A TRACK_LIST entry.
     public struct Track: Equatable, Sendable {
-        /// 1-based channel index in the file.
+        /// 1-based input number on the recorder this track came from, which travels with the signal.
         public var channelIndex: String?
 
+        /// 1-based position of the track in the file.
         public var interleaveIndex: String?
 
         /// Track name (e.g., "Boom", "Lav 1").
