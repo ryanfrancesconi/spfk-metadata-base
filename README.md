@@ -44,7 +44,7 @@ For reading and writing files, use [SPFKMetadata](https://github.com/ryanfrances
 | **MetadataComponent** | A part of a file's metadata read and written on its own, and the dirty flag that writes it |
 | **MetadataError** | A metadata read or write that failed, naming the operation and the component; a save that left parts out lists them, with the components it did write. Its file-type payload is a `UTType`, so either product can throw it |
 | **MetadataReadStatus** | The components a parse could not read, which a save leaves as the file has them; `Codable` as the failed components' names, which both products' descriptions store |
-| **TagPropertiesContainerModel** | Protocol for types that contain tag properties |
+| **TagPropertiesContainerModel** | Protocol for types that contain tag properties. Its two setters store a key tag in the ID3v2.4 short form ("C#m"); the read paths keep a key as the file wrote it |
 | **MediaFilePlayability** | Whether a file can be played, and by which of the two paths |
 | **MetadataDirtyFlag** | Which parts of a description have unsaved edits, in both products |
 | **StartTimecodeResolution** / **StartTimecodeSource** | A start timecode together with the carrier it came from |
@@ -80,7 +80,7 @@ The [iXML](http://www.ixml.info) model. `IXMLMetadata.xml` writes the modeled fi
 
 | Type | Description |
 |------|-------------|
-| **AudioMarkerDescription** | Format-agnostic marker struct with name, start/end time, color, and markerID |
+| **AudioMarkerDescription** | Format-agnostic marker struct with name, start/end time, color, and markerID. |
 | **AudioMarkerDescriptionCollection** | Ordered collection with insert, remove, update, sort, and automatic ID assignment |
 | **AudioMarkerType** | Structural classification of a marker |
 

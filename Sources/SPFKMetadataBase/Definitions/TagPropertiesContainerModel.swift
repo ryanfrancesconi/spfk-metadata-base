@@ -19,10 +19,12 @@ public protocol TagPropertiesContainerModel: CustomStringConvertible {
 }
 
 extension TagPropertiesContainerModel {
+    /// Writes through ``TagKey/storedValue(_:)``, so an ``TagKey/initialKey`` is stored in the
+    /// short form.
     public subscript(key: TagKey) -> String? {
         get { tags[key] }
         set {
-            tags[key] = newValue
+            tags[key] = newValue.map(key.storedValue)
         }
     }
 
@@ -77,9 +79,10 @@ extension TagPropertiesContainerModel {
         customTags[key]
     }
 
-    /// Sets a standard tag value. Pass `nil` to remove the tag.
+    /// Sets a standard tag value. Pass `nil` to remove the tag. An ``TagKey/initialKey`` is
+    /// stored in the short form (``TagKey/storedValue(_:)``).
     public mutating func set(tag key: TagKey, value: String?) {
-        tags[key] = value
+        tags[key] = value.map(key.storedValue)
     }
 
     /// Sets a custom tag value by its raw string key. Pass `nil` to remove it.
