@@ -80,7 +80,7 @@ The [iXML](http://www.ixml.info) model. `IXMLMetadata.xml` writes the modeled fi
 
 | Type | Description |
 |------|-------------|
-| **AudioMarkerDescription** | Format-agnostic marker struct with name, start/end time, color, and markerID. |
+| **AudioMarkerDescription** | Format-agnostic marker struct with name, start/end time, color, and markerID. `adjusted(_:forTrim:timeScale:newDuration:)` maps markers onto a trimmed, re-timed render |
 | **AudioMarkerDescriptionCollection** | Ordered collection with insert, remove, update, sort, and automatic ID assignment |
 | **AudioMarkerType** | Structural classification of a marker |
 
