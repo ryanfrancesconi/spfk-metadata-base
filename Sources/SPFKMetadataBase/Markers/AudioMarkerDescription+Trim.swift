@@ -1,6 +1,7 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/spfk-metadata-base
 
 import Foundation
+import SPFKAudioBase
 import SPFKBase
 
 extension AudioMarkerDescription {
@@ -25,16 +26,40 @@ extension AudioMarkerDescription {
         adjusted(descriptions, inPoint: inPoint, outPoint: outPoint, timeScale: 1, newDuration: newDuration)
     }
 
-    /// Maps markers onto the timeline a render produces: the trim of ``adjustedForTrim(_:inPoint:outPoint:newDuration:)``,
-    /// then every time divided by `timeScale`, the render's playback rate (2 halves every time).
+    /// Maps markers onto the timeline a render of `edit` produces: the trim of
+    /// ``adjustedForTrim(_:inPoint:outPoint:newDuration:)``, every time divided by the edit's rate
+    /// (2 halves every time), then, for a reversed edit, mirrored with region ends swapped.
     /// `newDuration` is the rendered file's, in its own timeline.
     public static func adjusted(
         _ descriptions: [AudioMarkerDescription],
-        forTrim trim: TrimDescription,
-        timeScale: Double,
-        newDuration: TimeInterval? = nil
+        for edit: AudioEditDescription,
+        newDuration: TimeInterval
     ) -> [AudioMarkerDescription] {
-        adjusted(descriptions, inPoint: trim.inPoint, outPoint: trim.outPoint, timeScale: timeScale, newDuration: newDuration)
+        let adjusted = adjusted(
+            descriptions,
+            inPoint: edit.trim.inPoint,
+            outPoint: edit.trim.outPoint,
+            timeScale: edit.timePitch.rate,
+            newDuration: newDuration
+        )
+        return edit.isReversed ? mirrored(adjusted, duration: newDuration) : adjusted
+    }
+
+    /// Markers on the reversed timeline of a file `duration` seconds long: t → duration − t, with
+    /// each region's start and end swapped, in ascending start order. A chapter writer expects
+    /// that order, and a mirror reverses it.
+    public static func mirrored(_ descriptions: [AudioMarkerDescription], duration: TimeInterval) -> [AudioMarkerDescription] {
+        let mirrored = descriptions.map { description in
+            var copy = description
+            if let end = description.endTime {
+                copy.startTime = max(0, duration - end)
+                copy.endTime = max(0, duration - description.startTime)
+            } else {
+                copy.startTime = max(0, duration - description.startTime)
+            }
+            return copy
+        }
+        return mirrored.sorted { $0.startTime < $1.startTime }
     }
 
     private static func adjusted(

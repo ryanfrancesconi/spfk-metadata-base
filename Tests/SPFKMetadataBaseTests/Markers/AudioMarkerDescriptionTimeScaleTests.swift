@@ -1,6 +1,7 @@
 // Copyright Ryan Francesconi. All Rights Reserved.
 
 import Foundation
+import SPFKAudioBase
 import SPFKBase
 import Testing
 
@@ -13,14 +14,20 @@ final class AudioMarkerDescriptionTimeScaleTests {
         AudioMarkerDescription(name: name, startTime: start, endTime: end)
     }
 
+    private func edit(_ trim: TrimDescription, rate: Double) -> AudioEditDescription {
+        var edit = AudioEditDescription(trim: trim)
+        edit.timePitch.rate = rate
+        return edit
+    }
+
     @Test func theTrimShiftsBeforeTheRateScales() {
         let markers = [marker("a", 10), marker("b", 20, 30)]
 
-        let half = AudioMarkerDescription.adjusted(markers, forTrim: TrimDescription(inPoint: 4), timeScale: 0.5)
+        let half = AudioMarkerDescription.adjusted(markers, for: edit(TrimDescription(inPoint: 4), rate: 0.5), newDuration: 100)
         #expect(half.map(\.startTime) == [12, 32])
         #expect(half.map(\.endTime) == [nil, 52])
 
-        let double = AudioMarkerDescription.adjusted(markers, forTrim: TrimDescription(inPoint: 4), timeScale: 2)
+        let double = AudioMarkerDescription.adjusted(markers, for: edit(TrimDescription(inPoint: 4), rate: 2), newDuration: 100)
         #expect(double.map(\.startTime) == [3, 8])
         #expect(double.map(\.endTime) == [nil, 13])
     }
@@ -30,8 +37,8 @@ final class AudioMarkerDescriptionTimeScaleTests {
 
         let adjusted = AudioMarkerDescription.adjusted(
             markers,
-            forTrim: TrimDescription(inPoint: 5, outPoint: 20),
-            timeScale: 2
+            for: edit(TrimDescription(inPoint: 5, outPoint: 20), rate: 2),
+            newDuration: 7.5
         )
 
         #expect(adjusted.map(\.name) == ["kept", "straddles"])
@@ -42,8 +49,7 @@ final class AudioMarkerDescriptionTimeScaleTests {
     @Test func aRegionEndIsClampedToTheRenderedDuration() {
         let adjusted = AudioMarkerDescription.adjusted(
             [marker("region", 2, 12)],
-            forTrim: TrimDescription(),
-            timeScale: 0.5,
+            for: edit(TrimDescription(), rate: 0.5),
             newDuration: 20
         )
 
@@ -54,19 +60,20 @@ final class AudioMarkerDescriptionTimeScaleTests {
     @Test func nothingInTheWindowIsEmpty() {
         let adjusted = AudioMarkerDescription.adjusted(
             [marker("a", 1), marker("b", 30)],
-            forTrim: TrimDescription(inPoint: 5, outPoint: 20),
-            timeScale: 1.5
+            for: edit(TrimDescription(inPoint: 5, outPoint: 20), rate: 1.5),
+            newDuration: 10
         )
 
         #expect(adjusted.isEmpty)
     }
 
-    @Test(arguments: [1.0, 0, -2, .nan, .infinity])
+    /// The model resolves a non-finite rate to 1.
+    @Test(arguments: [1.0, .nan, .infinity])
     func anUnusableOrUnitScaleIsTheTrimAlone(timeScale: Double) {
         let markers = [marker("a", 10), marker("b", 20, 40), marker("c", 2)]
         let trim = TrimDescription(inPoint: 5, outPoint: 30)
 
-        let adjusted = AudioMarkerDescription.adjusted(markers, forTrim: trim, timeScale: timeScale, newDuration: 25)
+        let adjusted = AudioMarkerDescription.adjusted(markers, for: edit(trim, rate: timeScale), newDuration: 25)
         let trimmed = AudioMarkerDescription.adjustedForTrim(markers, inPoint: 5, outPoint: 30, newDuration: 25)
 
         #expect(adjusted == trimmed)
