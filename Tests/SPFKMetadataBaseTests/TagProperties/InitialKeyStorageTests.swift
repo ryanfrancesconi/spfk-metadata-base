@@ -1,23 +1,30 @@
 // Copyright Ryan Francesconi. All Rights Reserved. Revision History at https://github.com/ryanfrancesconi/spfk-metadata-base
 
 import Foundation
+import SPFKAudioBase
 import SPFKBase
+import SPFKTesting
 import Testing
 
 @testable import SPFKMetadataBase
 
-@Suite("Initial key storage")
+@Suite("Initial key storage", .tags(.musicalKey))
 struct InitialKeyStorageTests {
     static let cases: [(typed: String, stored: String)] = [
-        ("C# Minor", "C#m"),
-        ("c#min", "C#m"),
-        ("12A", "C#m"),
-        ("C♯m", "C#m"),
-        ("5m", "C#m"),
-        ("Dbm", "Dbm"),
-        ("db minor", "Dbm"),
-        ("A Major", "A"),
-        ("8B", "C"),
+        ("C# Minor", "C# Minor"),
+        ("c#min", "C# Minor"),
+        ("12A", "C# Minor"),
+        ("C♯m", "C# Minor"),
+        ("5m", "C# Minor"),
+        ("Dbm", "Db Minor"),
+        ("db minor", "Db Minor"),
+        ("A Major", "A Major"),
+        ("Amaj", "A Major"),
+        ("4B", "Ab Major"),
+        ("8B", "C Major"),
+        ("A", "A"),
+        ("F#", "F#"),
+        ("B♭", "Bb"),
         ("o", "o"),
         ("O", "o"),
         ("off", "o"),
@@ -27,24 +34,54 @@ struct InitialKeyStorageTests {
     ]
 
     @Test(arguments: cases)
-    func setInitialKeyStoresTheShortForm(typed: String, stored: String) {
-        var properties = TagProperties()
-        properties.setInitialKey(typed)
-        #expect(properties.tag(for: .initialKey) == stored)
-    }
-
-    @Test(arguments: cases)
-    func setTagStoresTheShortForm(typed: String, stored: String) {
+    func setTagStoresTheStandardNotation(typed: String, stored: String) {
         var data = TagData()
         data.set(tag: .initialKey, value: typed)
         #expect(data.tags[.initialKey] == stored)
     }
 
     @Test(arguments: cases)
-    func theSubscriptStoresTheShortForm(typed: String, stored: String) {
+    func theSubscriptStoresTheStandardNotation(typed: String, stored: String) {
         var data = TagData()
         data[.initialKey] = typed
         #expect(data.tags[.initialKey] == stored)
+    }
+
+    @Test(arguments: [
+        ("C# Minor", MusicalKeyNotation.short, "C#m"),
+        ("Dbm", .short, "Dbm"),
+        ("A Major", .short, "Amaj"),
+        ("Abmin", .camelot, "1A"),
+        ("8A", .openKey, "1m"),
+        ("1m", .camelot, "8A"),
+        ("C# Minor", .standard, "C# Minor"),
+    ])
+    func setInitialKeyStoresTheNotationAsked(typed: String, notation: MusicalKeyNotation, stored: String) {
+        var properties = TagProperties()
+        properties.setInitialKey(typed, notation: notation)
+        #expect(properties.tag(for: .initialKey) == stored)
+    }
+
+    @Test(arguments: MusicalKeyNotation.allCases)
+    func offKeyIsOInEveryNotation(notation: MusicalKeyNotation) {
+        var properties = TagProperties()
+        properties.setInitialKey("Off Key", notation: notation)
+        #expect(properties.tag(for: .initialKey) == "o")
+    }
+
+    @Test(arguments: [MusicalKeyNotation.camelot, .openKey])
+    func aRootAloneFallsBackToStandardOnAWheel(notation: MusicalKeyNotation) {
+        var properties = TagProperties()
+        properties.setInitialKey("f#", notation: notation)
+        #expect(properties.tag(for: .initialKey) == "F#")
+    }
+
+    @Test func aRootAloneReadsBackAsARootAlone() throws {
+        var data = TagData()
+        data[.initialKey] = "F#"
+        let stored = try #require(data[.initialKey])
+        let parsed = try #require(MusicalKeyValue.parse(stored))
+        #expect(parsed.value.tonality == .unknown)
     }
 
     @Test func otherTagsAreStoredAsGiven() {
@@ -85,26 +122,44 @@ struct InitialKeyStorageTests {
     }
 
     /// The entry points can normalize only the writes that reach them; `tags` itself is public.
+    /// Scans every package beside this one, so a writer anywhere in the workspace is caught.
     @Test func noSourceWritesTheKeyTagDirectly() throws {
-        let sources = URL(filePath: #filePath)
+        let packages = URL(filePath: #filePath)
             .deletingLastPathComponent() // TagProperties
             .deletingLastPathComponent() // SPFKMetadataBaseTests
             .deletingLastPathComponent() // Tests
+            .deletingLastPathComponent() // spfk-metadata-base
             .deletingLastPathComponent()
-            .appending(path: "Sources")
 
-        let enumerator = try #require(FileManager.default.enumerator(at: sources, includingPropertiesForKeys: nil))
-        let pattern = try Regex(#"tags\s*\[\s*\.initialKey\s*\]\s*=[^=]"#)
-        var scanned = 0
+        let patterns = try [
+            Regex(#"tags\s*\[\s*\.initialKey\s*\]\s*=[^=]"#),
+            Regex(#"\(tags:\s*\[[^\]]*\.initialKey\s*:"#),
+        ]
 
-        for case let url as URL in enumerator where url.pathExtension == "swift" {
-            scanned += 1
-            guard !url.lastPathComponent.hasPrefix("TagPropertiesContainerModel") else { continue }
+        let packageURLs = try FileManager.default.contentsOfDirectory(at: packages, includingPropertiesForKeys: nil)
+            .filter { $0.lastPathComponent.hasPrefix("spfk-") }
 
-            let text = try String(contentsOf: url, encoding: .utf8)
-            #expect(text.firstMatch(of: pattern) == nil, "\(url.lastPathComponent) writes tags[.initialKey]")
+        var scanned: [String: Int] = [:]
+
+        for package in packageURLs {
+            let sources = package.appending(path: "Sources")
+
+            guard let enumerator = FileManager.default.enumerator(
+                at: sources, includingPropertiesForKeys: nil, options: .skipsHiddenFiles
+            ) else { continue }
+
+            for case let url as URL in enumerator where url.pathExtension == "swift" {
+                scanned[package.lastPathComponent, default: 0] += 1
+                guard !url.lastPathComponent.hasPrefix("TagPropertiesContainerModel") else { continue }
+
+                let text = try String(contentsOf: url, encoding: .utf8)
+
+                for pattern in patterns {
+                    #expect(text.firstMatch(of: pattern) == nil, "\(url.lastPathComponent) writes the key tag directly")
+                }
+            }
         }
 
-        #expect(scanned > 40)
+        #expect(scanned["spfk-metadata-base", default: 0] > 40)
     }
 }
