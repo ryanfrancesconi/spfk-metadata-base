@@ -6,11 +6,14 @@ import SPFKAudioBase
 import SPFKBase
 
 extension IXMLMetadata {
+    /// The IXML_VERSION written into a document this package creates.
+    public static let currentVersion = "1.52"
+
     /// Fills SPEED, TRACK_LIST, BEXT, LOUDNESS and HISTORY from the file's format, tags and BEXT.
     public init(from description: MetaAudioFileDescription) {
         self.init()
 
-        version = "1.52"
+        version = Self.currentVersion
         project = description.tag(for: .album)
         note = description.tag(for: .comment)
 

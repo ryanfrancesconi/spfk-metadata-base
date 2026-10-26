@@ -19,11 +19,18 @@ extension IXMLMetadata {
             return true
         }
 
-        func name(_ track: Track) -> String {
-            (track.name ?? "").trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        return Self.namesDescribeMidSide(tracks.map(\.name))
+    }
+
+    /// True for two names reading M and S, or Mid and Side, in that order, ignoring case and edge spaces.
+    public static func namesDescribeMidSide(_ names: [String?]) -> Bool {
+        guard names.count == 2 else { return false }
+
+        func name(_ index: Int) -> String {
+            (names[index] ?? "").trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         }
 
-        return ["m", "mid"].contains(name(tracks[0])) && ["s", "side"].contains(name(tracks[1]))
+        return ["m", "mid"].contains(name(0)) && ["s", "side"].contains(name(1))
     }
 
     /// Rewrites a two-track TRACK_LIST to describe the channels `operation` writes. Any other
