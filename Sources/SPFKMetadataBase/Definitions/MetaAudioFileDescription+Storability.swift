@@ -13,6 +13,11 @@ extension MetaAudioFileDescription {
         capabilityFileType?.supportsMarkerWrite == true
     }
 
+    /// The most markers this file's container can hold; nil when it sets no limit.
+    public var maximumMarkerCount: Int? {
+        capabilityFileType?.markerStorage?.maximumMarkerCount
+    }
+
     /// Falls back to the extension for a description not yet parsed, which has no `fileType`.
     private var capabilityFileType: AudioFileType? {
         fileType ?? AudioFileType(pathExtension: url.pathExtension)
