@@ -145,10 +145,24 @@ public struct IXMLMetadata: Equatable, Sendable {
 
     /// Parses without trimming, so every value keeps its text as read -- line breaks and edge
     /// spaces included -- through an edit of any other field.
+    ///
+    /// A `&` that begins no entity is read as text, as some catalogers write it unescaped.
     static func document(xml: String) throws -> AEXMLDocument {
         var options = AEXMLOptions()
         options.parserSettings.shouldTrimWhitespace = false
-        return try AEXMLDocument(xml: xml, options: options)
+
+        do {
+            return try AEXMLDocument(xml: xml, options: options)
+        } catch {
+            let escaped = xml.replacingOccurrences(
+                of: #"&(?![A-Za-z_][A-Za-z0-9._-]*;|#[0-9]+;|#x[0-9A-Fa-f]+;)"#,
+                with: "&amp;",
+                options: .regularExpression
+            )
+
+            guard escaped != xml, let doc = try? AEXMLDocument(xml: escaped, options: options) else { throw error }
+            return doc
+        }
     }
 
     /// All initializers resolve here. Expects a `<BWFXML>` root.
