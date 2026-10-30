@@ -42,6 +42,10 @@ public struct MetaAudioFileDescription: Hashable, Sendable {
     /// run that found nothing; nil when they never have. A store re-reads a row stamped behind it.
     public var trackReaderVersion: Int?
 
+    /// The `currentTagReaderVersion` (spfk-metadata) the tags were last read at; nil when they were
+    /// read before it existed. A store re-reads what an older reader may have read as empty.
+    public var tagReaderVersion: Int?
+
     /// QuickTime user-data (GPS, capture device, creation date). `nil` for files with no
     /// QuickTime user-data.
     public var quickTimeUserData: QuickTimeUserData?
@@ -140,6 +144,7 @@ extension MetaAudioFileDescription: Codable {
         case videoTrack
         case audioTracks
         case trackReaderVersion
+        case tagReaderVersion
         case quickTimeUserData
         case tagProperties
         case bextDescription
@@ -164,6 +169,7 @@ extension MetaAudioFileDescription: Codable {
         videoTrack = try container.decodeIfPresent(VideoTrackProperties.self, forKey: .videoTrack)
         audioTracks = try container.decodeIfPresent([AudioTrackDescription].self, forKey: .audioTracks) ?? []
         trackReaderVersion = try container.decodeIfPresent(Int.self, forKey: .trackReaderVersion)
+        tagReaderVersion = try container.decodeIfPresent(Int.self, forKey: .tagReaderVersion)
         quickTimeUserData = try container.decodeIfPresent(QuickTimeUserData.self, forKey: .quickTimeUserData)
         tagProperties = try container.decodeIfPresent(TagProperties.self, forKey: .tagProperties) ?? .init()
         bextDescription = try container.decodeIfPresent(BEXTDescription.self, forKey: .bextDescription)
@@ -196,6 +202,7 @@ extension MetaAudioFileDescription: Codable {
             try container.encode(audioTracks, forKey: .audioTracks)
         }
         try container.encodeIfPresent(trackReaderVersion, forKey: .trackReaderVersion)
+        try container.encodeIfPresent(tagReaderVersion, forKey: .tagReaderVersion)
         try container.encodeIfPresent(quickTimeUserData, forKey: .quickTimeUserData)
         try container.encode(tagProperties, forKey: .tagProperties)
         try container.encodeIfPresent(bextDescription, forKey: .bextDescription)
