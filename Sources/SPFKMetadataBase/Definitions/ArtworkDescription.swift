@@ -19,7 +19,7 @@ public struct ArtworkDescription: Sendable, Hashable {
         }
     }
 
-    /// Whether this value is a request to remove the file's artwork, as opposed to artwork that
+    /// Whether the file's artwork is removed, or is to be when saved, as opposed to artwork that
     /// is not in memory. Cleared by setting an image.
     public var isRemoval = false
 
