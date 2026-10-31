@@ -132,6 +132,8 @@ public enum TagKey: String, CaseIterable, Codable, Comparable, Sendable {
 
     case archivalLocation
     case commissioned
+    /// INFO `ISRC`: who supplied the original subject. Not ``isrc``.
+    case source
     case subject
 }
 

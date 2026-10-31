@@ -39,4 +39,11 @@ struct TagDataKnownCustomTagTests {
         #expect(data.tags == [.commissioned: "Articulated Sounds"])
         #expect(data.customTags.isEmpty)
     }
+
+    /// INFO `ISRC` is RIFF Source, not an International Standard Recording Code.
+    @Test func infoISRCIsSourceAndNotISRC() {
+        #expect(TagKey(infoFrame: .source) == .source)
+        #expect(TagKey.isrc.infoFrame == nil)
+        #expect(TagKey(id3Frame: .isrc) == .isrc)
+    }
 }

@@ -26,7 +26,6 @@ extension TagKey {
         case .encoding:         .software
         case .encodingTime:     .dateTimeOriginal
         case .genre:            .genre
-        case .isrc:             .source
         case .keywords:         .keywords
         case .label:            .publisher
         case .language:         .language
@@ -37,6 +36,7 @@ extension TagKey {
         case .rating:           .rating
         case .releaseCountry:   .country
         case .remixer:          .editedBy
+        case .source:           .source
         case .startTimecode:    .startTimecode
         case .endTimecode:      .endTimecode
         case .subject:          .subject
