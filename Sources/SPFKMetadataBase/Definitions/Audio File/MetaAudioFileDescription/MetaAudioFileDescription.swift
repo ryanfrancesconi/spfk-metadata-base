@@ -56,6 +56,9 @@ public struct MetaAudioFileDescription: Hashable, Sendable {
     /// Broadcast Wave Extension (BWF) chunk data. Only present for WAV/FLAC files that contain a BEXT chunk.
     public var bextDescription: BEXTDescription?
 
+    /// A WAV's INFO fields no ``TagKey`` maps; nil when they were not read.
+    public var riffInfoFields: RIFFInfoFields?
+
     /// Raw iXML chunk string extracted from WAV/FLAC files. `nil` for other formats or files without iXML.
     public var iXMLMetadata: String?
 
@@ -148,6 +151,7 @@ extension MetaAudioFileDescription: Codable {
         case quickTimeUserData
         case tagProperties
         case bextDescription
+        case riffInfoFields
         case iXMLMetadata
         case xmpMetadata
         case markerCollection
@@ -173,6 +177,7 @@ extension MetaAudioFileDescription: Codable {
         quickTimeUserData = try container.decodeIfPresent(QuickTimeUserData.self, forKey: .quickTimeUserData)
         tagProperties = try container.decodeIfPresent(TagProperties.self, forKey: .tagProperties) ?? .init()
         bextDescription = try container.decodeIfPresent(BEXTDescription.self, forKey: .bextDescription)
+        riffInfoFields = try container.decodeIfPresent(RIFFInfoFields.self, forKey: .riffInfoFields)
         iXMLMetadata = try container.decodeIfPresent(String.self, forKey: .iXMLMetadata)
         xmpMetadata = try container.decodeIfPresent(String.self, forKey: .xmpMetadata)
         markerCollection = try container.decodeIfPresent(AudioMarkerDescriptionCollection.self, forKey: .markerCollection) ?? .init()
@@ -206,6 +211,7 @@ extension MetaAudioFileDescription: Codable {
         try container.encodeIfPresent(quickTimeUserData, forKey: .quickTimeUserData)
         try container.encode(tagProperties, forKey: .tagProperties)
         try container.encodeIfPresent(bextDescription, forKey: .bextDescription)
+        try container.encodeIfPresent(riffInfoFields, forKey: .riffInfoFields)
         try container.encodeIfPresent(iXMLMetadata, forKey: .iXMLMetadata)
         try container.encodeIfPresent(xmpMetadata, forKey: .xmpMetadata)
         try container.encode(markerCollection, forKey: .markerCollection)
@@ -232,9 +238,10 @@ extension MetaAudioFileDescription {
         self != other || markerCollection.hasContentChanges(from: other.markerCollection)
     }
 
-    /// Whether the fields a `.tags` save writes differ: tags, BEXT and iXML.
+    /// Whether the fields a `.tags` save writes differ: tags, INFO fields, BEXT and iXML.
     public func hasMetadataChanges(from other: MetaAudioFileDescription) -> Bool {
         tagProperties != other.tagProperties
+            || riffInfoFields?.fields != other.riffInfoFields?.fields
             || bextDescription != other.bextDescription
             || iXMLMetadata != other.iXMLMetadata
     }
