@@ -73,4 +73,13 @@ struct RIFFInfoFieldsTests {
         display.riffInfoFields?.infoTitle = "Old Title"
         #expect(!display.hasMetadataChanges(from: base))
     }
+
+    @Test func readingFieldsNeverReadIsNotAMetadataChange() {
+        let unread = MetaAudioFileDescription(url: URL(fileURLWithPath: "/tmp/take.wav"))
+        var read = unread
+        read.riffInfoFields = RIFFInfoFields(fields: ["BCPR": "C"])
+
+        #expect(!read.hasMetadataChanges(from: unread))
+        #expect(!unread.hasMetadataChanges(from: read))
+    }
 }

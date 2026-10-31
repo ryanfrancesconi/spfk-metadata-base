@@ -238,12 +238,18 @@ extension MetaAudioFileDescription {
         self != other || markerCollection.hasContentChanges(from: other.markerCollection)
     }
 
-    /// Whether the fields a `.tags` save writes differ: tags, INFO fields, BEXT and iXML.
+    /// Whether the fields a `.tags` save writes differ: tags, INFO fields, BEXT and iXML. INFO
+    /// fields differ only when both sides read them, so a first read is not an edit.
     public func hasMetadataChanges(from other: MetaAudioFileDescription) -> Bool {
         tagProperties != other.tagProperties
-            || riffInfoFields?.fields != other.riffInfoFields?.fields
+            || infoFieldsDiffer(from: other)
             || bextDescription != other.bextDescription
             || iXMLMetadata != other.iXMLMetadata
+    }
+
+    private func infoFieldsDiffer(from other: MetaAudioFileDescription) -> Bool {
+        guard let fields = riffInfoFields?.fields, let otherFields = other.riffInfoFields?.fields else { return false }
+        return fields != otherFields
     }
 }
 
