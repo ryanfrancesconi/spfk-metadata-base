@@ -11,11 +11,13 @@ extension TagKey {
     public var infoFrame: InfoFrameKey? {
         switch self {
         case .album:            .product
+        case .archivalLocation: .archivalLocation
         case .arranger:         .engineer
         case .artist:           .artist
         case .artistWebpage:    .baseURL
         case .bpm:              .bpm
         case .comment:          .comment
+        case .commissioned:     .commissioned
         case .composer:         .musicBy
         case .copyright:        .copyright
         case .date:             .dateCreated
@@ -37,6 +39,7 @@ extension TagKey {
         case .remixer:          .editedBy
         case .startTimecode:    .startTimecode
         case .endTimecode:      .endTimecode
+        case .subject:          .subject
         case .title:            .title
         case .trackNumber:      .trackNumber1
         default:

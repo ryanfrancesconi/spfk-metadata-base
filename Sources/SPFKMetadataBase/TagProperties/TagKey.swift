@@ -127,6 +127,12 @@ public enum TagKey: String, CaseIterable, Codable, Comparable, Sendable {
     case ucsCategory
     case ucsSubcategory
     case ucsCatID
+
+    // RIFF INFO fields with no standard ID3 frame
+
+    case archivalLocation
+    case commissioned
+    case subject
 }
 
 // MARK: - overrides

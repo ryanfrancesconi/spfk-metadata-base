@@ -67,6 +67,16 @@ public struct TagData: TagPropertiesContainerModel, Hashable, Codable, Sendable 
         }
     }
 
+    /// Moves each custom tag whose key is a ``TagKey/taglibKey`` into ``tags``, where a value
+    /// already in ``tags`` wins. A custom tag stored before its ``TagKey`` existed loads as that key.
+    public mutating func promoteKnownCustomTags() {
+        for (key, value) in customTags {
+            guard let tagKey = TagKey(taglibKey: key) else { continue }
+            customTags.removeValue(forKey: key)
+            if tags[tagKey] == nil { tags[tagKey] = value }
+        }
+    }
+
     /// Clamps and sanitizes all tag values that have a ``TagValueConstraint`` declared on their ``TagKey``.
     ///
     /// Returns `true` if any value was changed, `false` if all values were already valid or unparseable.
@@ -83,6 +93,16 @@ public struct TagData: TagPropertiesContainerModel, Hashable, Codable, Sendable 
         }
 
         return changed
+    }
+}
+
+extension TagData {
+    /// Promotes known custom tags (``promoteKnownCustomTags()``).
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        tags = try container.decode(TagKeyDictionary.self, forKey: .tags)
+        customTags = try container.decode([String: String].self, forKey: .customTags)
+        promoteKnownCustomTags()
     }
 }
 
