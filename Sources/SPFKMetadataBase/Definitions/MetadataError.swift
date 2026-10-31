@@ -20,6 +20,10 @@ public enum MetadataError: LocalizedError, Hashable, Sendable {
     case removeFailed(MetadataComponent, URL)
     /// The file could not be written at all, so nothing in it changed.
     case saveFailed(URL)
+    /// The file's content is another format (`actual`) than its extension names, so a save would
+    /// write the wrong format's metadata into it. Nothing was written; renaming it to
+    /// `pathExtension` lets it save.
+    case contentMismatch(URL, actual: UTType, pathExtension: String)
     /// The container has no writer for these flags. Retrying cannot succeed.
     case unstorable(UTType?, Set<MetadataDirtyFlag>)
     /// A save that wrote `written` and left the rest as the file has it, each part for the reason in
@@ -59,6 +63,9 @@ public enum MetadataError: LocalizedError, Hashable, Sendable {
 
         case let .saveFailed(url):
             return "Failed to save \(url.path)"
+
+        case let .contentMismatch(url, _, pathExtension):
+            return "\(url.lastPathComponent) is a \(pathExtension.uppercased()) file with the wrong extension"
 
         case let .unstorable(fileType, flags):
             let name = fileType.map(Self.name(of:)) ?? "These"
