@@ -8,14 +8,26 @@ import SPFKUtils
 /// Container for embedded audio file artwork with thumbnail generation.
 ///
 /// The full-resolution `CGImage` and thumbnail image are transient — excluded from `Codable`.
-/// Only the text ``description`` is serialized. Image data is persisted via `ImageDataStore`.
+/// Only the text ``description`` and ``isRemoval`` are serialized. Image data is persisted via `ImageDataStore`.
 public struct ArtworkDescription: Sendable, Hashable {
     /// The full-resolution embedded artwork. Not encoded. Setting a different image drops
     /// ``storedPicture``.
     public var cgImage: CGImage? {
         didSet {
             if cgImage !== oldValue { storedPicture = nil }
+            if cgImage != nil { isRemoval = false }
         }
+    }
+
+    /// Whether this value is a request to remove the file's artwork, as opposed to artwork that
+    /// is not in memory. Cleared by setting an image.
+    public var isRemoval = false
+
+    /// Removes every picture from the file when saved.
+    public static var removed: ArtworkDescription {
+        var artwork = ArtworkDescription()
+        artwork.isRemoval = true
+        return artwork
     }
 
     /// The artwork as the file stores it, held while ``cgImage`` is the image it decodes to, so a
@@ -77,11 +89,12 @@ public struct ArtworkDescription: Sendable, Hashable {
 
 extension ArtworkDescription: Equatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.description == rhs.description
+        lhs.description == rhs.description && lhs.isRemoval == rhs.isRemoval
     }
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(description)
+        hasher.combine(isRemoval)
     }
 }
 
@@ -90,17 +103,20 @@ extension ArtworkDescription: Equatable {
 extension ArtworkDescription: Codable {
     enum CodingKeys: String, CodingKey {
         case description
+        case isRemoval
     }
 
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         description = try container.decodeIfPresent(String.self, forKey: .description)
+        isRemoval = try container.decodeIfPresent(Bool.self, forKey: .isRemoval) ?? false
         // thumbnailImage is populated separately from the image cache after decode
     }
 
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encodeIfPresent(description, forKey: .description)
+        if isRemoval { try container.encode(isRemoval, forKey: .isRemoval) }
     }
 }
 
