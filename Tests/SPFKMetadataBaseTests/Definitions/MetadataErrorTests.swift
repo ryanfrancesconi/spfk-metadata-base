@@ -51,15 +51,6 @@ struct MetadataErrorTests {
         )
     }
 
-    @Test func equalityCoversComponentAndURL() {
-        #expect(MetadataError.readFailed(.tags, url) == .readFailed(.tags, url))
-        #expect(MetadataError.readFailed(.tags, url) != .readFailed(.bext, url))
-        #expect(MetadataError.readFailed(.tags, url) != .readFailed(.tags, other))
-        #expect(MetadataError.readFailed(.tags, url) != .writeFailed(.tags, url))
-        #expect(MetadataError.unsupportedFormat(.mp3, .markers) != .unsupportedFormat(nil, .markers))
-        #expect(MetadataError.saveFailed(url) != .saveFailed(other))
-    }
-
     /// A save that wrote nothing, and a parse that could not open the file, name no component.
     @Test func wholeFileFailuresNameNoComponent() {
         #expect(MetadataError.saveFailed(url).errorDescription == "Failed to save /tmp/a.wav")

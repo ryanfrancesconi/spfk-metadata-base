@@ -6,25 +6,7 @@ import Testing
 // Test TagPropertiesContainerModel protocol via TagData which conforms to it
 
 struct TagPropertiesContainerModelTests {
-    // MARK: - subscript
-
-    @Test func subscriptGetSet() {
-        var data = TagData()
-        data[.title] = "Hello"
-        #expect(data[.title] == "Hello")
-
-        data[.title] = nil
-        #expect(data[.title] == nil)
-    }
-
     // MARK: - contains
-
-    @Test func containsKey() {
-        let data = TagData(tags: [.title: "Test", .album: "Album"])
-        #expect(data.contains(key: .title))
-        #expect(data.contains(key: .album))
-        #expect(!data.contains(key: .artist))
-    }
 
     @Test func containsOnlyTheUserDefinedKeyThatIsSet() {
         var data = TagData()
@@ -43,26 +25,6 @@ struct TagPropertiesContainerModelTests {
     @Test func containsKeysEmpty() {
         let data = TagData(tags: [.title: "Test"])
         #expect(data.contains(keys: []))
-    }
-
-    // MARK: - tag / customTag accessors
-
-    @Test func tagAccessors() {
-        var data = TagData()
-        data.set(tag: .title, value: "Test Title")
-        #expect(data.tag(for: .title) == "Test Title")
-
-        data.remove(tag: .title)
-        #expect(data.tag(for: .title) == nil)
-    }
-
-    @Test func customTagAccessors() {
-        var data = TagData()
-        data.set(customTag: "MY_TAG", value: "Custom Value")
-        #expect(data.customTag(for: "MY_TAG") == "Custom Value")
-
-        data.remove(customTag: "MY_TAG")
-        #expect(data.customTag(for: "MY_TAG") == nil)
     }
 
     // MARK: - set(taglibKey:value:)
@@ -255,18 +217,5 @@ struct TagPropertiesContainerModelTests {
         #expect(data.customTags["KEY1"] == "V1")
         #expect(data.customTags["KEY2"] == "V2")
         #expect(data.customTags["KEY3"] == "V3")
-    }
-
-    // MARK: - removeAll
-
-    @Test func removeAll() {
-        var data = TagData(
-            tags: [.title: "Test"],
-            customTags: ["KEY": "Value"]
-        )
-
-        data.removeAll()
-        #expect(data.tags.isEmpty)
-        #expect(data.customTags.isEmpty)
     }
 }

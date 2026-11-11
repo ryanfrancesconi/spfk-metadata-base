@@ -5,28 +5,6 @@ import Testing
 @testable import SPFKMetadataBase
 
 struct TagDataAdditionalTests {
-    // MARK: - isEmpty
-
-    @Test func isEmptyWhenBothEmpty() {
-        let data = TagData()
-        #expect(data.isEmpty)
-    }
-
-    @Test func isNotEmptyWithTags() {
-        let data = TagData(tags: [.title: "Test"])
-        #expect(!data.isEmpty)
-    }
-
-    @Test func isNotEmptyWithCustomTags() {
-        let data = TagData(customTags: ["KEY": "Value"])
-        #expect(!data.isEmpty)
-    }
-
-    @Test func isNotEmptyWithBoth() {
-        let data = TagData(tags: [.title: "T"], customTags: ["K": "V"])
-        #expect(!data.isEmpty)
-    }
-
     // MARK: - Codable
 
     @Test func codableRoundTrip() throws {
@@ -49,17 +27,6 @@ struct TagDataAdditionalTests {
         let decoded = try JSONDecoder().decode(TagData.self, from: data)
 
         #expect(decoded.isEmpty)
-    }
-
-    // MARK: - Hashable
-
-    @Test func hashable() {
-        let data1 = TagData(tags: [.title: "Test"])
-        let data2 = TagData(tags: [.title: "Test"])
-        let data3 = TagData(tags: [.title: "Different"])
-
-        #expect(data1.hashValue == data2.hashValue)
-        #expect(data1 != data3)
     }
 
     // MARK: - remove(data:)

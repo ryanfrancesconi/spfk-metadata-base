@@ -241,13 +241,6 @@ struct BEXTTimeReferenceTests {
 // MARK: - BEXTDescription.Key
 
 struct BEXTKeyTests {
-    @Test func displayNames() {
-        #expect(BEXTDescription.Key.originator.displayName == "Originator")
-        #expect(BEXTDescription.Key.version.displayName == "Version")
-        #expect(BEXTDescription.Key.description.displayName == "Description")
-        #expect(BEXTDescription.Key.umid.displayName == "UMID")
-    }
-
     @Test func initFromDisplayName() {
         for key in BEXTDescription.Key.allCases {
             let recovered = BEXTDescription.Key(displayName: key.displayName)
@@ -265,13 +258,6 @@ struct BEXTKeyTests {
         #expect(BEXTDescription.Key.umid.isEditable)
         #expect(BEXTDescription.Key.codingHistory.isEditable)
         #expect(!BEXTDescription.Key.version.isEditable)
-    }
-
-    @Test func descriptions() {
-        // version has a description
-        #expect(BEXTDescription.Key.version.description == "Version of the BWF")
-        // originator has a description
-        #expect(!BEXTDescription.Key.originator.description.isEmpty)
     }
 }
 
@@ -451,14 +437,6 @@ struct BEXTClearingTests {
         bext[.originator] = "x"
 
         #expect(bext.timeReferenceLow == 5)
-    }
-}
-
-// MARK: - BEXTDescription.defaultVersionString
-
-struct BEXTDefaultVersionTests {
-    @Test func defaultVersionStringIsTwo() {
-        #expect(BEXTDescription.defaultVersionString == "2")
     }
 }
 

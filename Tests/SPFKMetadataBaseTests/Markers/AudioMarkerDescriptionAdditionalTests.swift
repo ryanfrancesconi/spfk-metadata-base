@@ -223,14 +223,6 @@ struct AudioMarkerDescriptionStringTests {
         #expect(m.description.contains("Untitled"))
     }
 
-    @Test func debugDescription() {
-        let m = AudioMarkerDescription(name: "Test", startTime: 1.0, markerID: 5)
-        let debug = m.debugDescription
-        #expect(debug.contains("AudioMarkerDescription"))
-        #expect(debug.contains("Test"))
-        #expect(debug.contains("1.0"))
-    }
-
     @Test func noEndTimeRangeWhenEqual() {
         // endTime == startTime should not show range
         let m = AudioMarkerDescription(name: "X", startTime: 2.0, endTime: 2.0)

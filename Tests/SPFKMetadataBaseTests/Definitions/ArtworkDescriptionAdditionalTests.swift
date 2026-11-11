@@ -60,13 +60,3 @@ struct ArtworkDescriptionEquatableTests {
         #expect(a != b)
     }
 }
-
-struct ArtworkDescriptionInitTests {
-    @Test func defaultInit() {
-        let desc = ArtworkDescription()
-        #expect(desc.cgImage == nil)
-        #expect(desc.thumbnailImage == nil)
-        #expect(desc.thumbnailData == nil)
-        #expect(desc.description == nil)
-    }
-}

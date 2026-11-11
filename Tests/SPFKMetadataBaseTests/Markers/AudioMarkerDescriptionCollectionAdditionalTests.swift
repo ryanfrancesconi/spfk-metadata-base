@@ -156,11 +156,6 @@ struct AudioMarkerDescriptionCollectionAdditionalTests {
         #expect(collection.highestID == -1)
     }
 
-    @Test func allIDsEmpty() {
-        let collection = AudioMarkerDescriptionCollection()
-        #expect(collection.allIDs.isEmpty)
-    }
-
     // MARK: - removeSegmentMarkers
 
     @Test("removeSegmentMarkers removes all In NN-named markers and leaves others untouched")

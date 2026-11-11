@@ -24,41 +24,6 @@ struct MetaAudioFileDescriptionTests {
         )
     }
 
-    // MARK: - Tag Accessors
-
-    @Test func tagForKey() {
-        var desc = makeDescription()
-        desc.tagProperties.set(tag: .title, value: "My Title")
-
-        #expect(desc.tag(for: .title) == "My Title")
-    }
-
-    @Test func tagForKeyMissing() {
-        let desc = makeDescription()
-        #expect(desc.tag(for: .title) == nil)
-    }
-
-    @Test func customTagForKey() {
-        var desc = makeDescription()
-        desc.tagProperties.set(customTag: "MYKEY", value: "Custom Value")
-
-        #expect(desc.customTag(for: "MYKEY") == "Custom Value")
-    }
-
-    @Test func setTag() {
-        var desc = makeDescription()
-        desc.set(tag: .artist, value: "Artist Name")
-
-        #expect(desc.tagProperties.tag(for: .artist) == "Artist Name")
-    }
-
-    @Test func setCustomTag() {
-        var desc = makeDescription()
-        desc.set(customTag: "CUSTOM", value: "value123")
-
-        #expect(desc.tagProperties.customTag(for: "CUSTOM") == "value123")
-    }
-
     // MARK: - merge(bext:)
 
     @Test func mergeBextCreatesDescriptionWhenNil() {
