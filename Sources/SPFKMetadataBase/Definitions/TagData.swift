@@ -112,7 +112,7 @@ extension [TagData] {
     /// Returns the display names of tag keys whose values are not unanimous across the elements.
     ///
     /// Keys are unioned across the elements, **not** intersected, and an absent value counts as
-    /// `""` — so a key present on some files and missing from others is divergent. That is
+    /// `""` - so a key present on some files and missing from others is divergent. That is
     /// deliberate: partial presence is exactly the case a user needs flagged before an edit
     /// overwrites it, and treating it as agreement would hide it.
     ///

@@ -180,7 +180,7 @@ extension TagPropertiesContainerModel {
 }
 
 extension String {
-    /// Drops U+0000–U+001F except tab, line feed and carriage return. Format characters such as
+    /// Drops U+0000-U+001F except tab, line feed and carriage return. Format characters such as
     /// zero-width joiners and bidi marks are kept.
     var removingC0ControlsExceptLineBreaksAndTabs: String {
         var scalars = String.UnicodeScalarView()

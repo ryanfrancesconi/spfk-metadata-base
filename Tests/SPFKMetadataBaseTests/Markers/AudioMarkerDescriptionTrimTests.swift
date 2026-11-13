@@ -8,7 +8,7 @@ import Testing
 /// Where a marker lands after its file is trimmed.
 ///
 /// A passthrough video export drops the chapter track outright, so these values are what gets
-/// written back — not an adjustment applied to something the export preserved.
+/// written back - not an adjustment applied to something the export preserved.
 @Suite
 final class AudioMarkerDescriptionTrimTests {
     private func marker(_ name: String, _ start: TimeInterval, _ end: TimeInterval? = nil) -> AudioMarkerDescription {
@@ -82,7 +82,7 @@ final class AudioMarkerDescriptionTrimTests {
         #expect(adjusted.first?.endTime == 40)
     }
 
-    /// Without a duration the end is shifted but not bounded — the audio path's existing behavior.
+    /// Without a duration the end is shifted but not bounded - the audio path's existing behavior.
     @Test func withoutADurationTheEndIsShiftedButNotClamped() {
         let adjusted = AudioMarkerDescription.adjustedForTrim(
             [marker("region", 10, 60)],
@@ -163,7 +163,7 @@ final class AudioMarkerDescriptionTrimTests {
         #expect(adjusted.map(\.startTime) == [0])
     }
 
-    /// Nothing survives, and the caller gets an empty set rather than the originals — which is
+    /// Nothing survives, and the caller gets an empty set rather than the originals - which is
     /// what lets it leave a file with no chapter track alone instead of writing pre-trim times.
     @Test func everyMarkerOutsideTheKeptRangeYieldsNothing() {
         let adjusted = AudioMarkerDescription.adjustedForTrim(

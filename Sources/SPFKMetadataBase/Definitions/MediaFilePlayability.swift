@@ -5,7 +5,7 @@ import Foundation
 /// A file with two independent answers to whether it can be played.
 ///
 /// Both products need the union and neither can use `isAVPlayable` alone, so the derivation lives
-/// here rather than being written once per description type. Only the two inputs are required —
+/// here rather than being written once per description type. Only the two inputs are required -
 /// what sets them differs: ShadowTag asks the codec map about an audio track, TorchTag about a
 /// video one.
 public protocol MediaFilePlayability {

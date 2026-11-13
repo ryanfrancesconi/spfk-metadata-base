@@ -19,7 +19,7 @@ public struct AudioMarkerDescription: Hashable, Sendable, Equatable, Comparable,
                 && lhs.endTime == rhs.endTime
                 && lhs.markerType == rhs.markerType
         default:
-            // One has an ID and the other doesn't — different identity types, never equal.
+            // One has an ID and the other doesn't - different identity types, never equal.
             // Treating them as equal would violate Hashable (they hash by different fields).
             return false
         }

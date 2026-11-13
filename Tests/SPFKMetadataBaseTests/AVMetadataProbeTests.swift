@@ -25,7 +25,7 @@ struct AVMetadataProbeTests {
         #expect(probe.items.isNotEmpty)
     }
 
-    /// MXF's whole keyspace is provenance — application name, UMIDs, operational pattern — so
+    /// MXF's whole keyspace is provenance - application name, UMIDs, operational pattern - so
     /// nothing maps to a common key. **That is the measurement behind calling it untaggable**,
     /// rather than an assumption about the format.
     @Test("MXF declares items but no common keys", .enabled(if: ProVideoFormats.isAvailable))

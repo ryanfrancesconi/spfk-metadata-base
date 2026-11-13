@@ -31,7 +31,7 @@ public struct MetaAudioFileDescription: Hashable, Sendable {
     public var videoTrack: VideoTrackProperties?
 
     /// Every selectable audio track, in stored order. Empty for a file whose tracks have not been
-    /// read, and one element for the ordinary single-track case — a caller offering a choice needs
+    /// read, and one element for the ordinary single-track case - a caller offering a choice needs
     /// two or more.
     ///
     /// Read alongside ``videoTrack`` and by the same container-agnostic route, so a `.mkv` lists

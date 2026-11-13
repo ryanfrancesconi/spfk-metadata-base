@@ -161,7 +161,7 @@ struct AudioFormatPropertiesTests {
         let data = try JSONEncoder().encode(original)
         let decoded = try JSONDecoder().decode(AudioFormatProperties.self, from: data)
 
-        // Descriptions are not encoded — they are regenerated on decode via initialize()
+        // Descriptions are not encoded - they are regenerated on decode via initialize()
         #expect(decoded.channelsDescription == "Stereo")
         #expect(decoded.formatDescription == original.formatDescription)
         #expect(decoded.durationDescription == original.durationDescription)

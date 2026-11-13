@@ -130,7 +130,7 @@ public struct BEXTDescription: Hashable, Sendable {
     public var loudnessDescription: LoudnessDescription = .init()
 
     /// Sample rate used to convert ``timeReference`` (samples) to seconds.
-    /// Not part of the BEXT chunk itself — set externally from the audio format.
+    /// Not part of the BEXT chunk itself - set externally from the audio format.
     public var sampleRate: Double?
 
     public init() {}

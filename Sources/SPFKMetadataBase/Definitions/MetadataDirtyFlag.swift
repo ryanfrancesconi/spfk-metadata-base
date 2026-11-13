@@ -14,7 +14,7 @@ public enum MetadataDirtyFlag: String, CaseIterable, Hashable, Sendable, Codable
     case tags = "metadata"
     /// Embedded artwork
     case artwork = "image"
-    /// Embedded XMP — written by a separate XMP call
+    /// Embedded XMP - written by a separate XMP call
     case xmp
     /// Markers, which some formats store as chapters
     case markers

@@ -45,7 +45,7 @@ final class AudioMarkerDescriptionReverseTests {
     }
 
     @Test func mirrorsAfterTheTrimAndTheRate() {
-        // Trim [4, 24], rate 2: 10 → 3, region 14–18 → 5–7, in a 10 s render.
+        // Trim [4, 24], rate 2: 10 → 3, region 14-18 → 5-7, in a 10 s render.
         let adjusted = AudioMarkerDescription.adjusted(
             [marker("a", 10), marker("b", 14, 18), marker("outside", 30)],
             for: reversed(TrimDescription(inPoint: 4, outPoint: 24), rate: 2),

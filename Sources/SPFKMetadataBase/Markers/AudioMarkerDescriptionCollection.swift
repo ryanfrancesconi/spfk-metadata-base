@@ -133,7 +133,7 @@ extension AudioMarkerDescriptionCollection {
     /// Used after re-reading markers from a file to restore in-memory colors that haven't been
     /// written to the file yet. Matching is by `markerID` first, then by `(name, startTime)` as
     /// a fallback for markers without IDs (e.g. freshly parsed from file). Only markers in this
-    /// collection that have no color are updated — file-embedded colors are left untouched.
+    /// collection that have no color are updated - file-embedded colors are left untouched.
     public mutating func mergeColors(from previous: AudioMarkerDescriptionCollection) {
         guard previous.markerDescriptions.isNotEmpty else { return }
 

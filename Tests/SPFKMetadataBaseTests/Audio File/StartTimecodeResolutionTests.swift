@@ -154,7 +154,7 @@ final class StartTimecodeResolutionTests {
     }
 
     /// `bext` stores a bare sample count and `TCOD`'s format is unspecified, so neither states a
-    /// rate — the caller's supplies it, and a different one renders a different string.
+    /// rate - the caller's supplies it, and a different one renders a different string.
     @Test func fallbackFrameRateAppliesOnlyToRatelessCarriers() throws {
         var bext = BEXTDescription()
         bext.timeReference = 48000 * 10 + 24000

@@ -7,7 +7,7 @@ import SPFKUtils
 
 /// Container for embedded audio file artwork with thumbnail generation.
 ///
-/// The full-resolution `CGImage` and thumbnail image are transient — excluded from `Codable`.
+/// The full-resolution `CGImage` and thumbnail image are transient - excluded from `Codable`.
 /// Only the text ``description`` and ``isRemoval`` are serialized. Image data is persisted via `ImageDataStore`.
 public struct ArtworkDescription: Sendable, Hashable {
     /// The full-resolution embedded artwork. Not encoded. Setting a different image drops

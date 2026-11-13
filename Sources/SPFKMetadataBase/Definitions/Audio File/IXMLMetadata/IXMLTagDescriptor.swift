@@ -136,7 +136,7 @@ extension IXMLTagDescriptor {
     ///
     /// BEXT is excluded because it mirrors the binary chunk, which is indexed from its own
     /// dictionary; SPEED, LOUDNESS and HISTORY hold technical values nobody searches by. Read-only
-    /// and non-text fields stay in — a file UID or a BPM is still a term a user can type.
+    /// and non-text fields stay in - a file UID or a BPM is still a term a user can type.
     public static let searchableDescriptors: [IXMLTagDescriptor] =
         allDescriptors.filter { [.core, .user, .aswg, .location].contains($0.section) }
 

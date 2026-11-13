@@ -10,7 +10,7 @@ extension AudioMarkerDescription {
     /// The kept range is half-open: a marker on `inPoint` survives and lands at 0, one on
     /// `outPoint` is dropped. A region overlapping the range is kept and clipped to it, so a
     /// region straddling `inPoint` starts at 0 rather than disappearing. A region's end is bounded
-    /// by `newDuration` when one is given — an end beyond the file's own duration is not a
+    /// by `newDuration` when one is given - an end beyond the file's own duration is not a
     /// position anything can resolve.
     ///
     /// - Parameters:

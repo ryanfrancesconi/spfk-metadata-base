@@ -104,7 +104,7 @@ struct AudioMarkerDescriptionCollectionAdditionalTests {
         #expect(collection.markerDescriptions[1].startTime == 2)
         #expect(collection.markerDescriptions[2].startTime == 3)
 
-        // existing IDs preserved — not reassigned sequentially
+        // existing IDs preserved - not reassigned sequentially
         #expect(collection.markerDescriptions[0].markerID == 50)
         #expect(collection.markerDescriptions[1].markerID == 75)
         #expect(collection.markerDescriptions[2].markerID == 99)

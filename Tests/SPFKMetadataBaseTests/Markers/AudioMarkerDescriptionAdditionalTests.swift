@@ -160,7 +160,7 @@ struct AudioMarkerDescriptionEquatableTests {
         #expect(h1.finalize() == h2.finalize())
     }
 
-    // Mixed case: one has ID, one doesn't — must be not-equal regardless of content,
+    // Mixed case: one has ID, one doesn't - must be not-equal regardless of content,
     // otherwise equal values would hash differently (Hashable contract violation).
 
     @Test func notEqualWhenOnlyLHSHasID() {

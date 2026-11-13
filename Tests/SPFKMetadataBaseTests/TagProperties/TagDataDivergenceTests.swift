@@ -40,7 +40,7 @@ struct TagDataDivergenceTests {
     }
 
     @Test func standardKeyAbsentFromOneElementIsDivergent() {
-        // A key present in some elements but absent from others is divergent —
+        // A key present in some elements but absent from others is divergent -
         // absent is treated as "" which differs from a real value.
         let data1 = TagData(tags: [.title: "Song A"])
         let data2 = TagData(tags: [:])
@@ -49,7 +49,7 @@ struct TagDataDivergenceTests {
     }
 
     @Test func standardKeyAbsentFromAllElementsNotDivergent() {
-        // A key absent from every element is not divergent — all "values" are the same (absent).
+        // A key absent from every element is not divergent - all "values" are the same (absent).
         let data1 = TagData(tags: [:])
         let data2 = TagData(tags: [:])
         #expect([data1, data2].divergentTagKeyDisplayNames().isEmpty)
@@ -73,7 +73,7 @@ struct TagDataDivergenceTests {
     }
 
     @Test func threeElementsKeyMissingFromOneIsDivergent() {
-        // Key in first and second but absent from third — divergent.
+        // Key in first and second but absent from third - divergent.
         let data1 = TagData(tags: [.title: "Song A"])
         let data2 = TagData(tags: [.title: "Song B"])
         let data3 = TagData(tags: [:])
@@ -82,7 +82,7 @@ struct TagDataDivergenceTests {
     }
 
     @Test func threeElementsKeyMissingFromMiddleIsDivergent() {
-        // Key in first and third but absent from second — divergent.
+        // Key in first and third but absent from second - divergent.
         let data1 = TagData(tags: [.title: "Song A"])
         let data2 = TagData(tags: [:])
         let data3 = TagData(tags: [.title: "Song B"])
@@ -91,7 +91,7 @@ struct TagDataDivergenceTests {
     }
 
     @Test func threeElementsOneValueDiffersIsDivergent() {
-        // Only one of three values differs — still divergent.
+        // Only one of three values differs - still divergent.
         let data1 = TagData(tags: [.title: "Song A"])
         let data2 = TagData(tags: [.title: "Song A"])
         let data3 = TagData(tags: [.title: "Song B"])
