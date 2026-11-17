@@ -41,12 +41,12 @@ public struct RIFFInfoFields: Hashable, Codable, Sendable {
         !id.contains { $0.isASCII && $0.isLowercase }
     }
 
-    /// The field changes that turn `other` into these, named `INFO: <display name>` and sorted
-    /// by name.
+    /// The field changes that turn `other` into these, keyed by INFO ID, named
+    /// `INFO: <display name>` and sorted by name.
     public func difference(from other: RIFFInfoFields) -> [TagValueChange] {
         Set(fields.keys).union(other.fields.keys)
             .filter { fields[$0] != other.fields[$0] }
-            .map { TagValueChange(name: "INFO: \(Self.displayName(for: $0))", before: other.fields[$0] ?? "", after: fields[$0] ?? "") }
+            .map { TagValueChange(key: $0, name: "INFO: \(Self.displayName(for: $0))", before: other.fields[$0] ?? "", after: fields[$0] ?? "") }
             .sorted { $0.name.standardCompare(with: $1.name) }
     }
 

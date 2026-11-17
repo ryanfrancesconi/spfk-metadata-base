@@ -9,16 +9,39 @@ import SPFKUtils
 /// An absent key is carried as `""` rather than `nil`, so an added and a cleared value are both
 /// ordinary changes with one side empty.
 public struct TagValueChange: Hashable, Sendable {
+    /// Identifies the field within its store: a ``TagKey`` raw value, or ``customKeyPrefix`` plus
+    /// the raw key for a custom tag. Read it with ``tagKey`` and ``customTagKey``.
+    public let key: String
+
     /// User-facing name of the field: a ``TagKey/displayName``, or the raw key for a custom tag.
     public let name: String
 
     public let before: String
     public let after: String
 
-    public init(name: String, before: String, after: String) {
+    public init(key: String, name: String, before: String, after: String) {
+        self.key = key
         self.name = name
         self.before = before
         self.after = after
+    }
+
+    /// A change whose key is its name.
+    public init(name: String, before: String, after: String) {
+        self.init(key: name, name: name, before: before, after: after)
+    }
+
+    /// Prefixes a custom tag's key, which could otherwise equal a ``TagKey`` raw value.
+    public static let customKeyPrefix = "custom:"
+
+    /// The standard tag this change names, if any.
+    public var tagKey: TagKey? {
+        key.hasPrefix(Self.customKeyPrefix) ? nil : TagKey(rawValue: key)
+    }
+
+    /// The custom tag this change names, if any.
+    public var customTagKey: String? {
+        key.hasPrefix(Self.customKeyPrefix) ? String(key.dropFirst(Self.customKeyPrefix.count)) : nil
     }
 }
 
@@ -36,7 +59,7 @@ extension TagData {
             let after = tags[key] ?? ""
 
             if before != after {
-                changes.append(TagValueChange(name: key.displayName, before: before, after: after))
+                changes.append(TagValueChange(key: key.rawValue, name: key.displayName, before: before, after: after))
             }
         }
 
@@ -45,11 +68,16 @@ extension TagData {
             let after = customTags[key] ?? ""
 
             if before != after {
-                changes.append(TagValueChange(name: key, before: before, after: after))
+                changes.append(TagValueChange(key: Self.customKey(key), name: key, before: before, after: after))
             }
         }
 
         return changes.sorted { $0.name < $1.name }
+    }
+
+    /// The ``TagValueChange/key`` of custom tag `key`.
+    public static func customKey(_ key: String) -> String {
+        TagValueChange.customKeyPrefix + key
     }
 }
 

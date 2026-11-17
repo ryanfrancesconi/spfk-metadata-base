@@ -36,9 +36,9 @@ struct RIFFInfoFieldsTests {
         let changes = edited.difference(from: onDisk)
 
         #expect(changes == [
-            TagValueChange(name: "INFO: BCPR", before: "Old", after: "New"),
-            TagValueChange(name: "INFO: BETM", before: "02:00", after: ""),
-            TagValueChange(name: "INFO: Source Form", before: "", after: "1100"),
+            TagValueChange(key: "BCPR", name: "INFO: BCPR", before: "Old", after: "New"),
+            TagValueChange(key: "BETM", name: "INFO: BETM", before: "02:00", after: ""),
+            TagValueChange(key: "ISRF", name: "INFO: Source Form", before: "", after: "1100"),
         ])
     }
 
