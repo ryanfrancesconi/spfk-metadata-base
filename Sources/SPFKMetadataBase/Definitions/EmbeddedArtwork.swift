@@ -8,8 +8,8 @@ import UniformTypeIdentifiers
 public struct EmbeddedArtwork: Sendable, Hashable {
     public var cgImage: CGImage
 
-    /// The encoding the picture is stored in. A type ImageIO cannot write, such as WebP, is
-    /// written as JPEG.
+    /// The encoding the picture is stored in, or the type its image came from when it is not yet
+    /// written. A new picture is only ever written as JPEG or PNG.
     public var utType: UTType
 
     public var pictureDescription: String
